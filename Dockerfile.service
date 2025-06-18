@@ -1,0 +1,5 @@
+FROM node:18-alpine
+WORKDIR /app
+COPY service ./service
+RUN cd service && npm install && npm run build
+CMD ["node", "service/dist/main.js"]

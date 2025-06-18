@@ -1,14 +1,26 @@
 {
   "name": "service",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "NestJS service for budget management",
   "scripts": {
-    "test": "node server.js",
-    "start": "node server.js"
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/main.js",
+    "dev": "ts-node src/main.ts"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "dependencies": {
+    "@nestjs/common": "^9.0.0",
+    "@nestjs/core": "^9.0.0",
+    "@nestjs/mongoose": "^9.0.0",
+    "bcryptjs": "^2.4.3",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^6.0.0",
+    "ioredis": "^5.0.0",
+    "reflect-metadata": "^0.1.13",
+    "rxjs": "^7.0.0"
+  },
+  "devDependencies": {
+    "ts-node": "^10.0.0",
+    "typescript": "^4.8.4"
+  },
   "type": "commonjs"
 }
