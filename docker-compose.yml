@@ -1,0 +1,31 @@
+version: '3'
+services:
+  mongo:
+    image: mongo:6
+    ports:
+      - "27017:27017"
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+  service:
+    build:
+      context: .
+      dockerfile: Dockerfile.service
+    environment:
+      - MONGO_URL=mongodb://mongo:27017/budget
+      - REDIS_URL=redis://redis:6379
+      - SECRET=replace_this_secret
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo
+      - redis
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    ports:
+      - "8080:3000"
+    depends_on:
+      - service

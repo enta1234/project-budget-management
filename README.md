@@ -1,26 +1,34 @@
 # Project Budget Management
 
-This repository now uses a basic monorepo layout with two folders:
+This project now uses a NestJS service and a Next.js client. The service stores
+user data in MongoDB and uses Redis for caching. Development is containerised
+with Docker.
 
-- **client** – small web UI that allows a user to log in.
-- **service** – Express API implementing a token-based login flow using JWT.
+## Running with Docker
 
-## Running the service
-
+```sh
+./start.sh
 ```
+
+This starts MongoDB, Redis, the NestJS API on port `3000` and the Next.js client
+on `http://localhost:8080`.
+
+## Manual Usage
+
+To run the service manually:
+
+```sh
 cd service
-npm install      # will fail without network but dependencies are express, jsonwebtoken and bcryptjs
-npm start
+npm install
+npm run build
+npm run start:prod
 ```
 
-The API exposes `/login` and `/profile` endpoints. The `/login` route accepts `username` and `password` and returns a JWT token when credentials are valid.
+To run the client manually:
 
-## Running the client
-
-```
+```sh
 cd client
-npm install      # installs express for a simple static server
+npm install
+npm run build
 npm start
 ```
-
-Open `http://localhost:8080` in a browser and use `admin` / `password` to test.
