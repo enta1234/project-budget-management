@@ -1,5 +1,14 @@
+# Build stage
+FROM node:18-alpine AS build
+WORKDIR /app/service
+COPY service/package*.json ./
+RUN npm install
+COPY service .
+RUN npm run build
+
+# Runtime stage with only production files for a smaller image
 FROM node:18-alpine
-WORKDIR /app
-COPY service ./service
-RUN cd service && npm install && npm run build
-CMD ["npm", "--prefix", "service", "run", "start:prod"]
+WORKDIR /app/service
+COPY --from=build /app/service/node_modules ./node_modules
+COPY --from=build /app/service/dist ./dist
+CMD ["node", "dist/main.js"]
