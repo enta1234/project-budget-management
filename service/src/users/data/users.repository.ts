@@ -14,4 +14,9 @@ export class UsersRepository {
   findById(id: string): Promise<User | null> {
     return this.userModel.findById(id).exec();
   }
+
+  create(username: string, passwordHash: string): Promise<User> {
+    const user = new this.userModel({ username, passwordHash });
+    return user.save();
+  }
 }

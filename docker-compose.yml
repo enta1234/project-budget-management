@@ -16,6 +16,7 @@ services:
       - MONGO_URL=mongodb://mongo:27017/budget
       - REDIS_URL=redis://redis:6379
       - SECRET=replace_this_secret
+      - ADMIN_PASSWORD=admin
     ports:
       - "3000:3000"
     depends_on:

@@ -13,6 +13,9 @@ with Docker.
 This starts MongoDB, Redis, the NestJS API on port `3000` and the Next.js client
 on `http://localhost:8080`.
 
+An admin user is created automatically with username `admin` and password taken
+from the `ADMIN_PASSWORD` environment variable (default `admin`).
+
 ## Manual Usage
 
 To run the service manually:
