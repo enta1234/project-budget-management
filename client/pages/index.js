@@ -1,4 +1,10 @@
 import { useState } from 'react';
+import Container from '@mui/material/Container';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Paper from '@mui/material/Paper';
 
 export default function Home() {
   const [token, setToken] = useState(null);
@@ -25,15 +31,27 @@ export default function Home() {
   }
 
   return (
-    <div>
-      <h1>Login</h1>
-      <form onSubmit={login}>
-        <input value={username} onChange={e => setUsername(e.target.value)} placeholder="username" />
-        <input value={password} onChange={e => setPassword(e.target.value)} placeholder="password" type="password" />
-        <button type="submit">Login</button>
-      </form>
-      {token && <button onClick={getProfile}>Get Profile</button>}
-      {profile && <pre>{JSON.stringify(profile, null, 2)}</pre>}
-    </div>
+    <Container maxWidth="sm">
+      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
+        <Paper sx={{ p: 4, width: '100%' }} elevation={3}>
+          <Typography variant="h4" component="h1" gutterBottom align="center">
+            Login
+          </Typography>
+          <Box component="form" onSubmit={login} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <TextField label="Username" value={username} onChange={e => setUsername(e.target.value)} required />
+            <TextField label="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} required />
+            <Button variant="contained" type="submit" fullWidth>
+              Login
+            </Button>
+          </Box>
+          {token && (
+            <Box sx={{ mt: 2, textAlign: 'center' }}>
+              <Button variant="outlined" onClick={getProfile}>Get Profile</Button>
+            </Box>
+          )}
+          {profile && <pre>{JSON.stringify(profile, null, 2)}</pre>}
+        </Paper>
+      </Box>
+    </Container>
   );
 }
