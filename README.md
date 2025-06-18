@@ -21,7 +21,7 @@ To run the service manually:
 cd service
 npm install
 npm run build
-npm start
+npm run start:prod
 ```
 
 To run the client manually:
