@@ -5,6 +5,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import theme from '../theme';
 import { AuthProvider } from '../context/AuthContext';
+import { SidebarProvider } from '../context/SidebarContext';
 import '../styles/globals.scss';
 
 export default function MyApp({ Component, pageProps }) {
@@ -13,7 +14,9 @@ export default function MyApp({ Component, pageProps }) {
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <AuthProvider>
-          <Component {...pageProps} />
+          <SidebarProvider>
+            <Component {...pageProps} />
+          </SidebarProvider>
         </AuthProvider>
       </ThemeProvider>
     </LocalizationProvider>
