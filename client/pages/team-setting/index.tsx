@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import axios from 'axios';
+import api from '../../api';
 import { Layout, ResourceForm, Popup } from '../../components';
 import { withAuth, useAuth } from '../../context/AuthContext';
 
@@ -16,8 +16,7 @@ function TeamSetting() {
   const [open, setOpen] = useState(false);
 
   async function loadData() {
-    const headers = { Authorization: `Bearer ${token}` };
-    const res = await axios.get('/api/v1/users', { headers });
+    const res = await api.get('/api/v1/users');
     setResources(res.data);
   }
 
@@ -26,8 +25,7 @@ function TeamSetting() {
   }, [token]);
 
   const handleCreate = async data => {
-    const headers = { Authorization: `Bearer ${token}` };
-    await axios.post('/api/v1/users', { username: data.name }, { headers });
+    await api.post('/api/v1/users', { username: data.name });
     setOpen(false);
     loadData();
   };

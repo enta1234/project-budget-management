@@ -1,18 +1,16 @@
 // @ts-nocheck
-import axios from 'axios';
+import api from '../api';
 
 export async function loginRequest(username, password) {
-  const { data } = await axios.post('/api/v1/auth/login', { username, password });
+  const { data } = await api.post('/api/v1/auth/login', { username, password });
   return data;
 }
 
-export async function fetchProfile(token) {
-  const { data } = await axios.get('/api/v1/profile', {
-    headers: { Authorization: `Bearer ${token}` },
-  });
+export async function fetchProfile() {
+  const { data } = await api.get('/api/v1/profile');
   return data;
 }
 
 export async function revokeRefreshToken(refreshToken) {
-  await axios.post('/api/v1/auth/revoke', { refreshToken });
+  await api.post('/api/v1/auth/revoke', { refreshToken });
 }
