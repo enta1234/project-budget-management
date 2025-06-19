@@ -27,6 +27,7 @@ services:
       context: .
       dockerfile: Dockerfile.client
     environment:
+      - NODE_ENV=production
       - SERVICE_URL=http://service:3000
     ports:
       - "8080:3000"
