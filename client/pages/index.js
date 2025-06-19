@@ -32,8 +32,8 @@ export default function Home() {
 
   return (
     <Container maxWidth="sm">
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
-        <Paper sx={{ p: 4, width: '100%' }} elevation={3}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', bgcolor: 'background.default' }}>
+        <Paper sx={{ p: 4, width: '100%', bgcolor: 'background.paper' }} elevation={3}>
           <Typography variant="h4" component="h1" gutterBottom align="center">
             Login
           </Typography>
