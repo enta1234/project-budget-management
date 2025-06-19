@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { useRouter } from 'next/router';
 import Container from '@mui/material/Container';
@@ -19,22 +20,21 @@ export default function Home() {
 
   async function handleLogin(e) {
     e.preventDefault();
-    const res = await fetch('/api/v1/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
+    setLoading(true);
+    const { data } = await axios.post('/api/v1/auth/login', {
+      username,
+      password,
     });
-    const data = await res.json();
     login(data.accessToken);
     router.push('/workspace');
     setLoading(false);
   }
 
   async function getProfile() {
-    const res = await fetch('/api/v1/profile', {
-      headers: { Authorization: `Bearer ${token}` }
+    const { data } = await axios.get('/api/v1/profile', {
+      headers: { Authorization: `Bearer ${token}` },
     });
-    setProfile(await res.json());
+    setProfile(data);
   }
 
   return (
