@@ -26,7 +26,12 @@ export default function Topbar({ onMenuClick }) {
   };
 
   return (
-    <AppBar position="fixed" color="primary" sx={{ zIndex: (t) => t.zIndex.drawer + 1 }}>
+    // Lower the app bar so drawers can appear above it
+    <AppBar
+      position="fixed"
+      color="primary"
+      sx={{ zIndex: (t) => t.zIndex.appBar }}
+    >
       <Toolbar>
         <IconButton color="inherit" edge="start" onClick={onMenuClick} sx={{ mr: 2 }}>
           <MenuIcon />
@@ -55,7 +60,12 @@ export default function Topbar({ onMenuClick }) {
             Logout
           </MenuItem>
         </Menu>
-        <Drawer anchor="right" open={openProfile} onClose={() => setOpenProfile(false)}>
+        <Drawer
+          anchor="right"
+          open={openProfile}
+          onClose={() => setOpenProfile(false)}
+          sx={{ zIndex: (t) => t.zIndex.modal + 2 }}
+        >
           <Box sx={{ width: 250, p: 2 }}>
             <Typography variant="h6" gutterBottom>
               My Profile
