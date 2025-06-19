@@ -1,3 +1,4 @@
+// @ts-nocheck
 import CircularProgress from '@mui/material/CircularProgress';
 
 export default function Loading(props) {

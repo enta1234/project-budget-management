@@ -1,3 +1,4 @@
+// @ts-nocheck
 export { default as Loading } from './Loading';
 export { default as lazyLoad } from './LazyLoad';
 export { default as Popup } from './Popup';

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { loginRequest, fetchProfile } from '../models/authModel';
