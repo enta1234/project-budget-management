@@ -12,3 +12,7 @@ export async function fetchProfile(token) {
   });
   return data;
 }
+
+export async function revokeRefreshToken(refreshToken) {
+  await axios.post('/api/v1/auth/revoke', { refreshToken });
+}
