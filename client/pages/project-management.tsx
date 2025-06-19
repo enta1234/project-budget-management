@@ -35,7 +35,7 @@ function ProjectManagement() {
     const headers = { Authorization: `Bearer ${token}` };
     const pro = await axios.get('/api/v1/projects', { headers });
     setProjects(pro.data);
-    const usr = await axios.get('/api/v1/users', { headers });
+    const usr = await axios.get('/api/v1/resources', { headers });
     setUsers(usr.data);
   }
 
@@ -142,7 +142,7 @@ function ProjectManagement() {
             <DatePicker label="Start Date" value={start} onChange={setStart} renderInput={params => <TextField {...params} required />} />
             <Autocomplete
               options={users}
-              getOptionLabel={o => o.username}
+              getOptionLabel={o => o.name}
               value={lead}
               onChange={(_, v) => setLead(v)}
               renderInput={params => <TextField {...params} label="Team Lead" required />}
@@ -150,7 +150,7 @@ function ProjectManagement() {
             <Autocomplete
               multiple
               options={users}
-              getOptionLabel={o => o.username}
+              getOptionLabel={o => o.name}
               value={members}
               onChange={(_, v) => setMembers(v)}
               renderInput={params => <TextField {...params} label="Members" />}
