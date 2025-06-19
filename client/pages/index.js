@@ -17,18 +17,18 @@ export default function Home() {
 
   async function handleLogin(e) {
     e.preventDefault();
-    const res = await fetch('http://localhost:3000/login', {
+    const res = await fetch('http://localhost:3000/api/v1/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
     });
     const data = await res.json();
-    login(data.token);
+    login(data.accessToken);
     router.push('/workspace');
   }
 
   async function getProfile() {
-    const res = await fetch('http://localhost:3000/profile', {
+    const res = await fetch('http://localhost:3000/api/v1/profile', {
       headers: { Authorization: `Bearer ${token}` }
     });
     setProfile(await res.json());
