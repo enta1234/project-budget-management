@@ -37,6 +37,10 @@ npm run build
 npm start
 ```
 
+Set the `SERVICE_URL` environment variable to control where API requests are
+proxied. Create an `.env` file based on `.env.example` to override the default
+(`http://localhost:3000`).
+
 ## Environments
 
 The service loads environment variables from files in `service/env` based on the

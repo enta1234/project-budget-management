@@ -17,7 +17,7 @@ export default function Home() {
 
   async function handleLogin(e) {
     e.preventDefault();
-    const res = await fetch('http://localhost:3000/api/v1/auth/login', {
+    const res = await fetch('/api/v1/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ username, password })
@@ -28,7 +28,7 @@ export default function Home() {
   }
 
   async function getProfile() {
-    const res = await fetch('http://localhost:3000/api/v1/profile', {
+    const res = await fetch('/api/v1/profile', {
       headers: { Authorization: `Bearer ${token}` }
     });
     setProfile(await res.json());
