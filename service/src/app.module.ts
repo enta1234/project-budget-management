@@ -4,6 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { UsersModule } from './users/users.module';
 import { RedisModule } from './redis.module';
 import { EventsModule } from './events/events.module';
+import { FollowersModule } from './followers/followers.module';
 
 @Module({
   imports: [
@@ -11,6 +12,7 @@ import { EventsModule } from './events/events.module';
     RedisModule,
     UsersModule,
     EventsModule,
+    FollowersModule,
   ],
   providers: [LoggerService],
   exports: [LoggerService],

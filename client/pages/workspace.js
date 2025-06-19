@@ -13,13 +13,15 @@ import TimelineConnector from '@mui/lab/TimelineConnector';
 import TimelineContent from '@mui/lab/TimelineContent';
 import TimelineDot from '@mui/lab/TimelineDot';
 import { withAuth } from '../context/AuthContext';
+import { Layout } from '../components';
 
 function Workspace() {
   const [view, setView] = useState('calendar');
 
   return (
-    <Container maxWidth="md" sx={{ mt: 4 }}>
-      <Paper sx={{ p: 2 }} elevation={3}>
+    <Layout>
+      <Container maxWidth="md" sx={{ mt: 4 }}>
+        <Paper sx={{ p: 2 }} elevation={3}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
           <Typography variant="h5">Workspace</Typography>
           <ToggleButtonGroup
@@ -60,6 +62,7 @@ function Workspace() {
         )}
       </Paper>
     </Container>
+    </Layout>
   );
 }
 
