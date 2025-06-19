@@ -14,6 +14,9 @@ This starts MongoDB, Redis, the NestJS API on port `3000` and the Next.js client
 on `http://localhost:8080`. All service endpoints are available under the
 `/api/v1` path prefix.
 
+The service now exposes a new endpoint `GET /api/v1/events` which returns the
+timeline/calendar layout entries.
+
 An admin user is created automatically with username `admin` and password taken
 from the `ADMIN_PASSWORD` environment variable (default `admin`).
 
