@@ -46,7 +46,14 @@ To run the client manually:
 cd client
 npm install
 npm run build
-npm start
+npm run dev
+```
+
+The built client can be started with:
+
+```sh
+npm run start:dev   # uses the development environment
+npm run start:local # uses the local environment
 ```
 
 Set the `SERVICE_URL` environment variable to control where API requests are
