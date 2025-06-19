@@ -3,7 +3,6 @@ import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import { Input, LoadingButton } from '.';
 import styles from '../styles/index.module.scss';
 
@@ -12,11 +11,8 @@ export default function LoginView({
   setUsername,
   password,
   setPassword,
-  profile,
   loading,
-  token,
   handleLogin,
-  getProfile,
 }) {
   return (
     <Container maxWidth="sm">
@@ -32,12 +28,6 @@ export default function LoginView({
               Login
             </LoadingButton>
           </Box>
-          {token && (
-            <Box sx={{ mt: 2, textAlign: 'center' }}>
-              <Button variant="outlined" onClick={getProfile}>Get Profile</Button>
-            </Box>
-          )}
-          {profile && <pre className={styles.profilePre}>{JSON.stringify(profile, null, 2)}</pre>}
         </Paper>
       </Box>
     </Container>
