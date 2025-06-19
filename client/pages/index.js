@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { useRouter } from 'next/router';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
@@ -7,12 +9,13 @@ import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 
 export default function Home() {
-  const [token, setToken] = useState(null);
+  const { token, login } = useAuth();
+  const router = useRouter();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [profile, setProfile] = useState(null);
 
-  async function login(e) {
+  async function handleLogin(e) {
     e.preventDefault();
     const res = await fetch('http://localhost:3000/login', {
       method: 'POST',
@@ -20,7 +23,8 @@ export default function Home() {
       body: JSON.stringify({ username, password })
     });
     const data = await res.json();
-    setToken(data.token);
+    login(data.token);
+    router.push('/workspace');
   }
 
   async function getProfile() {
@@ -37,7 +41,7 @@ export default function Home() {
           <Typography variant="h4" component="h1" gutterBottom align="center">
             Login
           </Typography>
-          <Box component="form" onSubmit={login} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+  <Box component="form" onSubmit={handleLogin} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
             <TextField label="Username" value={username} onChange={e => setUsername(e.target.value)} required />
             <TextField label="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} required />
             <Button variant="contained" type="submit" fullWidth>
