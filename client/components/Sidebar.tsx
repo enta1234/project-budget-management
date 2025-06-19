@@ -17,7 +17,7 @@ import { useState } from 'react';
 // width when sidebar is expanded
 const drawerWidth = 220;
 
-export default function Sidebar() {
+export default function Sidebar({ open, onClose }) {
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
 
@@ -26,11 +26,12 @@ export default function Sidebar() {
 
   return (
     <Drawer
-      variant="permanent"
-      open
+      anchor="left"
+      variant="temporary"
+      open={open}
+      onClose={onClose}
+      ModalProps={{ keepMounted: true }}
       sx={{
-        width,
-        flexShrink: 0,
         [`& .MuiDrawer-paper`]: {
           width,
           boxSizing: 'border-box',
@@ -53,7 +54,10 @@ export default function Sidebar() {
       <List>
         <ListItemButton
           selected={router.pathname === '/workspace'}
-          onClick={() => router.push('/workspace')}
+          onClick={() => {
+            router.push('/workspace');
+            onClose();
+          }}
         >
           <ListItemIcon>
             <DashboardIcon />
@@ -62,7 +66,10 @@ export default function Sidebar() {
         </ListItemButton>
         <ListItemButton
           selected={router.pathname === '/project-installation'}
-          onClick={() => router.push('/project-installation')}
+          onClick={() => {
+            router.push('/project-installation');
+            onClose();
+          }}
         >
           <ListItemIcon>
             <SettingsIcon />
@@ -71,7 +78,10 @@ export default function Sidebar() {
         </ListItemButton>
         <ListItemButton
           selected={router.pathname === '/team-setting'}
-          onClick={() => router.push('/team-setting')}
+          onClick={() => {
+            router.push('/team-setting');
+            onClose();
+          }}
         >
           <ListItemIcon>
             <GroupIcon />
