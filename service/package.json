@@ -19,7 +19,9 @@
     "ioredis": "^5.0.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.0.0",
-    "dotenv": "^16.0.0"
+    "dotenv": "^16.0.0",
+    "@nestjs/swagger": "^6.3.0",
+    "swagger-ui-express": "^5.0.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",

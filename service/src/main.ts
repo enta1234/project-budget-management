@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { LoggingInterceptor } from './logger/logging.interceptor';
 import { LoggerService } from './logger/logger.service';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as path from 'path';
 import { config } from 'dotenv';
 
@@ -15,6 +16,14 @@ async function bootstrap() {
   app.setGlobalPrefix('api/v1');
   const logger = app.get(LoggerService);
   app.useGlobalInterceptors(new LoggingInterceptor(logger));
+  if (process.env.NODE_ENV !== 'production') {
+    const swaggerConfig = new DocumentBuilder()
+      .setTitle('Budget Management API')
+      .setVersion('1.0')
+      .build();
+    const document = SwaggerModule.createDocument(app, swaggerConfig);
+    SwaggerModule.setup('api-docs', app, document);
+  }
   await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
