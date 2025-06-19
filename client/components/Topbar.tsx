@@ -9,6 +9,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Drawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
+import GitHubIcon from '@mui/icons-material/GitHub';
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 
@@ -26,17 +27,20 @@ export default function Topbar({ onMenuClick }) {
   };
 
   return (
-    // Lower the app bar so drawers can appear above it
     <AppBar
       position="fixed"
       color="primary"
-      sx={{ zIndex: (t) => t.zIndex.appBar }}
+      sx={{
+        zIndex: (t) => t.zIndex.appBar,
+        borderBottom: '1px solid #d0d7de',
+      }}
     >
-      <Toolbar>
-        <IconButton color="inherit" edge="start" onClick={onMenuClick} sx={{ mr: 2 }}>
+      <Toolbar variant="dense">
+        <IconButton color="inherit" edge="start" onClick={onMenuClick} sx={{ mr: 1 }}>
           <MenuIcon />
         </IconButton>
-        <Typography variant="h6" sx={{ flexGrow: 1 }}>
+        <GitHubIcon sx={{ mr: 1 }} />
+        <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 500 }}>
           Budget Manager
         </Typography>
         <IconButton color="inherit" onClick={handleMenu}>

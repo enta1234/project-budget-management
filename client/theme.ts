@@ -3,15 +3,17 @@ import { createTheme } from '@mui/material/styles';
 
 const theme = createTheme({
   palette: {
+    // GitHub inspired colour scheme
     primary: {
-      main: '#1E90FF', // bright blue
+      main: '#24292e', // dark header grey
+      contrastText: '#fff',
     },
     secondary: {
-      main: '#00008B', // dark blue
+      main: '#0969da', // link blue
     },
     background: {
-      default: '#E0F7FF',
-      paper: '#B0C4DE',
+      default: '#f6f8fa',
+      paper: '#ffffff',
     },
   },
   typography: {
