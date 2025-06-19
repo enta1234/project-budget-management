@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import * as bcrypt from 'bcryptjs';
 import { UsersRepository } from './data/users.repository';
 
 @Injectable()
@@ -14,5 +15,10 @@ export class UsersService {
   async getUsers(): Promise<{ id: string; username: string }[]> {
     const users = await this.repo.findAll();
     return users.map(u => ({ id: u._id.toString(), username: u.username }));
+  }
+
+  async createUser(username: string) {
+    const hash = bcrypt.hashSync('changeit', 10);
+    return this.repo.create(username, hash);
   }
 }

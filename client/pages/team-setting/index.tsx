@@ -15,14 +15,22 @@ function TeamSetting() {
   const [resources, setResources] = useState([]);
   const [open, setOpen] = useState(false);
 
-  useEffect(() => {
-    if (!token) return;
+  async function loadData() {
     const headers = { Authorization: `Bearer ${token}` };
-    axios
-      .get('/api/v1/users', { headers })
-      .then(res => setResources(res.data))
-      .catch(console.error);
+    const res = await axios.get('/api/v1/users', { headers });
+    setResources(res.data);
+  }
+
+  useEffect(() => {
+    if (token) loadData();
   }, [token]);
+
+  const handleCreate = async data => {
+    const headers = { Authorization: `Bearer ${token}` };
+    await axios.post('/api/v1/users', { username: data.name }, { headers });
+    setOpen(false);
+    loadData();
+  };
 
   const columns = [
     {
@@ -59,7 +67,7 @@ function TeamSetting() {
           />
         </Paper>
         <Popup open={open} onClose={() => setOpen(false)} title="Add Resource">
-          <ResourceForm />
+          <ResourceForm onSubmit={handleCreate} />
         </Popup>
       </Container>
     </Layout>

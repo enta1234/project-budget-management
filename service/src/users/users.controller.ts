@@ -1,4 +1,4 @@
-import { Controller, Get, Req, UseGuards, UnauthorizedException } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UsersService } from './users.service';
@@ -19,5 +19,11 @@ export class UsersController {
   @Get('users')
   getUsers() {
     return this.usersService.getUsers();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('users')
+  create(@Body() body: { username: string }) {
+    return this.usersService.createUser(body.username);
   }
 }
