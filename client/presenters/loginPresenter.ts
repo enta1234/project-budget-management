@@ -16,7 +16,7 @@ export function useLoginPresenter() {
     e.preventDefault();
     setLoading(true);
     const data = await loginRequest(username, password);
-    login(data.accessToken);
+    login(data.accessToken, data.refreshToken);
     router.push('/workspace');
     setLoading(false);
   }

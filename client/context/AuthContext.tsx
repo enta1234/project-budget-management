@@ -6,24 +6,33 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [token, setToken] = useState(null);
+  const [refreshToken, setRefreshToken] = useState(null);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem('token');
-    if (stored) setToken(stored);
+    const tok = localStorage.getItem('token');
+    const rt = localStorage.getItem('refreshToken');
+    if (tok) setToken(tok);
+    if (rt) setRefreshToken(rt);
+    setReady(true);
   }, []);
 
-  const login = (tok) => {
+  const login = (tok, refreshTok) => {
     localStorage.setItem('token', tok);
+    localStorage.setItem('refreshToken', refreshTok);
     setToken(tok);
+    setRefreshToken(refreshTok);
   };
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
     setToken(null);
+    setRefreshToken(null);
   };
 
   return (
-    <AuthContext.Provider value={{ token, login, logout }}>
+    <AuthContext.Provider value={{ token, refreshToken, login, logout, ready }}>
       {children}
     </AuthContext.Provider>
   );
@@ -33,11 +42,13 @@ export const useAuth = () => useContext(AuthContext);
 
 export function withAuth(Component) {
   return function Authenticated(props) {
-    const { token } = useAuth();
+    const { token, ready } = useAuth();
     const router = useRouter();
     useEffect(() => {
+      if (!ready) return;
       if (!token) router.push('/');
-    }, [token]);
+    }, [token, ready]);
+    if (!ready) return null;
     if (!token) return null;
     return <Component {...props} />;
   };
