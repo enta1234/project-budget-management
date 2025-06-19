@@ -14,8 +14,9 @@ This starts MongoDB, Redis, the NestJS API on port `3000` and the Next.js client
 on `http://localhost:8080`. All service endpoints are available under the
 `/api/v1` path prefix.
 
-The `docker-compose.yml` file sets `SERVICE_URL` for the client container so
-that API requests are forwarded to the service.
+The `docker-compose.yml` file sets `SERVICE_URL` as a build argument and
+environment variable for the client container so API requests are forwarded to
+the service.
 
 The service now exposes a new endpoint `GET /api/v1/events` which returns the
 timeline/calendar layout entries.
@@ -45,9 +46,9 @@ npm run build
 npm start
 ```
 
-Set the `SERVICE_URL` environment variable to control where API requests are
-proxied. Create an `.env` file based on `.env.example` to override the default
-(`http://localhost:3000`).
+Set the `SERVICE_URL` environment variable before `npm run build` to control
+where API requests are proxied. Create an `.env` file based on `.env.example` to
+override the default (`http://localhost:3000`).
 
 The service also provides a `service/.env.example` file. Copy it to
 `service/.env` and adjust values if you prefer not to use the predefined files

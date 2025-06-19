@@ -26,6 +26,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.client
+      args:
+        - SERVICE_URL=http://service:3000
     environment:
       - SERVICE_URL=http://service:3000
     ports:

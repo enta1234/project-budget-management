@@ -1,11 +1,15 @@
 # Modules stage
 FROM node:18-alpine AS modules
+ARG SERVICE_URL=http://service:3000
+ENV SERVICE_URL=$SERVICE_URL
 WORKDIR /app/client
 COPY client/package*.json ./
 RUN npm install
 
 # Build stage
 FROM node:18-alpine AS build
+ARG SERVICE_URL=http://service:3000
+ENV SERVICE_URL=$SERVICE_URL
 WORKDIR /app/client
 COPY --from=modules /app/client/node_modules ./node_modules
 COPY client .
@@ -13,6 +17,8 @@ RUN npm run build
 
 # Runtime stage with only production files
 FROM node:18-alpine
+ARG SERVICE_URL=http://service:3000
+ENV SERVICE_URL=$SERVICE_URL
 WORKDIR /app/client
 COPY --from=modules /app/client/node_modules ./node_modules
 COPY --from=build /app/client/.next ./.next
