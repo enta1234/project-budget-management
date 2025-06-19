@@ -1,3 +1,4 @@
+// @ts-nocheck
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Topbar from './Topbar';

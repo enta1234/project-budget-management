@@ -56,6 +56,7 @@ web_modules/
 
 # Optional stylelint cache
 .stylelintcache
+client/cache/
 
 # Microbundle cache
 .rpt2_cache/
@@ -137,5 +138,6 @@ dist
 
 # Lock files
 **/package-lock.json
+!client/package-lock.json
 pnpm-lock.yaml
 yarn.lock
