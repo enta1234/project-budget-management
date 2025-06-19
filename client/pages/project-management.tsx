@@ -159,8 +159,15 @@ function ProjectManagement() {
             <Button type="submit" variant="contained">Create</Button>
           </Box>
         </Paper>
-        <Paper sx={{ height: 400 }}>
-          <DataGrid rows={projects} columns={columns} getRowId={row => row._id} pageSize={5} rowsPerPageOptions={[5]} autoHeight />
+        <Paper>
+          <DataGrid
+            rows={projects}
+            columns={columns}
+            getRowId={row => row._id}
+            pageSize={5}
+            rowsPerPageOptions={[5]}
+            autoHeight
+          />
         </Paper>
       </Container>
     </Layout>
