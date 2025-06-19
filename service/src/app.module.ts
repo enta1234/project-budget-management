@@ -6,6 +6,7 @@ import { RedisModule } from './redis.module';
 import { EventsModule } from './events/events.module';
 import { FollowersModule } from './followers/followers.module';
 import { ProjectsModule } from './projects/projects.module';
+import { TeamsModule } from './teams/teams.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { ProjectsModule } from './projects/projects.module';
     EventsModule,
     FollowersModule,
     ProjectsModule,
+    TeamsModule,
   ],
   providers: [LoggerService],
   exports: [LoggerService],
