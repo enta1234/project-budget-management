@@ -60,9 +60,9 @@ export default function Sidebar({ open, onClose }) {
           {!collapsed && <ListItemText primary="Summary" />}
         </ListItemButton>
         <ListItemButton
-          selected={router.pathname === '/project-installation'}
+          selected={router.pathname === '/project-management'}
           onClick={() => {
-            router.push('/project-installation');
+            router.push('/project-management');
             onClose();
           }}
         >
