@@ -47,15 +47,6 @@ export default function Sidebar({ open, onClose }) {
     >
       <Toolbar />
       <List>
-        <ListItemButton onClick={() => setCollapsed(!collapsed)}>
-          <ListItemIcon>
-            {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-          </ListItemIcon>
-          {!collapsed && <ListItemText primary="Collapse" />}
-        </ListItemButton>
-      </List>
-      <Divider />
-      <List>
         <ListItemButton
           selected={router.pathname === '/workspace'}
           onClick={() => {
