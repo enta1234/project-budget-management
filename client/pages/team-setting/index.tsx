@@ -29,7 +29,7 @@ function TeamSetting() {
       field: 'no',
       headerName: 'No.',
       width: 70,
-      valueGetter: params => params.api.getRowIndex(params.id) + 1,
+      // valueGetter: params => params.api.getRowIndex(params.id) + 1,
       sortable: false,
     },
     { field: 'username', headerName: 'Username', flex: 1 },
