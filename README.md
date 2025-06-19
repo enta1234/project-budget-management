@@ -18,7 +18,9 @@ The `docker-compose.yml` file sets `SERVICE_URL` for the client container so
 that API requests are forwarded to the service.
 
 The service now exposes a new endpoint `GET /api/v1/events` which returns the
-timeline/calendar layout entries.
+timeline/calendar layout entries. It also provides a `POST /api/v1/projects`
+endpoint for creating projects with a structured body containing the project
+name, resources, start and end dates, manday estimate and priority.
 
 An admin user is created automatically with username `admin` and password taken
 from the `ADMIN_PASSWORD` environment variable (default `admin`).
