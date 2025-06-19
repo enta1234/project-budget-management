@@ -20,10 +20,10 @@ import { useState } from 'react';
 // width when sidebar is expanded
 const drawerWidth = 220;
 
-export default function Sidebar({ open, onClose }) {
-  const router = useRouter();
-  const [collapsed, setCollapsed] = useState(false);
-  const [openTeamMgmt, setOpenTeamMgmt] = useState(false);
+  const [openTeamManagement, setOpenTeamManagement] = useState(false);
+        <ListItemButton onClick={() => setOpenTeamManagement(!openTeamManagement)}>
+              {openTeamManagement ? <ExpandLess /> : <ExpandMore />}
+          <Collapse in={openTeamManagement} timeout="auto" unmountOnExit>
 
   // width to use when sidebar is collapsed
   const width = collapsed ? 72 : drawerWidth;
