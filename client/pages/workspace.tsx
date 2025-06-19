@@ -6,9 +6,6 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
-import PickersDay from '@mui/x-date-pickers/PickersDay';
-import { isSameDay } from 'date-fns';
 import { fetchEvents } from '../models/eventsModel';
 import Timeline from '@mui/lab/Timeline';
 import TimelineItem from '@mui/lab/TimelineItem';
@@ -17,7 +14,7 @@ import TimelineConnector from '@mui/lab/TimelineConnector';
 import TimelineContent from '@mui/lab/TimelineContent';
 import TimelineDot from '@mui/lab/TimelineDot';
 import { withAuth } from '../context/AuthContext';
-import { Layout } from '../components';
+import { Layout, SimpleCalendar } from '../components';
 
 function Workspace() {
   const [view, setView] = useState('calendar');
@@ -44,19 +41,7 @@ function Workspace() {
           </ToggleButtonGroup>
         </Box>
         {view === 'calendar' ? (
-          <DateCalendar
-            renderDay={(day, _value, DayComponentProps) => {
-              const hasEvent = events.some((ev) =>
-                isSameDay(new Date(ev.date), day)
-              );
-              return (
-                <PickersDay
-                  {...DayComponentProps}
-                  sx={hasEvent ? { bgcolor: 'secondary.main', color: 'white' } : {}}
-                />
-              );
-            }}
-          />
+          <SimpleCalendar events={events} />
         ) : (
           <Timeline>
             {events.map((ev, idx) => (
