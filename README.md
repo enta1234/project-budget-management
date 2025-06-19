@@ -49,6 +49,18 @@ Set the `SERVICE_URL` environment variable to control where API requests are
 proxied. Create an `.env` file based on `.env.example` to override the default
 (`http://localhost:3000`).
 
+The client also supports environment files under `client/env` in the same way as
+the service. The file matching the `NODE_ENV` value will be loaded when the
+client starts. Five example configurations are provided:
+
+```
+client/env/local.env
+client/env/development.env
+client/env/staging.env
+client/env/uat.env
+client/env/production.env
+```
+
 The service also provides a `service/.env.example` file. Copy it to
 `service/.env` and adjust values if you prefer not to use the predefined files
 under `service/env`.
