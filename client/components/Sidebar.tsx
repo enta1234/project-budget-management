@@ -61,13 +61,13 @@ export default function Sidebar() {
           {!collapsed && <ListItemText primary="Summary" />}
         </ListItemButton>
         <ListItemButton
-          selected={router.pathname === '/project-installation'}
-          onClick={() => router.push('/project-installation')}
+          selected={router.pathname === '/project-management'}
+          onClick={() => router.push('/project-management')}
         >
           <ListItemIcon>
             <SettingsIcon />
           </ListItemIcon>
-          {!collapsed && <ListItemText primary="Project Installation" />}
+          {!collapsed && <ListItemText primary="Project Management" />}
         </ListItemButton>
         <ListItemButton
           selected={router.pathname === '/team-setting'}

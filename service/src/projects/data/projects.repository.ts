@@ -5,11 +5,15 @@ import { Project } from './project.schema';
 
 export interface CreateProjectInput {
   name: string;
+  description?: string;
   resources: number;
   start: Date;
   end: Date;
   manday: number;
   priority: number;
+  lead?: string;
+  status?: string;
+  members?: string[];
 }
 
 @Injectable()

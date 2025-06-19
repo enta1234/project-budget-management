@@ -23,6 +23,8 @@ The service now exposes a new endpoint `GET /api/v1/events` which returns the
 timeline/calendar layout entries. It also provides a `POST /api/v1/projects`
 endpoint for creating projects with a structured body containing the project
 name, resources, start and end dates, manday estimate and priority.
+For convenience the service also offers `GET /api/v1/users` which lists all
+registered users so the client can populate team selection menus.
 
 An admin user is created automatically with username `admin` and password taken
 from the `ADMIN_PASSWORD` environment variable (default `admin`).

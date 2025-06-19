@@ -14,4 +14,10 @@ export class UsersController {
     if (!profile) throw new UnauthorizedException();
     return profile;
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('users')
+  getUsers() {
+    return this.usersService.getUsers();
+  }
 }

@@ -15,6 +15,10 @@ export class UsersRepository {
     return this.userModel.findById(id).exec();
   }
 
+  findAll(): Promise<User[]> {
+    return this.userModel.find().sort({ username: 1 }).exec();
+  }
+
   create(username: string, passwordHash: string): Promise<User> {
     const user = new this.userModel({ username, passwordHash });
     return user.save();
