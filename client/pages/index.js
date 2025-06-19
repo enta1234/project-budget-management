@@ -3,10 +3,11 @@ import { useAuth } from '../context/AuthContext';
 import { useRouter } from 'next/router';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
+import { Input, LoadingButton } from '../components';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
+import styles from '../styles/index.module.scss';
 
 export default function Home() {
   const { token, login } = useAuth();
@@ -14,6 +15,7 @@ export default function Home() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   async function handleLogin(e) {
     e.preventDefault();
@@ -25,6 +27,7 @@ export default function Home() {
     const data = await res.json();
     login(data.accessToken);
     router.push('/workspace');
+    setLoading(false);
   }
 
   async function getProfile() {
@@ -36,24 +39,24 @@ export default function Home() {
 
   return (
     <Container maxWidth="sm">
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', bgcolor: 'background.default' }}>
-        <Paper sx={{ p: 4, width: '100%', bgcolor: 'background.paper' }} elevation={3}>
+      <Box className={styles.wrapper}>
+        <Paper className={styles.paper} elevation={3}>
           <Typography variant="h4" component="h1" gutterBottom align="center">
             Login
           </Typography>
-  <Box component="form" onSubmit={handleLogin} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-            <TextField label="Username" value={username} onChange={e => setUsername(e.target.value)} required />
-            <TextField label="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} required />
-            <Button variant="contained" type="submit" fullWidth>
+          <Box component="form" onSubmit={handleLogin} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <Input label="Username" value={username} onChange={e => setUsername(e.target.value)} required />
+            <Input label="Password" type="password" value={password} onChange={e => setPassword(e.target.value)} required />
+            <LoadingButton loading={loading} variant="contained" type="submit" fullWidth>
               Login
-            </Button>
+            </LoadingButton>
           </Box>
           {token && (
             <Box sx={{ mt: 2, textAlign: 'center' }}>
               <Button variant="outlined" onClick={getProfile}>Get Profile</Button>
             </Box>
           )}
-          {profile && <pre>{JSON.stringify(profile, null, 2)}</pre>}
+          {profile && <pre className={styles.profilePre}>{JSON.stringify(profile, null, 2)}</pre>}
         </Paper>
       </Box>
     </Container>
