@@ -5,6 +5,7 @@ import { UsersModule } from './users/users.module';
 import { RedisModule } from './redis.module';
 import { EventsModule } from './events/events.module';
 import { FollowersModule } from './followers/followers.module';
+import { ProjectsModule } from './projects/projects.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { FollowersModule } from './followers/followers.module';
     UsersModule,
     EventsModule,
     FollowersModule,
+    ProjectsModule,
   ],
   providers: [LoggerService],
   exports: [LoggerService],
