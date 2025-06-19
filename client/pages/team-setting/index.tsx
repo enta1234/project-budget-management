@@ -5,7 +5,12 @@ import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 import axios from 'axios';
 import { Layout, ResourceForm, Popup } from '../../components';
 import { withAuth, useAuth } from '../../context/AuthContext';
@@ -32,16 +37,6 @@ function TeamSetting() {
     loadData();
   };
 
-  const columns = [
-    {
-      field: 'no',
-      headerName: 'No.',
-      width: 70,
-      // valueGetter: params => params.api.getRowIndex(params.id) + 1,
-      sortable: false,
-    },
-    { field: 'username', headerName: 'Username', flex: 1 },
-  ];
 
   return (
     <Layout>
@@ -58,16 +53,24 @@ function TeamSetting() {
           </Button>
         </Box>
         <Paper>
-          <DataGrid
-            rows={resources}
-            columns={columns}
-            getRowId={row => row.id}
-            autoHeight
-            pageSize={5}
-            rowsPerPageOptions={[5]}
-            components={{ Toolbar: GridToolbar }}
-            componentsProps={{ toolbar: { showQuickFilter: true } }}
-          />
+          <TableContainer>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell>No.</TableCell>
+                  <TableCell>Username</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {resources.map((r, i) => (
+                  <TableRow key={r.id}>
+                    <TableCell>{i + 1}</TableCell>
+                    <TableCell>{r.username}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </Paper>
         <Popup open={open} onClose={() => setOpen(false)} title="Add Resource">
           <ResourceForm onSubmit={handleCreate} />
