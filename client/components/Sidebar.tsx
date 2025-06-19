@@ -78,7 +78,7 @@ export default function Sidebar({ open, onClose }) {
           <ListItemIcon>
             <SettingsIcon />
           </ListItemIcon>
-          {!collapsed && <ListItemText primary="Project Installation" />}
+          {!collapsed && <ListItemText primary="Project Management" />}
         </ListItemButton>
         <ListItemButton
           selected={router.pathname === '/team-setting'}

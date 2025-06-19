@@ -6,6 +6,9 @@ export class Project extends Document {
   @Prop({ required: true })
   name: string;
 
+  @Prop()
+  description: string;
+
   @Prop({ required: true })
   resources: number;
 
@@ -20,6 +23,15 @@ export class Project extends Document {
 
   @Prop({ required: true })
   priority: number;
+
+  @Prop()
+  lead: string;
+
+  @Prop()
+  status: string;
+
+  @Prop({ type: [String], default: [] })
+  members: string[];
 }
 
 export const ProjectSchema = SchemaFactory.createForClass(Project);
