@@ -33,8 +33,8 @@ npm install
 npm run build
 npm run start:prod
 ```
-Create a `.env` file in the `service` directory based on `.env.example` to set
-database URLs and other options.
+Create a `.env` file in the `service` directory by copying one of the files
+from `service/env` and adjusting values to set database URLs and other options.
 
 To run the client manually:
 
@@ -46,8 +46,8 @@ npm start
 ```
 
 Set the `SERVICE_URL` environment variable to control where API requests are
-proxied. Create an `.env` file based on `.env.example` to override the default
-(`http://localhost:3000`).
+proxied. You can create an `.env` file in the `client` directory based on one
+of the files in `client/env` to override the default (`http://localhost:3000`).
 
 The client also supports environment files under `client/env` in the same way as
 the service. The file matching the `NODE_ENV` value will be loaded when the
@@ -61,9 +61,8 @@ client/env/uat.env
 client/env/production.env
 ```
 
-The service also provides a `service/.env.example` file. Copy it to
-`service/.env` and adjust values if you prefer not to use the predefined files
-under `service/env`.
+You may also copy one of the files in `service/env` to `service/.env` if you
+prefer not to rely on the predefined `NODE_ENV` values.
 
 ## Environments
 
