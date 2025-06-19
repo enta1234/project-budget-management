@@ -36,3 +36,19 @@ npm install
 npm run build
 npm start
 ```
+
+## Environments
+
+The service loads environment variables from files in `service/env` based on the
+`NODE_ENV` value. Five example configurations are provided:
+
+```
+service/env/local.env
+service/env/development.env
+service/env/staging.env
+service/env/uat.env
+service/env/production.env
+```
+
+Set `NODE_ENV` to one of these names when starting the service to load the
+matching file.

@@ -16,4 +16,5 @@ FROM node:18-alpine
 WORKDIR /app/service
 COPY --from=modules /app/service/node_modules ./node_modules
 COPY --from=build /app/service/dist ./dist
+COPY --from=build /app/service/env ./env
 CMD ["node", "dist/main.js"]
