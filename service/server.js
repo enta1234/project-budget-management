@@ -1,6 +1,10 @@
+const path = require('path');
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+require('dotenv').config({
+  path: path.join(__dirname, '..', 'env', `${process.env.NODE_ENV || 'local'}.env`)
+});
 
 const app = express();
 app.use(express.json());
@@ -10,7 +14,7 @@ const users = [
   { id: 1, username: 'admin', passwordHash: bcrypt.hashSync('password', 8) }
 ];
 
-const SECRET = 'replace_this_secret';
+const SECRET = process.env.JWT_SECRET || 'replace_this_secret';
 
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
@@ -39,5 +43,5 @@ app.get('/profile', (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.SERVICE_PORT || 3000;
 app.listen(PORT, () => console.log(`Service running on port ${PORT}`));
