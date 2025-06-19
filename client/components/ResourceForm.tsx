@@ -23,7 +23,7 @@ const positions = [
   { value: 'qa_jr', label: 'QA - Junior' },
 ];
 
-export default function ResourceForm() {
+export default function ResourceForm({ onSubmit }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [position, setPosition] = useState('');
@@ -31,7 +31,9 @@ export default function ResourceForm() {
 
   function handleSubmit(e) {
     e.preventDefault();
-    alert(`Created resource ${name}`);
+    if (onSubmit) {
+      onSubmit({ name, email, position, startDate });
+    }
     setName('');
     setEmail('');
     setPosition('');
