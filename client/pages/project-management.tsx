@@ -34,7 +34,7 @@ function ProjectManagement() {
   async function loadData() {
     const pro = await api.get('/api/v1/projects');
     setProjects(pro.data);
-    const usr = await api.get('/api/v1/users');
+    const usr = await axios.get('/api/v1/resources', { headers });
     setUsers(usr.data);
   }
 
@@ -139,7 +139,7 @@ function ProjectManagement() {
             <DatePicker label="Start Date" value={start} onChange={setStart} renderInput={params => <TextField {...params} required />} />
             <Autocomplete
               options={users}
-              getOptionLabel={o => o.username}
+              getOptionLabel={o => o.name}
               value={lead}
               onChange={(_, v) => setLead(v)}
               renderInput={params => <TextField {...params} label="Team Lead" required />}
@@ -147,7 +147,7 @@ function ProjectManagement() {
             <Autocomplete
               multiple
               options={users}
-              getOptionLabel={o => o.username}
+              getOptionLabel={o => o.name}
               value={members}
               onChange={(_, v) => setMembers(v)}
               renderInput={params => <TextField {...params} label="Members" />}
