@@ -2,6 +2,11 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { LoggingInterceptor } from './logger/logging.interceptor';
 import { LoggerService } from './logger/logger.service';
+import * as path from 'path';
+import { config } from 'dotenv';
+
+const envFile = path.join(__dirname, '../env', `${process.env.NODE_ENV || 'local'}.env`);
+config({ path: envFile });
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

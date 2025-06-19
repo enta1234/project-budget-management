@@ -18,7 +18,8 @@
     "mongoose": "^6.0.0",
     "ioredis": "^5.0.0",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.0.0"
+    "rxjs": "^7.0.0",
+    "dotenv": "^16.0.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.0.0",
