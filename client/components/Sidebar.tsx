@@ -80,7 +80,13 @@ export default function Sidebar({ open, onClose }) {
           </ListItemIcon>
           {!collapsed && <ListItemText primary="Project Installation" />}
         </ListItemButton>
-        <ListItemButton onClick={() => setOpenTeamMgmt(!openTeamMgmt)}>
+        <ListItemButton
+          selected={router.pathname === '/team-setting'}
+          onClick={() => {
+            router.push('/team-setting');
+            onClose();
+          }}
+        >
           <ListItemIcon>
             <GroupIcon />
           </ListItemIcon>
