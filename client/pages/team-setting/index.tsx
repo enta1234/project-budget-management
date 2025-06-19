@@ -17,7 +17,7 @@ function TeamSetting() {
 
   async function loadData() {
     const headers = { Authorization: `Bearer ${token}` };
-    const res = await axios.get('/api/v1/users', { headers });
+    const res = await axios.get('/api/v1/resources', { headers });
     setResources(res.data);
   }
 
@@ -27,7 +27,7 @@ function TeamSetting() {
 
   const handleCreate = async data => {
     const headers = { Authorization: `Bearer ${token}` };
-    await axios.post('/api/v1/users', { username: data.name }, { headers });
+    await axios.post('/api/v1/resources', data, { headers });
     setOpen(false);
     loadData();
   };
@@ -37,10 +37,9 @@ function TeamSetting() {
       field: 'no',
       headerName: 'No.',
       width: 70,
-      // valueGetter: params => params.api.getRowIndex(params.id) + 1,
       sortable: false,
     },
-    { field: 'username', headerName: 'Username', flex: 1 },
+    { field: 'name', headerName: 'Name', flex: 1 },
   ];
 
   return (

@@ -25,7 +25,7 @@ function TeamPage() {
     const headers = { Authorization: `Bearer ${token}` };
     const [t, u] = await Promise.all([
       axios.get('/api/v1/teams', { headers }),
-      axios.get('/api/v1/users', { headers }),
+      axios.get('/api/v1/resources', { headers }),
     ]);
     setTeams(t.data);
     setUsers(u.data);
