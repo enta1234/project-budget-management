@@ -11,6 +11,9 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import SettingsIcon from '@mui/icons-material/Settings';
 import GroupIcon from '@mui/icons-material/Group';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import Collapse from '@mui/material/Collapse';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
@@ -20,6 +23,7 @@ const drawerWidth = 220;
 export default function Sidebar({ open, onClose }) {
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
+  const [openTeamMgmt, setOpenTeamMgmt] = useState(false);
 
   // width to use when sidebar is collapsed
   const width = collapsed ? 72 : drawerWidth;
@@ -86,8 +90,39 @@ export default function Sidebar({ open, onClose }) {
           <ListItemIcon>
             <GroupIcon />
           </ListItemIcon>
-          {!collapsed && <ListItemText primary="Team Setting" />}
+          {!collapsed && (
+            <>
+              <ListItemText primary="Team Management" />
+              {openTeamMgmt ? <ExpandLess /> : <ExpandMore />}
+            </>
+          )}
         </ListItemButton>
+        {!collapsed && (
+          <Collapse in={openTeamMgmt} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItemButton
+                sx={{ pl: 4 }}
+                selected={router.pathname === '/team-setting'}
+                onClick={() => router.push('/team-setting')}
+              >
+                <ListItemIcon>
+                  <GroupIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText primary="Resource" />
+              </ListItemButton>
+              <ListItemButton
+                sx={{ pl: 4 }}
+                selected={router.pathname === '/team-setting/team'}
+                onClick={() => router.push('/team-setting/team')}
+              >
+                <ListItemIcon>
+                  <GroupIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText primary="Team" />
+              </ListItemButton>
+            </List>
+          </Collapse>
+        )}
       </List>
     </Drawer>
   );
