@@ -81,11 +81,8 @@ export default function Sidebar({ open, onClose }) {
           {!collapsed && <ListItemText primary="Project Management" />}
         </ListItemButton>
         <ListItemButton
-          selected={router.pathname === '/team-setting'}
-          onClick={() => {
-            router.push('/team-setting');
-            onClose();
-          }}
+          selected={router.pathname.startsWith('/team-setting')}
+          onClick={() => setOpenTeamMgmt(!openTeamMgmt)}
         >
           <ListItemIcon>
             <GroupIcon />
