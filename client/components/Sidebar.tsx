@@ -11,26 +11,31 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import SettingsIcon from '@mui/icons-material/Settings';
 import GroupIcon from '@mui/icons-material/Group';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import Collapse from '@mui/material/Collapse';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
 // width when sidebar is expanded
 const drawerWidth = 220;
 
-export default function Sidebar() {
+export default function Sidebar({ open, onClose }) {
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
+  const [openTeamMgmt, setOpenTeamMgmt] = useState(false);
 
   // width to use when sidebar is collapsed
   const width = collapsed ? 72 : drawerWidth;
 
   return (
     <Drawer
-      variant="permanent"
-      open
+      anchor="left"
+      variant="temporary"
+      open={open}
+      onClose={onClose}
+      ModalProps={{ keepMounted: true }}
       sx={{
-        width,
-        flexShrink: 0,
         [`& .MuiDrawer-paper`]: {
           width,
           boxSizing: 'border-box',
@@ -53,7 +58,10 @@ export default function Sidebar() {
       <List>
         <ListItemButton
           selected={router.pathname === '/workspace'}
-          onClick={() => router.push('/workspace')}
+          onClick={() => {
+            router.push('/workspace');
+            onClose();
+          }}
         >
           <ListItemIcon>
             <DashboardIcon />
@@ -61,8 +69,11 @@ export default function Sidebar() {
           {!collapsed && <ListItemText primary="Summary" />}
         </ListItemButton>
         <ListItemButton
-          selected={router.pathname === '/project-management'}
-          onClick={() => router.push('/project-management')}
+          selected={router.pathname === '/project-installation'}
+          onClick={() => {
+            router.push('/project-installation');
+            onClose();
+          }}
         >
           <ListItemIcon>
             <SettingsIcon />
@@ -71,13 +82,47 @@ export default function Sidebar() {
         </ListItemButton>
         <ListItemButton
           selected={router.pathname === '/team-setting'}
-          onClick={() => router.push('/team-setting')}
+          onClick={() => {
+            router.push('/team-setting');
+            onClose();
+          }}
         >
           <ListItemIcon>
             <GroupIcon />
           </ListItemIcon>
-          {!collapsed && <ListItemText primary="Team Setting" />}
+          {!collapsed && (
+            <>
+              <ListItemText primary="Team Management" />
+              {openTeamMgmt ? <ExpandLess /> : <ExpandMore />}
+            </>
+          )}
         </ListItemButton>
+        {!collapsed && (
+          <Collapse in={openTeamMgmt} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItemButton
+                sx={{ pl: 4 }}
+                selected={router.pathname === '/team-setting'}
+                onClick={() => router.push('/team-setting')}
+              >
+                <ListItemIcon>
+                  <GroupIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText primary="Resource" />
+              </ListItemButton>
+              <ListItemButton
+                sx={{ pl: 4 }}
+                selected={router.pathname === '/team-setting/team'}
+                onClick={() => router.push('/team-setting/team')}
+              >
+                <ListItemIcon>
+                  <GroupIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText primary="Team" />
+              </ListItemButton>
+            </List>
+          </Collapse>
+        )}
       </List>
     </Drawer>
   );
