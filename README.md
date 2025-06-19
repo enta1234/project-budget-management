@@ -10,9 +10,11 @@ with Docker.
 ./start.sh
 ```
 
-This starts MongoDB, Redis, the NestJS API on port `3000` and the Next.js client
-on `http://localhost:8080`. All service endpoints are available under the
-`/api/v1` path prefix.
+When run, the script prompts for what to start. Select **1** to launch all
+containers, **2** to start only MongoDB and Redis, or **3** to start the service
+along with its databases. Choosing the first option will also start the Next.js
+client on `http://localhost:8080` while exposing the service on port `3000`.
+All service endpoints are available under the `/api/v1` path prefix.
 
 The `docker-compose.yml` file sets `SERVICE_URL` for the client container so
 that API requests are forwarded to the service.
