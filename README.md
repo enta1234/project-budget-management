@@ -24,3 +24,10 @@ npm start
 ```
 
 Open `http://localhost:8080` in a browser and use `admin` / `password` to test.
+
+## Notes
+
+This repository only provides a minimal login page under the `client` folder.
+There is no built-in navigation or sidebar component. Implementing behavior
+such as automatically closing a sidebar on page changes would require adding
+additional UI code first.
