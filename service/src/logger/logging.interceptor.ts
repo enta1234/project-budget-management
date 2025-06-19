@@ -17,7 +17,7 @@ export class LoggingInterceptor implements NestInterceptor {
     const res = context.switchToHttp().getResponse();
     const { method, originalUrl: url } = req;
     const start = Date.now();
-    this.logger.debug({ event: 'request_received', method, url });
+    this.logger.logInfo('debug', { event: 'request_received', method, url });
     return next.handle().pipe(
       tap((data) => {
         const process_time = Date.now() - start;
@@ -28,13 +28,13 @@ export class LoggingInterceptor implements NestInterceptor {
           status_code: res.statusCode,
           process_time,
         };
-        if (res.statusCode >= 500) this.logger.error(log);
-        else if (res.statusCode >= 400) this.logger.warn(log);
-        else this.logger.info(log);
+        if (res.statusCode >= 500) this.logger.logInfo('error', log);
+        else if (res.statusCode >= 400) this.logger.logInfo('warn', log);
+        else this.logger.logInfo('info', log);
       }),
       catchError((err) => {
         const process_time = Date.now() - start;
-        this.logger.error({
+        this.logger.logInfo('error', {
           event: 'request_failed',
           method,
           url,

@@ -1,20 +1,40 @@
 import { Injectable } from '@nestjs/common';
 
+type LogLevel = 'debug' | 'info' | 'warn' | 'error';
+
 @Injectable()
 export class LoggerService {
-  debug(data: any) {
-    console.debug(JSON.stringify(data));
+  private output(level: LogLevel, log: any) {
+    const msg = JSON.stringify(log);
+    switch (level) {
+      case 'debug':
+        console.debug(msg);
+        break;
+      case 'info':
+        console.info(msg);
+        break;
+      case 'warn':
+        console.warn(msg);
+        break;
+      case 'error':
+        console.error(msg);
+        break;
+    }
   }
 
-  info(data: any) {
-    console.info(JSON.stringify(data));
+  private log(log_type: 'info' | 'app' | 'service', level: LogLevel, data: any) {
+    this.output(level, { log_type, level, ...data });
   }
 
-  warn(data: any) {
-    console.warn(JSON.stringify(data));
+  logInfo(level: LogLevel, data: any) {
+    this.log('info', level, data);
   }
 
-  error(data: any) {
-    console.error(JSON.stringify(data));
+  logApp(level: LogLevel, data: any) {
+    this.log('app', level, data);
+  }
+
+  logService(level: LogLevel, data: any) {
+    this.log('service', level, data);
   }
 }
