@@ -9,11 +9,10 @@ import MenuItem from '@mui/material/MenuItem';
 import Drawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
-import GitHubIcon from '@mui/icons-material/GitHub';
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 
-export default function Topbar({ onMenuClick }) {
+export default function Topbar() {
   const { logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
   const [openProfile, setOpenProfile] = useState(false);
@@ -36,10 +35,9 @@ export default function Topbar({ onMenuClick }) {
       }}
     >
       <Toolbar variant="dense">
-        <IconButton color="inherit" edge="start" onClick={onMenuClick} sx={{ mr: 1 }}>
+        <IconButton color="inherit" edge="start" sx={{ mr: 1 }}>
           <MenuIcon />
         </IconButton>
-        <GitHubIcon sx={{ mr: 1 }} />
         <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 500 }}>
           Budget Manager
         </Typography>
