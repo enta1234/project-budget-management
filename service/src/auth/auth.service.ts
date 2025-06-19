@@ -23,7 +23,7 @@ export class AuthService {
   }
 
   signToken(userId: string): string {
-    return jwt.sign({ sub: userId }, this.SECRET, { expiresIn: '1h' });
+    return jwt.sign({ sub: userId }, this.SECRET, { expiresIn: '30m' });
   }
 
   verifyToken(token: string): { sub: string } | null {
