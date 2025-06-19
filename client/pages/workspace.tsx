@@ -1,12 +1,12 @@
 // @ts-nocheck
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
+import { fetchEvents } from '../models/eventsModel';
 import Timeline from '@mui/lab/Timeline';
 import TimelineItem from '@mui/lab/TimelineItem';
 import TimelineSeparator from '@mui/lab/TimelineSeparator';
@@ -14,10 +14,15 @@ import TimelineConnector from '@mui/lab/TimelineConnector';
 import TimelineContent from '@mui/lab/TimelineContent';
 import TimelineDot from '@mui/lab/TimelineDot';
 import { withAuth } from '../context/AuthContext';
-import { Layout } from '../components';
+import { Layout, SimpleCalendar } from '../components';
 
 function Workspace() {
   const [view, setView] = useState('calendar');
+  const [events, setEvents] = useState([]);
+
+  useEffect(() => {
+    fetchEvents().then(setEvents).catch(console.error);
+  }, []);
 
   return (
     <Layout>
@@ -36,29 +41,20 @@ function Workspace() {
           </ToggleButtonGroup>
         </Box>
         {view === 'calendar' ? (
-          <DateCalendar />
+          <SimpleCalendar events={events} />
         ) : (
           <Timeline>
-            <TimelineItem>
-              <TimelineSeparator>
-                <TimelineDot />
-                <TimelineConnector />
-              </TimelineSeparator>
-              <TimelineContent>Initial Planning</TimelineContent>
-            </TimelineItem>
-            <TimelineItem>
-              <TimelineSeparator>
-                <TimelineDot />
-                <TimelineConnector />
-              </TimelineSeparator>
-              <TimelineContent>Development</TimelineContent>
-            </TimelineItem>
-            <TimelineItem>
-              <TimelineSeparator>
-                <TimelineDot />
-              </TimelineSeparator>
-              <TimelineContent>Release</TimelineContent>
-            </TimelineItem>
+            {events.map((ev, idx) => (
+              <TimelineItem key={idx}>
+                <TimelineSeparator>
+                  <TimelineDot />
+                  {idx < events.length - 1 && <TimelineConnector />}
+                </TimelineSeparator>
+                <TimelineContent>
+                  {ev.title} - {new Date(ev.date).toLocaleDateString()}
+                </TimelineContent>
+              </TimelineItem>
+            ))}
           </Timeline>
         )}
       </Paper>
