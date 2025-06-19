@@ -3,6 +3,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import Head from 'next/head';
 import theme from '../theme';
 import { AuthProvider } from '../context/AuthContext';
 import { SidebarProvider } from '../context/SidebarContext';
@@ -13,6 +14,9 @@ export default function MyApp({ Component, pageProps }) {
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
+        <Head>
+          <title>Project Budget Management</title>
+        </Head>
         <AuthProvider>
           <SidebarProvider>
             <Component {...pageProps} />
