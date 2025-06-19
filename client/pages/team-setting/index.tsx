@@ -46,6 +46,9 @@ function TeamSetting() {
   return (
     <Layout>
       <Container maxWidth="md" sx={{ mt: 4 }}>
+        <Typography variant="h4" gutterBottom>
+          Team Setting
+        </Typography>
         <Box
           sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}
         >
