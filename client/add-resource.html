@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Add Resource</title>
+</head>
+<body>
+  <h1>Add Resource</h1>
+  <form id="resourceForm">
+    <label>
+      Position:
+      <select id="position" name="position">
+        <option value="pm">Project Manager</option>
+        <option value="sa">System Analyst</option>
+        <option value="pa">Programmer Analyst</option>
+        <option value="qa">Quality Assurance</option>
+      </select>
+    </label><br />
+    <label>
+      Level:
+      <select id="level" name="level">
+        <option value="sr">Senior</option>
+        <option value="inter">Intermediate</option>
+        <option value="jr">Junior</option>
+      </select>
+    </label><br />
+    <label>
+      Start Service Date:
+      <input type="date" id="startDate" name="startDate" />
+    </label><br />
+    <button type="submit">Add Resource</button>
+  </form>
+  <pre id="output"></pre>
+<script>
+const form = document.getElementById('resourceForm');
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const position = document.getElementById('position').value;
+  const level = document.getElementById('level').value;
+  const startDate = document.getElementById('startDate').value;
+  const data = { position, level, startDate };
+  document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+});
+</script>
+</body>
+</html>
