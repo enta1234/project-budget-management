@@ -13,7 +13,7 @@ npm install      # will fail without network but dependencies are express, jsonw
 npm start
 ```
 
-The API exposes `/login` and `/profile` endpoints. The `/login` route accepts `username` and `password` and returns a JWT token when credentials are valid.
+The API exposes `/api/v1/login` and `/api/v1/profile` endpoints. The `/api/v1/login` route accepts `username` and `password` and returns a JWT token when credentials are valid. The version prefix (`/api/v1`) can be configured via the `API_PREFIX` environment variable.
 
 ## Running the client
 

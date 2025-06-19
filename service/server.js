@@ -5,6 +5,8 @@ const bcrypt = require('bcryptjs');
 const app = express();
 app.use(express.json());
 
+const API_PREFIX = process.env.API_PREFIX || '/api/v1';
+
 // Dummy user database
 const users = [
   { id: 1, username: 'admin', passwordHash: bcrypt.hashSync('password', 8) }
@@ -12,7 +14,7 @@ const users = [
 
 const SECRET = 'replace_this_secret';
 
-app.post('/login', (req, res) => {
+app.post(`${API_PREFIX}/login`, (req, res) => {
   const { username, password } = req.body;
   const user = users.find(u => u.username === username);
   if (!user) {
@@ -26,7 +28,7 @@ app.post('/login', (req, res) => {
   res.json({ token });
 });
 
-app.get('/profile', (req, res) => {
+app.get(`${API_PREFIX}/profile`, (req, res) => {
   const auth = req.headers.authorization;
   if (!auth) return res.status(401).json({ error: 'missing token' });
   const token = auth.replace('Bearer ', '');
