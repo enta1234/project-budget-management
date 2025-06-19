@@ -1,6 +1,7 @@
 // @ts-nocheck
 import { createContext, useContext, useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { revokeRefreshToken } from '../models/authModel';
 
 const AuthContext = createContext(null);
 
@@ -24,7 +25,12 @@ export function AuthProvider({ children }) {
     setRefreshToken(refreshTok);
   };
 
-  const logout = () => {
+  const logout = async () => {
+    if (refreshToken) {
+      try {
+        await revokeRefreshToken(refreshToken);
+      } catch {}
+    }
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
     setToken(null);
