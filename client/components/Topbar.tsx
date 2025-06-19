@@ -12,7 +12,7 @@ import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 
-export default function Topbar() {
+export default function Topbar({ onMenuClick }) {
   const { logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
   const [openProfile, setOpenProfile] = useState(false);
@@ -35,7 +35,7 @@ export default function Topbar() {
       }}
     >
       <Toolbar variant="dense">
-        <IconButton color="inherit" edge="start" sx={{ mr: 1 }}>
+        <IconButton color="inherit" edge="start" sx={{ mr: 1 }} onClick={onMenuClick}>
           <MenuIcon />
         </IconButton>
         <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 500 }}>
