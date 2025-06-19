@@ -15,7 +15,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { DataGrid } from '@mui/x-data-grid';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { differenceInDays, format } from 'date-fns';
-import axios from 'axios';
+import api from '../api';
 import { Layout } from '../components';
 import { withAuth, useAuth } from '../context/AuthContext';
 
@@ -32,8 +32,7 @@ function ProjectManagement() {
   const [manday, setManday] = useState('');
 
   async function loadData() {
-    const headers = { Authorization: `Bearer ${token}` };
-    const pro = await axios.get('/api/v1/projects', { headers });
+    const pro = await api.get('/api/v1/projects');
     setProjects(pro.data);
     const usr = await axios.get('/api/v1/resources', { headers });
     setUsers(usr.data);
@@ -45,8 +44,7 @@ function ProjectManagement() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    const headers = { Authorization: `Bearer ${token}` };
-    await axios.post(
+    await api.post(
       '/api/v1/projects',
       {
         name,
@@ -57,8 +55,7 @@ function ProjectManagement() {
         priority: 1,
         lead: lead?.id,
         members: members.map(m => m.id),
-      },
-      { headers }
+      }
     );
     setName('');
     setDescription('');

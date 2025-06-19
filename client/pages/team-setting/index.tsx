@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
-import axios from 'axios';
+import api from '../../api';
 import { Layout, ResourceForm, Popup } from '../../components';
 import { withAuth, useAuth } from '../../context/AuthContext';
 
