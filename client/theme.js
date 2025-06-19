@@ -13,6 +13,9 @@ const theme = createTheme({
       paper: '#E5E1DA',
     },
   },
+  typography: {
+    fontFamily: '"Fira Code", monospace',
+  },
 });
 
 export default theme;

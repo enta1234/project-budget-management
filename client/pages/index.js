@@ -7,6 +7,7 @@ import { Input, LoadingButton } from '../components';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
+import styles from '../styles/index.module.scss';
 
 export default function Home() {
   const { token, login } = useAuth();
@@ -39,8 +40,8 @@ export default function Home() {
 
   return (
     <Container maxWidth="sm">
-      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '100vh', bgcolor: 'background.default' }}>
-        <Paper sx={{ p: 4, width: '100%', bgcolor: 'background.paper' }} elevation={3}>
+      <Box className={styles.wrapper}>
+        <Paper className={styles.paper} elevation={3}>
           <Typography variant="h4" component="h1" gutterBottom align="center">
             Login
           </Typography>
@@ -56,7 +57,7 @@ export default function Home() {
               <Button variant="outlined" onClick={getProfile}>Get Profile</Button>
             </Box>
           )}
-          {profile && <pre>{JSON.stringify(profile, null, 2)}</pre>}
+          {profile && <pre className={styles.profilePre}>{JSON.stringify(profile, null, 2)}</pre>}
         </Paper>
       </Box>
     </Container>

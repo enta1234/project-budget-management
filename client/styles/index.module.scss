@@ -1,0 +1,26 @@
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #F1F0E8;
+}
+
+.paper {
+  padding: 2rem;
+  width: 100%;
+  background-color: #E5E1DA;
+}
+
+.profilePre {
+  background: #272822;
+  color: #F8F8F2;
+  padding: 1rem;
+  overflow: auto;
+}
+
+@media (max-width: 600px) {
+  .paper {
+    padding: 1rem;
+  }
+}
