@@ -1,10 +1,10 @@
 // @ts-nocheck
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import IconButton from '@mui/material/IconButton';
+import Toolbar from '@mui/material/Toolbar';
 import Divider from '@mui/material/Divider';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -29,37 +29,52 @@ export default function Sidebar({ open, onClose }) {
       sx={{
         width,
         flexShrink: 0,
-        [`& .MuiDrawer-paper`]: { width, boxSizing: 'border-box' },
+        [`& .MuiDrawer-paper`]: {
+          width,
+          boxSizing: 'border-box',
+          bgcolor: 'background.paper',
+          borderRight: '1px solid #d0d7de',
+        },
       }}
     >
+      <Toolbar />
       <List>
-        <ListItem button onClick={() => setCollapsed(!collapsed)}>
+        <ListItemButton onClick={() => setCollapsed(!collapsed)}>
           <ListItemIcon>
             {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
           </ListItemIcon>
           {!collapsed && <ListItemText primary="Collapse" />}
-        </ListItem>
+        </ListItemButton>
       </List>
       <Divider />
       <List>
-        <ListItem button onClick={() => router.push('/workspace')}>
+        <ListItemButton
+          selected={router.pathname === '/workspace'}
+          onClick={() => router.push('/workspace')}
+        >
           <ListItemIcon>
             <DashboardIcon />
           </ListItemIcon>
           {!collapsed && <ListItemText primary="Summary" />}
-        </ListItem>
-        <ListItem button onClick={() => router.push('/project-installation')}>
+        </ListItemButton>
+        <ListItemButton
+          selected={router.pathname === '/project-installation'}
+          onClick={() => router.push('/project-installation')}
+        >
           <ListItemIcon>
             <SettingsIcon />
           </ListItemIcon>
           {!collapsed && <ListItemText primary="Project Installation" />}
-        </ListItem>
-        <ListItem button onClick={() => router.push('/team-setting')}>
+        </ListItemButton>
+        <ListItemButton
+          selected={router.pathname === '/team-setting'}
+          onClick={() => router.push('/team-setting')}
+        >
           <ListItemIcon>
             <GroupIcon />
           </ListItemIcon>
           {!collapsed && <ListItemText primary="Team Setting" />}
-        </ListItem>
+        </ListItemButton>
       </List>
     </Drawer>
   );
