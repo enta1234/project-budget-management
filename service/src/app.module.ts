@@ -10,6 +10,7 @@ import { ProjectsModule } from './projects/projects.module';
 import { TeamsModule } from './teams/teams.module';
 import { BudgetsModule } from './budgets/budgets.module';
 import { PositionsModule } from './positions/positions.module';
+import { RolesModule } from './roles/roles.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { PositionsModule } from './positions/positions.module';
     TeamsModule,
     BudgetsModule,
     PositionsModule,
+    RolesModule,
   ],
   providers: [LoggerService],
   exports: [LoggerService],
