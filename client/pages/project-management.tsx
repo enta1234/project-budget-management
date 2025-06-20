@@ -63,8 +63,8 @@ function ProjectManagement() {
         differenceInDays(new Date(), new Date(params.row.start)),
     },
     {
-      field: 'remainMandat',
-      headerName: 'Remain Mandat',
+      field: 'remainManday',
+      headerName: 'Remain Manday',
       width: 150,
       valueGetter: params =>
         params.row.manday -
