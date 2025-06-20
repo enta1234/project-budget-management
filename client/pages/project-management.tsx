@@ -34,7 +34,11 @@ function ProjectManagement() {
   }, [token]);
 
   const handleCreate = async data => {
-    await api.post('/api/v1/projects', data);
+    const payload = {
+      ...data,
+      resources: (data.members?.length || 0) + (data.lead ? 1 : 0),
+    };
+    await api.post('/api/v1/projects', payload);
     setOpen(false);
     loadData();
   };

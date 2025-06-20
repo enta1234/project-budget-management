@@ -48,7 +48,7 @@ export default function Sidebar({ open, onClose }) {
       <Toolbar />
       <List>
         <ListItemButton
-          selected={router.pathname.startsWith('/workspace')}
+          selected={router.pathname.startsWith('/summary')}
           onClick={() => setOpenSummary(!openSummary)}
         >
           <ListItemIcon>
@@ -66,9 +66,9 @@ export default function Sidebar({ open, onClose }) {
             <List component="div" disablePadding>
               <ListItemButton
                 sx={{ pl: 4 }}
-                selected={router.pathname === '/workspace'}
+                selected={router.pathname === '/summary'}
                 onClick={() => {
-                  router.push('/workspace');
+                  router.push('/summary');
                   onClose();
                 }}
               >
@@ -79,9 +79,9 @@ export default function Sidebar({ open, onClose }) {
               </ListItemButton>
               <ListItemButton
                 sx={{ pl: 4 }}
-                selected={router.pathname === '/workspace/detail'}
+                selected={router.pathname === '/summary/detail'}
                 onClick={() => {
-                  router.push('/workspace/detail');
+                  router.push('/summary/detail');
                   onClose();
                 }}
               >

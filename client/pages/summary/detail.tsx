@@ -8,7 +8,7 @@ import { Layout } from '../../components';
 import { withAuth } from '../../context/AuthContext';
 import { fetchEvents } from '../../models/eventsModel';
 
-function WorkspaceDetail() {
+function SummaryDetail() {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
@@ -21,7 +21,8 @@ function WorkspaceDetail() {
       field: 'date',
       headerName: 'Date',
       width: 150,
-      valueGetter: params => new Date(params.row.date).toLocaleDateString(),
+      valueGetter: params =>
+        params.row?.date ? new Date(params.row.date).toLocaleDateString() : '',
     },
   ];
 
@@ -46,4 +47,4 @@ function WorkspaceDetail() {
   );
 }
 
-export default withAuth(WorkspaceDetail);
+export default withAuth(SummaryDetail);
