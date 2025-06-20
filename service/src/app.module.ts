@@ -9,6 +9,7 @@ import { FollowersModule } from './followers/followers.module';
 import { ProjectsModule } from './projects/projects.module';
 import { TeamsModule } from './teams/teams.module';
 import { BudgetsModule } from './budgets/budgets.module';
+import { PositionsModule } from './positions/positions.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { BudgetsModule } from './budgets/budgets.module';
     ProjectsModule,
     TeamsModule,
     BudgetsModule,
+    PositionsModule,
   ],
   providers: [LoggerService],
   exports: [LoggerService],
