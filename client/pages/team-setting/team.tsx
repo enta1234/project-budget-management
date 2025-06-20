@@ -74,7 +74,7 @@ function TeamPage() {
 
   return (
     <Layout>
-      <Container maxWidth="lg" sx={{ mt: 4 }}>
+      <Container maxWidth="md" sx={{ mt: 4 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
           <Typography variant="h5">Teams</Typography>
           <Button variant="contained" onClick={() => setOpen(true)}>
