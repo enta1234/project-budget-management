@@ -105,7 +105,7 @@ function BudgetManagement() {
 
   return (
     <Layout>
-      <Container maxWidth="md" sx={{ mt: 4 }}>
+      <Container maxWidth={false} sx={{ mt: 4, width: '90%' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
           <Typography variant="h5">Budget Management</Typography>
           <Button variant="contained" onClick={() => setOpen(true)}>
