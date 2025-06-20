@@ -12,6 +12,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import axios from 'axios';
+import { format } from 'date-fns';
 import { Layout, ResourceForm, Popup } from '../../components';
 import { withAuth, useAuth } from '../../context/AuthContext';
 
@@ -65,14 +66,24 @@ function TeamSetting() {
               <TableHead>
                 <TableRow>
                   <TableCell>No.</TableCell>
-                  <TableCell>Username</TableCell>
+                  <TableCell>Name</TableCell>
+                  <TableCell>Email</TableCell>
+                  <TableCell>Position</TableCell>
+                  <TableCell>Start Date</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {resources.map((r, i) => (
                   <TableRow key={r.id}>
                     <TableCell>{i + 1}</TableCell>
-                    <TableCell>{r.username}</TableCell>
+                    <TableCell>{r.name}</TableCell>
+                    <TableCell>{r.email}</TableCell>
+                    <TableCell>{r.position}</TableCell>
+                    <TableCell>
+                      {r.startDate
+                        ? format(new Date(r.startDate), 'yyyy-MM-dd')
+                        : ''}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
