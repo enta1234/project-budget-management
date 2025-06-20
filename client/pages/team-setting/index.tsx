@@ -87,7 +87,7 @@ function TeamSetting() {
       valueGetter: (_value, row) => {
         if (row && row.startDate) {
           try {
-            return differenceInYears(new Date(), new Date(row.startDate));
+            return getServiceDuration(row.startDate);
           } catch {
             return '';
           }
