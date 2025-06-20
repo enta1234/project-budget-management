@@ -92,9 +92,12 @@ function ProjectManagement() {
       field: 'actions',
       headerName: 'Action',
       width: 150,
-      renderCell: () => (
+      renderCell: params => (
         <Stack direction="row" spacing={1}>
-          <IconButton size="small">
+          <IconButton
+            size="small"
+            onClick={() => router.push(`/project/${params.row._id}`)}
+          >
             <EditIcon fontSize="small" />
           </IconButton>
           <IconButton size="small">
@@ -125,7 +128,6 @@ function ProjectManagement() {
             pageSize={25}
             rowsPerPageOptions={[25]}
             autoHeight
-            onRowClick={params => router.push(`/project/${params.row._id}`)}
           />
         </Paper>
         <Popup open={open} onClose={() => setOpen(false)} title="Add Project">
