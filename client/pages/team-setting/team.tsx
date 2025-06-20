@@ -87,8 +87,8 @@ function TeamPage() {
             columns={columns}
             getRowId={row => row._id}
             autoHeight
-            pageSize={5}
-            rowsPerPageOptions={[5]}
+            pageSize={25}
+            rowsPerPageOptions={[25]}
             checkboxSelection
           />
         </Paper>

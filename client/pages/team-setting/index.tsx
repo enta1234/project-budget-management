@@ -103,8 +103,8 @@ function TeamSetting() {
             columns={columns}
             getRowId={row => row.id}
             autoHeight
-            pageSize={5}
-            rowsPerPageOptions={[5]}
+            pageSize={25}
+            rowsPerPageOptions={[25]}
           />
         </Paper>
         <Popup open={open} onClose={() => setOpen(false)} title="Add Resource">

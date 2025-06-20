@@ -101,8 +101,8 @@ function BudgetManagement() {
             rows={rows}
             columns={columns}
             autoHeight
-            pageSize={5}
-            rowsPerPageOptions={[5]}
+            pageSize={25}
+            rowsPerPageOptions={[25]}
             disableSelectionOnClick
           />
         </Paper>
