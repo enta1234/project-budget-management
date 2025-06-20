@@ -11,6 +11,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import SettingsIcon from '@mui/icons-material/Settings';
 import GroupIcon from '@mui/icons-material/Group';
+import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Collapse from '@mui/material/Collapse';
@@ -70,6 +71,18 @@ export default function Sidebar({ open, onClose }) {
             <SettingsIcon />
           </ListItemIcon>
           {!collapsed && <ListItemText primary="Project Management" />}
+        </ListItemButton>
+        <ListItemButton
+          selected={router.pathname === '/budget-management'}
+          onClick={() => {
+            router.push('/budget-management');
+            onClose();
+          }}
+        >
+          <ListItemIcon>
+            <AttachMoneyIcon />
+          </ListItemIcon>
+          {!collapsed && <ListItemText primary="Budget Management" />}
         </ListItemButton>
         <ListItemButton
           selected={router.pathname.startsWith('/team-setting')}
