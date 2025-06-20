@@ -67,19 +67,6 @@ export default function Sidebar({ open, onClose }) {
             <List component="div" disablePadding>
               <ListItemButton
                 sx={{ pl: 4 }}
-                selected={router.pathname === '/summary'}
-                onClick={() => {
-                  router.push('/summary');
-                  onClose();
-                }}
-              >
-                <ListItemIcon>
-                  <DashboardIcon fontSize="small" />
-                </ListItemIcon>
-                <ListItemText primary="Overview" />
-              </ListItemButton>
-              <ListItemButton
-                sx={{ pl: 4 }}
                 selected={router.pathname === '/summary/detail'}
                 onClick={() => {
                   router.push('/summary/detail');
