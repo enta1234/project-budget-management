@@ -16,7 +16,7 @@ import TimelineDot from '@mui/lab/TimelineDot';
 import { withAuth } from '../../context/AuthContext';
 import { Layout, SimpleCalendar } from '../../components';
 
-function Workspace() {
+function Summary() {
   const [view, setView] = useState('calendar');
   const [events, setEvents] = useState([]);
 
@@ -29,7 +29,7 @@ function Workspace() {
       <Container maxWidth={false} sx={{ mt: 4, width: '90%' }}>
         <Paper sx={{ p: 2 }} elevation={3}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-          <Typography variant="h5">Workspace</Typography>
+          <Typography variant="h5">Summary</Typography>
           <ToggleButtonGroup
             value={view}
             exclusive
@@ -63,4 +63,4 @@ function Workspace() {
   );
 }
 
-export default withAuth(Workspace);
+export default withAuth(Summary);
