@@ -16,6 +16,19 @@ export interface CreateProjectInput {
   members?: string[];
 }
 
+export interface UpdateProjectInput {
+  name?: string;
+  description?: string;
+  resources?: number;
+  start?: Date;
+  end?: Date;
+  manday?: number;
+  priority?: number;
+  lead?: string;
+  status?: string;
+  members?: string[];
+}
+
 @Injectable()
 export class ProjectsRepository {
   constructor(@InjectModel(Project.name) private projectModel: Model<Project>) {}
@@ -31,5 +44,11 @@ export class ProjectsRepository {
   create(data: CreateProjectInput): Promise<Project> {
     const project = new this.projectModel(data);
     return project.save();
+  }
+
+  update(id: string, data: UpdateProjectInput): Promise<Project | null> {
+    return this.projectModel
+      .findByIdAndUpdate(id, data, { new: true })
+      .exec();
   }
 }

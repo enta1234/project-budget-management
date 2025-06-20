@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { ProjectsRepository, CreateProjectInput } from './data/projects.repository';
+import {
+  ProjectsRepository,
+  CreateProjectInput,
+  UpdateProjectInput,
+} from './data/projects.repository';
 
 @Injectable()
 export class ProjectsService {
@@ -15,5 +19,9 @@ export class ProjectsService {
 
   getProject(id: string) {
     return this.repo.findOne(id);
+  }
+
+  updateProject(id: string, data: UpdateProjectInput) {
+    return this.repo.update(id, data);
   }
 }

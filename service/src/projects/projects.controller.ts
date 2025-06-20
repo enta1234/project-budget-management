@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Post, Param } from '@nestjs/common';
+import { Body, Controller, Get, Post, Patch, Param } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
-import { CreateProjectInput } from './data/projects.repository';
+import { CreateProjectInput, UpdateProjectInput } from './data/projects.repository';
 
 @Controller('projects')
 export class ProjectsController {
@@ -19,5 +19,10 @@ export class ProjectsController {
   @Get(':id')
   getProject(@Param('id') id: string) {
     return this.service.getProject(id);
+  }
+
+  @Patch(':id')
+  updateProject(@Param('id') id: string, @Body() body: UpdateProjectInput) {
+    return this.service.updateProject(id, body);
   }
 }

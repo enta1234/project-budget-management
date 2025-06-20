@@ -8,7 +8,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
-import EditIcon from '@mui/icons-material/Edit';
+import InfoIcon from '@mui/icons-material/Info';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DownloadIcon from '@mui/icons-material/Download';
 import { DataGrid } from '@mui/x-data-grid';
@@ -98,7 +98,7 @@ function ProjectManagement() {
             size="small"
             onClick={() => router.push(`/project/${params.row._id}`)}
           >
-            <EditIcon fontSize="small" />
+            <InfoIcon fontSize="small" />
           </IconButton>
           <IconButton size="small">
             <DownloadIcon fontSize="small" />
