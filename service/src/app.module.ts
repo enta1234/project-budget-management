@@ -8,6 +8,7 @@ import { EventsModule } from './events/events.module';
 import { FollowersModule } from './followers/followers.module';
 import { ProjectsModule } from './projects/projects.module';
 import { TeamsModule } from './teams/teams.module';
+import { BudgetsModule } from './budgets/budgets.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { TeamsModule } from './teams/teams.module';
     FollowersModule,
     ProjectsModule,
     TeamsModule,
+    BudgetsModule,
   ],
   providers: [LoggerService],
   exports: [LoggerService],
