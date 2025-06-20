@@ -47,10 +47,9 @@ function TeamPage() {
       field: 'totalMember',
       headerName: 'Total Member',
       width: 120,
-      valueGetter: params => {
-        if (!params) return '';
-        if (Array.isArray(params.row?.members)) {
-          return params.row.members.length;
+      valueGetter: (_value, row) => {
+        if (Array.isArray(row?.members)) {
+          return row.members.length;
         }
         return '';
       },
@@ -59,11 +58,10 @@ function TeamPage() {
       field: 'createdAt',
       headerName: 'Create Date',
       width: 150,
-      valueGetter: params => {
-        if (!params) return '';
-        if (params.row?.createdAt) {
+      valueGetter: (_value, row) => {
+        if (row?.createdAt) {
           try {
-            return format(new Date(params.row.createdAt), 'yyyy-MM-dd');
+            return format(new Date(row.createdAt), 'yyyy-MM-dd');
           } catch {
             return '';
           }
