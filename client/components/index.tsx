@@ -12,3 +12,4 @@ export { default as SimpleCalendar } from './SimpleCalendar';
 export { default as TeamForm } from './TeamForm';
 export { default as ProjectForm } from './ProjectForm';
 export { default as BudgetForm } from './BudgetForm';
+export { default as BudgetTable } from './BudgetTable';
