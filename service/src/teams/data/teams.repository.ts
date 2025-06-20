@@ -9,6 +9,12 @@ export interface CreateTeamInput {
   members?: string[];
 }
 
+export interface UpdateTeamInput {
+  name?: string;
+  lead?: string;
+  members?: string[];
+}
+
 @Injectable()
 export class TeamsRepository {
   constructor(@InjectModel(Team.name) private teamModel: Model<Team>) {}
@@ -20,5 +26,15 @@ export class TeamsRepository {
   create(data: CreateTeamInput): Promise<Team> {
     const team = new this.teamModel(data);
     return team.save();
+  }
+
+  update(id: string, data: UpdateTeamInput): Promise<Team | null> {
+    return this.teamModel
+      .findByIdAndUpdate(id, data, { new: true })
+      .exec();
+  }
+
+  remove(id: string): Promise<Team | null> {
+    return this.teamModel.findByIdAndDelete(id).exec();
   }
 }
