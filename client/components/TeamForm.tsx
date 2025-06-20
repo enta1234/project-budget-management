@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
@@ -8,10 +8,15 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Autocomplete from '@mui/material/Autocomplete';
 
-export default function TeamForm({ users = [], onSubmit }) {
-  const [name, setName] = useState('');
-  const [lead, setLead] = useState(null);
-  const [members, setMembers] = useState([]);
+export default function TeamForm({ users = [], onSubmit, initial, submitText = 'Create' }) {
+  const [name, setName] = useState(initial?.name || '');
+  const [lead, setLead] = useState(() => {
+    if (initial?.lead) {
+      return users.find(u => u.name === initial.lead) || null;
+    }
+    return null;
+  });
+  const [members, setMembers] = useState(initial?.members || []);
 
   const toggleMember = id => {
     setMembers(prev =>
@@ -19,12 +24,26 @@ export default function TeamForm({ users = [], onSubmit }) {
     );
   };
 
+  useEffect(() => {
+    setName(initial?.name || '');
+    setMembers(initial?.members || []);
+    if (initial?.lead) {
+      setLead(users.find(u => u.name === initial.lead) || null);
+    } else {
+      setLead(null);
+    }
+  }, [initial, users]);
+
   const handleSubmit = e => {
     e.preventDefault();
-    onSubmit({ name, lead: lead?.name, members });
-    setName('');
-    setLead(null);
-    setMembers([]);
+    if (onSubmit) {
+      onSubmit({ name, lead: lead?.name, members });
+    }
+    if (!initial) {
+      setName('');
+      setLead(null);
+      setMembers([]);
+    }
   };
 
   return (
@@ -55,7 +74,7 @@ export default function TeamForm({ users = [], onSubmit }) {
         ))}
       </FormGroup>
       <Button variant="contained" type="submit" sx={{ gridColumn: 'span 2' }}>
-        Create
+        {submitText}
       </Button>
     </Box>
   );

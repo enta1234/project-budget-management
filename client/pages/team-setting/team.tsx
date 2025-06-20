@@ -12,6 +12,12 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { DataGrid } from '@mui/x-data-grid';
 import api from '../../api';
 import { Layout, Popup, TeamForm } from '../../components';
+import {
+  fetchTeams,
+  createTeam,
+  updateTeam,
+  deleteTeam,
+} from '../../models/teamModel';
 import { withAuth, useAuth } from '../../context/AuthContext';
 import { format } from 'date-fns';
 
@@ -20,13 +26,14 @@ function TeamPage() {
   const [teams, setTeams] = useState([]);
   const [users, setUsers] = useState([]);
   const [open, setOpen] = useState(false);
+  const [editRow, setEditRow] = useState(null);
 
   async function loadData() {
     const [t, u] = await Promise.all([
-      api.get('/api/v1/teams'),
+      fetchTeams(),
       api.get('/api/v1/resources'),
     ]);
-    setTeams(t.data);
+    setTeams(t);
     setUsers(u.data);
   }
 
@@ -35,9 +42,24 @@ function TeamPage() {
   }, [token]);
 
   const handleCreate = async data => {
-    await api.post('/api/v1/teams', data);
+    await createTeam(data);
     setOpen(false);
     loadData();
+  };
+
+  const handleSave = async data => {
+    if (editRow?._id) {
+      await updateTeam(editRow._id, data);
+      setEditRow(null);
+      loadData();
+    }
+  };
+
+  const handleDelete = async row => {
+    if (window.confirm('Delete this team?')) {
+      await deleteTeam(row._id);
+      loadData();
+    }
   };
 
   const columns = [
@@ -73,12 +95,12 @@ function TeamPage() {
       field: 'actions',
       headerName: 'Action',
       width: 150,
-      renderCell: () => (
+      renderCell: params => (
         <Stack direction="row" spacing={1}>
-          <IconButton size="small">
+          <IconButton size="small" onClick={() => setEditRow(params.row)}>
             <EditIcon fontSize="small" />
           </IconButton>
-          <IconButton size="small">
+          <IconButton size="small" onClick={() => handleDelete(params.row)}>
             <DeleteIcon fontSize="small" />
           </IconButton>
         </Stack>
@@ -103,11 +125,20 @@ function TeamPage() {
             autoHeight
             pageSize={25}
             rowsPerPageOptions={[25]}
-            checkboxSelection
           />
         </Paper>
         <Popup open={open} onClose={() => setOpen(false)} title="Add Team">
           <TeamForm users={users} onSubmit={handleCreate} />
+        </Popup>
+        <Popup open={!!editRow} onClose={() => setEditRow(null)} title="Edit Team">
+          {editRow && (
+            <TeamForm
+              users={users}
+              onSubmit={handleSave}
+              initial={editRow}
+              submitText="Save"
+            />
+          )}
         </Popup>
       </Container>
     </Layout>
