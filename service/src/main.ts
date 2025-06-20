@@ -6,7 +6,15 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as path from 'path';
 import { config } from 'dotenv';
 
-const envFile = path.join(__dirname, '../env', `${process.env.NODE_ENV || 'local'}.env`);
+// When compiled the entry point lives in dist/src so we need to go two levels up
+// to reach the original env directory.
+const envFile = path.join(
+  __dirname,
+  '..',
+  '..',
+  'env',
+  `${process.env.NODE_ENV || 'local'}.env`,
+);
 config({ path: envFile });
 
 async function bootstrap() {
