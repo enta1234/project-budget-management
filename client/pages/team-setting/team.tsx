@@ -11,7 +11,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { DataGrid } from '@mui/x-data-grid';
 import api from '../../api';
-import { Layout, Popup, TeamForm } from '../../components';
+import { Layout, Popup, TeamForm, useToast } from '../../components';
 import {
   fetchTeams,
   createTeam,
@@ -23,6 +23,7 @@ import { format } from 'date-fns';
 
 function TeamPage() {
   const { token } = useAuth();
+  const { showToast } = useToast();
   const [teams, setTeams] = useState([]);
   const [users, setUsers] = useState([]);
   const [open, setOpen] = useState(false);
@@ -42,23 +43,38 @@ function TeamPage() {
   }, [token]);
 
   const handleCreate = async data => {
-    await createTeam(data);
-    setOpen(false);
-    loadData();
+    try {
+      await createTeam(data);
+      showToast('Team created');
+      setOpen(false);
+      loadData();
+    } catch (e) {
+      showToast('Error creating team', { severity: 'error' });
+    }
   };
 
   const handleSave = async data => {
-    if (editRow?._id) {
-      await updateTeam(editRow._id, data);
-      setEditRow(null);
-      loadData();
+    try {
+      if (editRow?._id) {
+        await updateTeam(editRow._id, data);
+        showToast('Team updated');
+        setEditRow(null);
+        loadData();
+      }
+    } catch (e) {
+      showToast('Error updating team', { severity: 'error' });
     }
   };
 
   const handleDelete = async row => {
     if (window.confirm('Delete this team?')) {
-      await deleteTeam(row._id);
-      loadData();
+      try {
+        await deleteTeam(row._id);
+        showToast('Team deleted');
+        loadData();
+      } catch (e) {
+        showToast('Error deleting team', { severity: 'error' });
+      }
     }
   };
 

@@ -14,12 +14,13 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { DataGrid } from '@mui/x-data-grid';
 import { differenceInDays, format } from 'date-fns';
 import api from '../api';
-import { Layout, Popup, ProjectForm } from '../components';
+import { Layout, Popup, ProjectForm, useToast } from '../components';
 import { withAuth, useAuth } from '../context/AuthContext';
 
 function ProjectManagement() {
   const router = useRouter();
   const { token } = useAuth();
+  const { showToast } = useToast();
   const [projects, setProjects] = useState([]);
   const [users, setUsers] = useState([]);
   const [open, setOpen] = useState(false);
@@ -36,13 +37,18 @@ function ProjectManagement() {
   }, [token]);
 
   const handleCreate = async data => {
-    const payload = {
-      ...data,
-      resources: (data.members?.length || 0) + (data.lead ? 1 : 0),
-    };
-    await api.post('/api/v1/projects', payload);
-    setOpen(false);
-    loadData();
+    try {
+      const payload = {
+        ...data,
+        resources: (data.members?.length || 0) + (data.lead ? 1 : 0),
+      };
+      await api.post('/api/v1/projects', payload);
+      showToast('Project created');
+      setOpen(false);
+      loadData();
+    } catch (e) {
+      showToast('Error creating project', { severity: 'error' });
+    }
   };
 
   const columns = [
