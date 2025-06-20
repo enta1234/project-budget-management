@@ -22,7 +22,8 @@ const drawerWidth = 220;
 export default function Sidebar({ open, onClose }) {
   const router = useRouter();
   const [collapsed, setCollapsed] = useState(false);
-  const [openSummary, setOpenSummary] = useState(false);
+  const [openDashboard, setOpenDashboard] = useState(false);
+  const [openPlanMgmt, setOpenPlanMgmt] = useState(false);
   const [openTeamMgmt, setOpenTeamMgmt] = useState(false);
 
   // width to use when sidebar is collapsed
@@ -49,20 +50,20 @@ export default function Sidebar({ open, onClose }) {
       <List>
         <ListItemButton
           selected={router.pathname.startsWith('/summary')}
-          onClick={() => setOpenSummary(!openSummary)}
+          onClick={() => setOpenDashboard(!openDashboard)}
         >
           <ListItemIcon>
             <DashboardIcon />
           </ListItemIcon>
           {!collapsed && (
             <>
-              <ListItemText primary="Summary" />
-              {openSummary ? <ExpandLess /> : <ExpandMore />}
+              <ListItemText primary="Dashboard" />
+              {openDashboard ? <ExpandLess /> : <ExpandMore />}
             </>
           )}
         </ListItemButton>
         {!collapsed && (
-          <Collapse in={openSummary} timeout="auto" unmountOnExit>
+          <Collapse in={openDashboard} timeout="auto" unmountOnExit>
             <List component="div" disablePadding>
               <ListItemButton
                 sx={{ pl: 4 }}
@@ -117,6 +118,52 @@ export default function Sidebar({ open, onClose }) {
           </ListItemIcon>
           {!collapsed && <ListItemText primary="Budget Management" />}
         </ListItemButton>
+        <ListItemButton
+          selected={router.pathname.startsWith('/plan-management')}
+          onClick={() => setOpenPlanMgmt(!openPlanMgmt)}
+        >
+          <ListItemIcon>
+            <SettingsIcon />
+          </ListItemIcon>
+          {!collapsed && (
+            <>
+              <ListItemText primary="Plan Management" />
+              {openPlanMgmt ? <ExpandLess /> : <ExpandMore />}
+            </>
+          )}
+        </ListItemButton>
+        {!collapsed && (
+          <Collapse in={openPlanMgmt} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItemButton
+                sx={{ pl: 4 }}
+                selected={router.pathname === '/plan-management'}
+                onClick={() => {
+                  router.push('/plan-management');
+                  onClose();
+                }}
+              >
+                <ListItemIcon>
+                  <SettingsIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText primary="Overview" />
+              </ListItemButton>
+              <ListItemButton
+                sx={{ pl: 4 }}
+                selected={router.pathname === '/plan-management/planing-setting'}
+                onClick={() => {
+                  router.push('/plan-management/planing-setting');
+                  onClose();
+                }}
+              >
+                <ListItemIcon>
+                  <SettingsIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText primary="Planing Setting" />
+              </ListItemButton>
+            </List>
+          </Collapse>
+        )}
         <ListItemButton
           selected={router.pathname.startsWith('/team-setting')}
           onClick={() => setOpenTeamMgmt(!openTeamMgmt)}
