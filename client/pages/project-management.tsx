@@ -110,8 +110,8 @@ function ProjectManagement() {
             rows={projects}
             columns={columns}
             getRowId={row => row._id}
-            pageSize={5}
-            rowsPerPageOptions={[5]}
+            pageSize={25}
+            rowsPerPageOptions={[25]}
             autoHeight
           />
         </Paper>
