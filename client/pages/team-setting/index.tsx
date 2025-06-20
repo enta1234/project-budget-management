@@ -66,7 +66,7 @@ function TeamSetting() {
   ];
   return (
     <Layout>
-      <Container maxWidth="md" sx={{ mt: 4 }}>
+      <Container maxWidth={false} sx={{ mt: 4, width: '90%' }}>
         <Typography variant="h5" gutterBottom>
           Team Setting
         </Typography>
