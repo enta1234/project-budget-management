@@ -11,23 +11,11 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import api from '../api';
-import { Layout, Popup } from '../components';
+import { Layout, Popup, BudgetForm } from '../components';
 import { withAuth, useAuth } from '../context/AuthContext';
+import positions from '../models/positions';
+import { fetchBudgets, createBudget } from '../models/budgetModel';
 
-const positions = [
-  { value: 'project_manager_sr', label: 'Project Manager - Senior' },
-  { value: 'project_manager_inter', label: 'Project Manager - Intermediate' },
-  { value: 'project_manager_jr', label: 'Project Manager - Junior' },
-  { value: 'sa_sr', label: 'System Analyst - Senior' },
-  { value: 'sa_inter', label: 'System Analyst - Intermediate' },
-  { value: 'sa_jr', label: 'System Analyst - Junior' },
-  { value: 'pa_sr', label: 'PA - Senior' },
-  { value: 'pa_inter', label: 'PA - Intermediate' },
-  { value: 'pa_jr', label: 'PA - Junior' },
-  { value: 'qa_sr', label: 'QA - Senior' },
-  { value: 'qa_inter', label: 'QA - Intermediate' },
-  { value: 'qa_jr', label: 'QA - Junior' },
-];
 
 const defaultRates = {
   project_manager_sr: 10000,
@@ -49,31 +37,47 @@ function BudgetManagement() {
   const [rows, setRows] = useState([]);
   const [editId, setEditId] = useState(null);
   const [rate, setRate] = useState('');
+  const [open, setOpen] = useState(false);
+
+  async function loadData() {
+    const [res, budgets] = await Promise.all([
+      api.get('/api/v1/resources'),
+      fetchBudgets(),
+    ]);
+    const counts = {} as any;
+    res.data.forEach(r => {
+      counts[r.position] = (counts[r.position] || 0) + 1;
+    });
+    const rateMap = {} as any;
+    budgets.forEach(b => {
+      rateMap[b.position] = b.rate;
+    });
+    const rws = positions.map(p => {
+      const [role, level] = p.label.split(' - ');
+      return {
+        id: p.value,
+        role,
+        level,
+        count: counts[p.value] || 0,
+        rate: rateMap[p.value] ?? defaultRates[p.value] || 0,
+      };
+    });
+    setRows(rws);
+  }
 
   useEffect(() => {
-    if (!token) return;
-    api.get('/api/v1/resources').then(res => {
-      const counts = {} as any;
-      res.data.forEach(r => {
-        counts[r.position] = (counts[r.position] || 0) + 1;
-      });
-      const rws = positions.map(p => {
-        const [role, level] = p.label.split(' - ');
-        return {
-          id: p.value,
-          role,
-          level,
-          count: counts[p.value] || 0,
-          rate: defaultRates[p.value] || 0,
-        };
-      });
-      setRows(rws);
-    });
+    if (token) loadData();
   }, [token]);
 
   const handleSaveRate = () => {
     setRows(rows.map(r => (r.id === editId ? { ...r, rate: Number(rate) } : r)));
     setEditId(null);
+  };
+
+  const handleCreate = async data => {
+    await createBudget(data);
+    setOpen(false);
+    loadData();
   };
 
   const columns = [
@@ -102,9 +106,12 @@ function BudgetManagement() {
   return (
     <Layout>
       <Container maxWidth="md" sx={{ mt: 4 }}>
-        <Typography variant="h5" gutterBottom>
-          Budget Management
-        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
+          <Typography variant="h5">Budget Management</Typography>
+          <Button variant="contained" onClick={() => setOpen(true)}>
+            New Rate
+          </Button>
+        </Box>
         <Paper>
           <DataGrid
             rows={rows}
@@ -128,6 +135,9 @@ function BudgetManagement() {
               Save
             </Button>
           </Box>
+        </Popup>
+        <Popup open={open} onClose={() => setOpen(false)} title="Add Rate">
+          <BudgetForm onSubmit={handleCreate} />
         </Popup>
       </Container>
     </Layout>
