@@ -6,11 +6,23 @@ import Button from '@mui/material/Button';
 import { useState, useEffect } from 'react';
 import api from '../api';
 
-export default function BudgetForm({ onSubmit }) {
-  const [role, setRole] = useState('');
-  const [level, setLevel] = useState('');
-  const [rate, setRate] = useState('');
+interface Props {
+  onSubmit?: (data: { role: string; level: string; rate: number }) => void;
+  initial?: { role?: string; level?: string; rate?: number };
+  submitText?: string;
+}
+
+export default function BudgetForm({ onSubmit, initial, submitText = 'Create' }: Props) {
+  const [role, setRole] = useState(initial?.role || '');
+  const [level, setLevel] = useState(initial?.level || '');
+  const [rate, setRate] = useState(initial?.rate != null ? String(initial.rate) : '');
   const [roles, setRoles] = useState([]);
+
+  useEffect(() => {
+    setRole(initial?.role || '');
+    setLevel(initial?.level || '');
+    setRate(initial?.rate != null ? String(initial.rate) : '');
+  }, [initial]);
 
   useEffect(() => {
     async function load() {
@@ -25,9 +37,6 @@ export default function BudgetForm({ onSubmit }) {
     if (onSubmit) {
       onSubmit({ role, level, rate: Number(rate) });
     }
-    setRole('');
-    setLevel('');
-    setRate('');
   };
 
   return (
@@ -54,7 +63,7 @@ export default function BudgetForm({ onSubmit }) {
         required
       />
       <Button variant="contained" type="submit">
-        Create
+        {submitText}
       </Button>
     </Box>
   );

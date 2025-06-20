@@ -2,18 +2,20 @@
 import { useEffect, useState } from 'react';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import { Layout, Popup, BudgetForm, BudgetTable } from '../components';
 import { withAuth, useAuth } from '../context/AuthContext';
-import { createBudget, fetchBudgetOverview } from '../models/budgetModel';
+import {
+  createBudget,
+  updateBudget,
+  fetchBudgetOverview,
+} from '../models/budgetModel';
 
 function BudgetManagement() {
   const { token } = useAuth();
   const [rows, setRows] = useState([]);
-  const [editId, setEditId] = useState(null);
-  const [rate, setRate] = useState('');
+  const [editRow, setEditRow] = useState(null);
   const [open, setOpen] = useState(false);
 
   async function loadData() {
@@ -25,9 +27,14 @@ function BudgetManagement() {
     if (token) loadData();
   }, [token]);
 
-  const handleSaveRate = () => {
-    setRows(rows.map(r => (r.id === editId ? { ...r, rate: Number(rate) } : r)));
-    setEditId(null);
+  const handleSave = async data => {
+    if (editRow?.budgetId) {
+      await updateBudget(editRow.budgetId, data);
+    } else {
+      await createBudget(data);
+    }
+    setEditRow(null);
+    loadData();
   };
 
   const handleCreate = async data => {
@@ -37,8 +44,7 @@ function BudgetManagement() {
   };
 
   const handleEdit = row => {
-    setEditId(row.id);
-    setRate(String(row.rate));
+    setEditRow(row);
   };
 
   return (
@@ -51,19 +57,18 @@ function BudgetManagement() {
           </Button>
         </Box>
         <BudgetTable data={rows} onEdit={handleEdit} />
-        <Popup open={!!editId} onClose={() => setEditId(null)} title="Edit Rate">
-          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
-            <TextField
-              label="Baht / MD"
-              type="number"
-              value={rate}
-              onChange={e => setRate(e.target.value)}
-              fullWidth
+        <Popup open={!!editRow} onClose={() => setEditRow(null)} title="Edit Rate">
+          {editRow && (
+            <BudgetForm
+              onSubmit={handleSave}
+              initial={{
+                role: editRow.role,
+                level: editRow.level,
+                rate: editRow.rate,
+              }}
+              submitText="Save"
             />
-            <Button variant="contained" onClick={handleSaveRate}>
-              Save
-            </Button>
-          </Box>
+          )}
         </Popup>
         <Popup open={open} onClose={() => setOpen(false)} title="Add Rate">
           <BudgetForm onSubmit={handleCreate} />

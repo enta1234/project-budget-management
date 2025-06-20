@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { BudgetsRepository, CreateBudgetInput } from './data/budgets.repository';
+import {
+  BudgetsRepository,
+  CreateBudgetInput,
+  UpdateBudgetInput,
+} from './data/budgets.repository';
 import { Resource } from '../resources/data/resource.schema';
 import { RolesService } from '../roles/roles.service';
 
@@ -28,6 +32,10 @@ export class BudgetsService {
     return this.repo.create(data);
   }
 
+  update(id: string, data: UpdateBudgetInput) {
+    return this.repo.update(id, data);
+  }
+
   async getOverview() {
     const [resources, budgets, roles] = await Promise.all([
       this.resourceModel.find().exec(),
@@ -41,9 +49,11 @@ export class BudgetsService {
     });
 
     const rateMap: Record<string, number> = {};
+    const idMap: Record<string, string> = {};
     budgets.forEach(b => {
       const slug = `${b.role} ${b.level}`.toLowerCase().replace(/\s+/g, '_');
       rateMap[slug] = b.rate;
+      idMap[slug] = b._id.toString();
     });
 
     const positions: any[] = [];
@@ -56,6 +66,7 @@ export class BudgetsService {
 
     return positions.map(p => ({
       id: p.slug,
+      budgetId: idMap[p.slug],
       role: p.role,
       level: p.level,
       count: counts[p.slug] || 0,

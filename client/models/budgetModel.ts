@@ -10,6 +10,11 @@ export async function createBudget(budget) {
   return data;
 }
 
+export async function updateBudget(id, budget) {
+  const { data } = await api.patch(`/api/v1/budgets/${id}`, budget);
+  return data;
+}
+
 export async function fetchBudgetOverview() {
   const { data } = await api.get('/api/v1/budgets/overview');
   return data;
