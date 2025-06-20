@@ -12,7 +12,14 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import axios from 'axios';
-import { format, differenceInYears } from 'date-fns';
+import {
+  format,
+  differenceInYears,
+  differenceInMonths,
+  differenceInDays,
+  addYears,
+  addMonths,
+} from 'date-fns';
 import { Layout, ResourceForm, Popup } from '../../components';
 import { withAuth, useAuth } from '../../context/AuthContext';
 
@@ -20,6 +27,17 @@ function TeamSetting() {
   const { token } = useAuth();
   const [resources, setResources] = useState([]);
   const [open, setOpen] = useState(false);
+
+  function getServiceDuration(date: string | Date) {
+    const start = new Date(date);
+    const now = new Date();
+    const years = differenceInYears(now, start);
+    const afterYears = addYears(start, years);
+    const months = differenceInMonths(now, afterYears);
+    const afterMonths = addMonths(afterYears, months);
+    const days = differenceInDays(now, afterMonths);
+    return `${years}ปี ${months}เดือน ${days}วัน`;
+  }
 
   async function loadData() {
     const headers = { Authorization: `Bearer ${token}` };
@@ -86,9 +104,7 @@ function TeamSetting() {
                       : ''}
                   </TableCell>
                   <TableCell>
-                    {r.startDate
-                      ? differenceInYears(new Date(), new Date(r.startDate))
-                      : ''}
+                    {r.startDate ? getServiceDuration(r.startDate) : ''}
                   </TableCell>
                 </TableRow>
               ))}
