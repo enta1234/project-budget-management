@@ -9,6 +9,12 @@ export interface CreateBudgetInput {
   rate: number;
 }
 
+export interface UpdateBudgetInput {
+  role?: string;
+  level?: string;
+  rate?: number;
+}
+
 @Injectable()
 export class BudgetsRepository {
   constructor(@InjectModel(Budget.name) private budgetModel: Model<Budget>) {}
@@ -20,5 +26,11 @@ export class BudgetsRepository {
   create(data: CreateBudgetInput): Promise<Budget> {
     const budget = new this.budgetModel(data);
     return budget.save();
+  }
+
+  update(id: string, data: UpdateBudgetInput): Promise<Budget | null> {
+    return this.budgetModel
+      .findByIdAndUpdate(id, data, { new: true })
+      .exec();
   }
 }
