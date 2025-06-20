@@ -23,8 +23,8 @@ function TeamPage() {
 
   async function loadData() {
     const [t, u] = await Promise.all([
-      axios.get('/api/v1/teams', { headers }),
-      axios.get('/api/v1/resources', { headers }),
+      api.get('/api/v1/teams'),
+      api.get('/api/v1/resources'),
     ]);
     setTeams(t.data);
     setUsers(u.data);
