@@ -48,12 +48,16 @@ function ProjectManagement() {
       field: 'no',
       headerName: 'No.',
       width: 70,
-      valueGetter: params =>
-        params.api?.getRowIndexRelativeToVisibleRows
-          ? params.api.getRowIndexRelativeToVisibleRows(params.id) + 1
-          : params.api?.getRowIndex
-          ? params.api.getRowIndex(params.id) + 1
-          : '',
+      valueGetter: params => {
+        if (!params) return '';
+        if (typeof params.rowIndex === 'number') {
+          return params.rowIndex + 1;
+        }
+        if (typeof params.id === 'number') {
+          return params.id;
+        }
+        return '';
+      },
     },
     { field: 'name', headerName: 'Name', flex: 1 },
     { field: 'description', headerName: 'Description', flex: 1 },
