@@ -5,12 +5,7 @@ import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
+import { DataGrid } from '@mui/x-data-grid';
 import axios from 'axios';
 import { format, differenceInYears } from 'date-fns';
 import { Layout, ResourceForm, Popup } from '../../components';
@@ -43,8 +38,29 @@ function TeamSetting() {
       headerName: 'No.',
       width: 70,
       sortable: false,
+      valueGetter: params => params.api.getRowIndex(params.id) + 1,
     },
     { field: 'name', headerName: 'Name', flex: 1 },
+    { field: 'email', headerName: 'Email', flex: 1 },
+    { field: 'position', headerName: 'Position', flex: 1 },
+    {
+      field: 'startDate',
+      headerName: 'Start Date',
+      width: 120,
+      valueGetter: params =>
+        params.row.startDate
+          ? format(new Date(params.row.startDate), 'yyyy-MM-dd')
+          : '',
+    },
+    {
+      field: 'serviceYear',
+      headerName: 'Service Year',
+      width: 120,
+      valueGetter: params =>
+        params.row.startDate
+          ? differenceInYears(new Date(), new Date(params.row.startDate))
+          : '',
+    },
   ];
   return (
     <Layout>
@@ -61,40 +77,14 @@ function TeamSetting() {
           </Button>
         </Box>
         <Paper>
-          <TableContainer>
-            <Table size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell>No.</TableCell>
-                  <TableCell>Name</TableCell>
-                  <TableCell>Email</TableCell>
-                  <TableCell>Position</TableCell>
-                  <TableCell>Start Date</TableCell>
-                  <TableCell>Service Year</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {resources.map((r, i) => (
-                  <TableRow key={r.id}>
-                    <TableCell>{i + 1}</TableCell>
-                    <TableCell>{r.name}</TableCell>
-                    <TableCell>{r.email}</TableCell>
-                    <TableCell>{r.position}</TableCell>
-                  <TableCell>
-                    {r.startDate
-                      ? format(new Date(r.startDate), 'yyyy-MM-dd')
-                      : ''}
-                  </TableCell>
-                  <TableCell>
-                    {r.startDate
-                      ? differenceInYears(new Date(), new Date(r.startDate))
-                      : ''}
-                  </TableCell>
-                </TableRow>
-              ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <DataGrid
+            rows={resources}
+            columns={columns}
+            getRowId={row => row.id}
+            autoHeight
+            pageSize={5}
+            rowsPerPageOptions={[5]}
+          />
         </Paper>
         <Popup open={open} onClose={() => setOpen(false)} title="Add Resource">
           <ResourceForm onSubmit={handleCreate} />
