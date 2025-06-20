@@ -56,12 +56,19 @@ function TeamSetting() {
       headerName: 'No.',
       width: 70,
       sortable: false,
-      valueGetter: params =>
-        params.api?.getRowIndexRelativeToVisibleRows
-          ? params.api.getRowIndexRelativeToVisibleRows(params.id) + 1
-          : params.api?.getRowIndex
-          ? params.api.getRowIndex(params.id) + 1
-          : '',
+      valueGetter: (params) => {
+        // Defensive: if params is undefined, return ''
+        if (!params) return '';
+        // Show row index as running number (1,2,3,...)
+        if (typeof params.rowIndex === 'number') {
+          return params.rowIndex + 1;
+        }
+        // fallback: try to use id
+        if (typeof params.id === 'number') {
+          return params.id;
+        }
+        return '';
+      },
     },
     { field: 'name', headerName: 'Name', flex: 1 },
     { field: 'email', headerName: 'Email', flex: 1 },
@@ -70,19 +77,32 @@ function TeamSetting() {
       field: 'startDate',
       headerName: 'Start Date',
       width: 120,
-      valueGetter: params =>
-        params.row.startDate
-          ? format(new Date(params.row.startDate), 'yyyy-MM-dd')
-          : '',
+      valueGetter: params => {
+        if (!params) return '';
+        if (params.row && params.row.startDate) {
+          try {
+            return format(new Date(params.row.startDate), 'yyyy-MM-dd');
+          } catch {
+            return '';
+          }
+        }
+        return '';
+      },
     },
     {
       field: 'serviceYear',
       headerName: 'Service Year',
       width: 120,
-      valueGetter: params =>
-        params.row.startDate
-          ? differenceInYears(new Date(), new Date(params.row.startDate))
-          : '',
+      valueGetter: params => {
+        if (params.row && params.row.startDate) {
+          try {
+            return differenceInYears(new Date(), new Date(params.row.startDate));
+          } catch {
+            return '';
+          }
+        }
+        return '';
+      },
     },
   ];
   return (
