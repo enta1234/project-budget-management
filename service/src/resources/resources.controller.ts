@@ -1,6 +1,17 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Param,
+} from '@nestjs/common';
 import { ResourcesService } from './resources.service';
-import { CreateResourceInput } from './data/resources.repository';
+import {
+  CreateResourceInput,
+  UpdateResourceInput,
+} from './data/resources.repository';
 
 @Controller('resources')
 export class ResourcesController {
@@ -14,5 +25,15 @@ export class ResourcesController {
   @Post()
   create(@Body() body: CreateResourceInput) {
     return this.service.create(body);
+  }
+
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() body: UpdateResourceInput) {
+    return this.service.update(id, body);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.service.remove(id);
   }
 }

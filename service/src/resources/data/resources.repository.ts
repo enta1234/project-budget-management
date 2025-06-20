@@ -10,6 +10,13 @@ export interface CreateResourceInput {
   startDate?: Date;
 }
 
+export interface UpdateResourceInput {
+  name?: string;
+  email?: string;
+  position?: string;
+  startDate?: Date;
+}
+
 @Injectable()
 export class ResourcesRepository {
   constructor(@InjectModel(Resource.name) private resourceModel: Model<Resource>) {}
@@ -21,5 +28,15 @@ export class ResourcesRepository {
   create(data: CreateResourceInput): Promise<Resource> {
     const res = new this.resourceModel(data);
     return res.save();
+  }
+
+  update(id: string, data: UpdateResourceInput): Promise<Resource | null> {
+    return this.resourceModel
+      .findByIdAndUpdate(id, data, { new: true })
+      .exec();
+  }
+
+  remove(id: string): Promise<Resource | null> {
+    return this.resourceModel.findByIdAndDelete(id).exec();
   }
 }

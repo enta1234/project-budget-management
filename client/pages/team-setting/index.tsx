@@ -6,7 +6,10 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { DataGrid } from '@mui/x-data-grid';
-import axios from 'axios';
+import Stack from '@mui/material/Stack';
+import IconButton from '@mui/material/IconButton';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import {
   format,
   differenceInYears,
@@ -17,11 +20,18 @@ import {
 } from 'date-fns';
 import { Layout, ResourceForm, Popup } from '../../components';
 import { withAuth, useAuth } from '../../context/AuthContext';
+import {
+  fetchResources,
+  createResource,
+  updateResource,
+  deleteResource,
+} from '../../models/resourceModel';
 
 function TeamSetting() {
   const { token } = useAuth();
   const [resources, setResources] = useState([]);
   const [open, setOpen] = useState(false);
+  const [editRow, setEditRow] = useState(null);
 
   function getServiceDuration(date: string | Date) {
     const start = new Date(date);
@@ -35,9 +45,8 @@ function TeamSetting() {
   }
 
   async function loadData() {
-    const headers = { Authorization: `Bearer ${token}` };
-    const res = await axios.get('/api/v1/resources', { headers });
-    setResources(res.data);
+    const data = await fetchResources();
+    setResources(data);
   }
 
   useEffect(() => {
@@ -45,10 +54,24 @@ function TeamSetting() {
   }, [token]);
 
   const handleCreate = async data => {
-    const headers = { Authorization: `Bearer ${token}` };
-    await axios.post('/api/v1/resources', data, { headers });
+    await createResource(data);
     setOpen(false);
     loadData();
+  };
+
+  const handleSave = async data => {
+    if (editRow?.id) {
+      await updateResource(editRow.id, data);
+      setEditRow(null);
+      loadData();
+    }
+  };
+
+  const handleDelete = async row => {
+    if (window.confirm('Delete this resource?')) {
+      await deleteResource(row.id);
+      loadData();
+    }
   };
   const columns = [
     {
@@ -95,6 +118,21 @@ function TeamSetting() {
         return '';
       },
     },
+    {
+      field: 'actions',
+      headerName: 'Action',
+      width: 150,
+      renderCell: params => (
+        <Stack direction="row" spacing={1}>
+          <IconButton size="small" onClick={() => setEditRow(params.row)}>
+            <EditIcon fontSize="small" />
+          </IconButton>
+          <IconButton size="small" onClick={() => handleDelete(params.row)}>
+            <DeleteIcon fontSize="small" />
+          </IconButton>
+        </Stack>
+      ),
+    },
   ];
   return (
     <Layout>
@@ -122,6 +160,15 @@ function TeamSetting() {
         </Paper>
         <Popup open={open} onClose={() => setOpen(false)} title="Add Resource">
           <ResourceForm onSubmit={handleCreate} />
+        </Popup>
+        <Popup open={!!editRow} onClose={() => setEditRow(null)} title="Edit Resource">
+          {editRow && (
+            <ResourceForm
+              onSubmit={handleSave}
+              initial={editRow}
+              submitText="Save"
+            />
+          )}
         </Popup>
       </Container>
     </Layout>
