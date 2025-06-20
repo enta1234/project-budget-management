@@ -26,6 +26,7 @@ import {
   updateResource,
   deleteResource,
 } from '../../models/resourceModel';
+import api from '../../api';
 
 function TeamSetting() {
   const { token } = useAuth();
@@ -45,7 +46,20 @@ function TeamSetting() {
   }
 
   async function loadData() {
-    const data = await fetchResources();
+    const [res, pos] = await Promise.all([
+      fetchResources(),
+      api.get('/api/v1/positions'),
+    ]);
+    const map = {} as Record<string, { role: string; level: string }>;
+    pos.data.forEach(p => {
+      const [r, l] = p.label.split(' - ');
+      map[p.value] = { role: r, level: l };
+    });
+    const data = res.map(r => ({
+      ...r,
+      role: map[r.position]?.role || '',
+      level: map[r.position]?.level || '',
+    }));
     setResources(data);
   }
 
@@ -87,7 +101,8 @@ function TeamSetting() {
     },
     { field: 'name', headerName: 'Name', flex: 1 },
     { field: 'email', headerName: 'Email', flex: 1 },
-    { field: 'position', headerName: 'Position', flex: 1 },
+    { field: 'role', headerName: 'Role', flex: 1 },
+    { field: 'level', headerName: 'Level', width: 100 },
     {
       field: 'startDate',
       headerName: 'Start Date',
