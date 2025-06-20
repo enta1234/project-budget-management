@@ -4,7 +4,8 @@ import { Model } from 'mongoose';
 import { Budget } from './budget.schema';
 
 export interface CreateBudgetInput {
-  position: string;
+  role: string;
+  level: string;
   rate: number;
 }
 
@@ -13,7 +14,7 @@ export class BudgetsRepository {
   constructor(@InjectModel(Budget.name) private budgetModel: Model<Budget>) {}
 
   findAll(): Promise<Budget[]> {
-    return this.budgetModel.find().sort({ position: 1 }).exec();
+    return this.budgetModel.find().sort({ role: 1, level: 1 }).exec();
   }
 
   create(data: CreateBudgetInput): Promise<Budget> {

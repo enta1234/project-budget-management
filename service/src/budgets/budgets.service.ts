@@ -9,7 +9,8 @@ export class BudgetsService {
     return this.repo.findAll().then(budgets =>
       budgets.map(b => ({
         id: b._id.toString(),
-        position: b.position,
+        role: b.role,
+        level: b.level,
         rate: b.rate,
       })),
     );

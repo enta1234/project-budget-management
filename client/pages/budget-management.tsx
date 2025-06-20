@@ -23,10 +23,10 @@ function BudgetManagement() {
   const [open, setOpen] = useState(false);
 
   async function loadData() {
-    const [res, budgets, pos] = await Promise.all([
+    const [res, budgets, roles] = await Promise.all([
       api.get('/api/v1/resources'),
       fetchBudgets(),
-      api.get('/api/v1/positions'),
+      api.get('/api/v1/roles'),
     ]);
     const counts = {} as any;
     res.data.forEach(r => {
@@ -34,18 +34,27 @@ function BudgetManagement() {
     });
     const rateMap = {} as any;
     budgets.forEach(b => {
-      rateMap[b.position] = b.rate;
+      const slug = `${b.role} ${b.level}`
+        .toLowerCase()
+        .replace(/\s+/g, '_');
+      rateMap[slug] = b.rate;
     });
-    const rws = pos.data.map(p => {
-      const [role, level] = p.label.split(' - ');
-      return {
-        id: p.value,
-        role,
-        level,
-        count: counts[p.value] || 0,
-        rate: rateMap[p.value] || 0,
-      };
+    const positions: any[] = [];
+    roles.data.forEach(r => {
+      r.levels.forEach((l: string) => {
+        const slug = `${r.name} ${l}`
+          .toLowerCase()
+          .replace(/\s+/g, '_');
+        positions.push({ value: slug, role: r.name, level: l });
+      });
     });
+    const rws = positions.map(p => ({
+      id: p.value,
+      role: p.role,
+      level: p.level,
+      count: counts[p.value] || 0,
+      rate: rateMap[p.value] || 0,
+    }));
     setRows(rws);
   }
 
