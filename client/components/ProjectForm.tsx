@@ -22,7 +22,7 @@ export default function ProjectForm({ users = [], onSubmit }) {
         description,
         start,
         end: start,
-        manday: Number(manday),
+        ...(manday ? { manday: Number(manday) } : {}),
         priority: 1,
         lead: lead?.id,
         members: members.map(m => m.id),
@@ -81,7 +81,6 @@ export default function ProjectForm({ users = [], onSubmit }) {
         type="number"
         value={manday}
         onChange={e => setManday(e.target.value)}
-        required
       />
       <Button type="submit" variant="contained" sx={{ gridColumn: 'span 2' }}>
         Create

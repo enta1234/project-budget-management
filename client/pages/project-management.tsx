@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import Container from '@mui/material/Container';
@@ -17,6 +18,7 @@ import { Layout, Popup, ProjectForm } from '../components';
 import { withAuth, useAuth } from '../context/AuthContext';
 
 function ProjectManagement() {
+  const router = useRouter();
   const { token } = useAuth();
   const [projects, setProjects] = useState([]);
   const [users, setUsers] = useState([]);
@@ -60,7 +62,7 @@ function ProjectManagement() {
       field: 'lead',
       headerName: 'Lead',
       flex: 1,
-      valueGetter: (_value, row) => row.lead || '',
+      valueGetter: (_value, row) => row.lead?.name || '',
     },
     { field: 'status', headerName: 'Status', flex: 1 },
     {
@@ -123,6 +125,7 @@ function ProjectManagement() {
             pageSize={25}
             rowsPerPageOptions={[25]}
             autoHeight
+            onRowClick={params => router.push(`/project/${params.row._id}`)}
           />
         </Paper>
         <Popup open={open} onClose={() => setOpen(false)} title="Add Project">
