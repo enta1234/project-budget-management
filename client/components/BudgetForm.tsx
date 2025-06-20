@@ -3,12 +3,21 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
-import { useState } from 'react';
-import positions from '../models/positions';
+import { useState, useEffect } from 'react';
+import api from '../api';
 
 export default function BudgetForm({ onSubmit }) {
   const [position, setPosition] = useState('');
   const [rate, setRate] = useState('');
+  const [positions, setPositions] = useState([]);
+
+  useEffect(() => {
+    async function load() {
+      const { data } = await api.get('/api/v1/positions');
+      setPositions(data);
+    }
+    load();
+  }, []);
 
   const handleSubmit = e => {
     e.preventDefault();
