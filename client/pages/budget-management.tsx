@@ -4,7 +4,7 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import { Layout, Popup, BudgetForm, BudgetTable } from '../components';
+import { Layout, Popup, BudgetForm, BudgetTable, useToast } from '../components';
 import { withAuth, useAuth } from '../context/AuthContext';
 import {
   createBudget,
@@ -14,6 +14,7 @@ import {
 
 function BudgetManagement() {
   const { token } = useAuth();
+  const { showToast } = useToast();
   const [rows, setRows] = useState([]);
   const [editRow, setEditRow] = useState(null);
   const [open, setOpen] = useState(false);
@@ -28,19 +29,30 @@ function BudgetManagement() {
   }, [token]);
 
   const handleSave = async data => {
-    if (editRow?.budgetId) {
-      await updateBudget(editRow.budgetId, data);
-    } else {
-      await createBudget(data);
+    try {
+      if (editRow?.budgetId) {
+        await updateBudget(editRow.budgetId, data);
+        showToast('Rate updated');
+      } else {
+        await createBudget(data);
+        showToast('Rate created');
+      }
+      setEditRow(null);
+      loadData();
+    } catch (e) {
+      showToast('Error saving rate', { severity: 'error' });
     }
-    setEditRow(null);
-    loadData();
   };
 
   const handleCreate = async data => {
-    await createBudget(data);
-    setOpen(false);
-    loadData();
+    try {
+      await createBudget(data);
+      showToast('Rate created');
+      setOpen(false);
+      loadData();
+    } catch (e) {
+      showToast('Error creating rate', { severity: 'error' });
+    }
   };
 
   const handleEdit = row => {

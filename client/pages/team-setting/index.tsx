@@ -18,7 +18,7 @@ import {
   addYears,
   addMonths,
 } from 'date-fns';
-import { Layout, ResourceForm, Popup } from '../../components';
+import { Layout, ResourceForm, Popup, useToast } from '../../components';
 import { withAuth, useAuth } from '../../context/AuthContext';
 import {
   fetchResources,
@@ -30,6 +30,7 @@ import api from '../../api';
 
 function TeamSetting() {
   const { token } = useAuth();
+  const { showToast } = useToast();
   const [resources, setResources] = useState([]);
   const [open, setOpen] = useState(false);
   const [editRow, setEditRow] = useState(null);
@@ -68,23 +69,38 @@ function TeamSetting() {
   }, [token]);
 
   const handleCreate = async data => {
-    await createResource(data);
-    setOpen(false);
-    loadData();
+    try {
+      await createResource(data);
+      showToast('Resource created');
+      setOpen(false);
+      loadData();
+    } catch (e) {
+      showToast('Error creating resource', { severity: 'error' });
+    }
   };
 
   const handleSave = async data => {
-    if (editRow?.id) {
-      await updateResource(editRow.id, data);
-      setEditRow(null);
-      loadData();
+    try {
+      if (editRow?.id) {
+        await updateResource(editRow.id, data);
+        showToast('Resource updated');
+        setEditRow(null);
+        loadData();
+      }
+    } catch (e) {
+      showToast('Error updating resource', { severity: 'error' });
     }
   };
 
   const handleDelete = async row => {
     if (window.confirm('Delete this resource?')) {
-      await deleteResource(row.id);
-      loadData();
+      try {
+        await deleteResource(row.id);
+        showToast('Resource deleted');
+        loadData();
+      } catch (e) {
+        showToast('Error deleting resource', { severity: 'error' });
+      }
     }
   };
   const columns = [

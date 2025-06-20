@@ -13,13 +13,14 @@ import ArrowBackIosNew from '@mui/icons-material/ArrowBackIosNew';
 import { DataGrid } from '@mui/x-data-grid';
 import { BarChart, PieChart } from '@mui/x-charts';
 import api from '../../api';
-import { Layout, Popup, ProjectForm } from '../../components';
+import { Layout, Popup, ProjectForm, useToast } from '../../components';
 import { withAuth } from '../../context/AuthContext';
 import { differenceInDays, addDays, format } from 'date-fns';
 
 function ProjectDetail() {
   const router = useRouter();
   const { id } = router.query;
+  const { showToast } = useToast();
   const [project, setProject] = useState(null);
   const [users, setUsers] = useState([]);
   const [open, setOpen] = useState(false);
@@ -68,14 +69,19 @@ function ProjectDetail() {
   ];
 
   const handleSave = async data => {
-    const payload = {
-      ...data,
-      resources: (data.members?.length || 0) + (data.lead ? 1 : 0),
-    };
-    await api.patch(`/api/v1/projects/${id}`, payload);
-    const res = await api.get(`/api/v1/projects/${id}`);
-    setProject(res.data);
-    setOpen(false);
+    try {
+      const payload = {
+        ...data,
+        resources: (data.members?.length || 0) + (data.lead ? 1 : 0),
+      };
+      await api.patch(`/api/v1/projects/${id}`, payload);
+      const res = await api.get(`/api/v1/projects/${id}`);
+      setProject(res.data);
+      showToast('Project updated');
+      setOpen(false);
+    } catch (e) {
+      showToast('Error updating project', { severity: 'error' });
+    }
   };
 
   if (!project) {
