@@ -56,18 +56,10 @@ function TeamSetting() {
       headerName: 'No.',
       width: 70,
       sortable: false,
-      valueGetter: (params) => {
-        // Defensive: if params is undefined, return ''
-        if (!params) return '';
-        // Show row index as running number (1,2,3,...)
-        if (typeof params.rowIndex === 'number') {
-          return params.rowIndex + 1;
-        }
-        // fallback: try to use id
-        if (typeof params.id === 'number') {
-          return params.id;
-        }
-        return '';
+      valueGetter: (_value, row, _col, api) => {
+        if (!api) return '';
+        const index = api.current.getRowIndexRelativeToVisibleRows(row.id);
+        return typeof index === 'number' ? index + 1 : '';
       },
     },
     { field: 'name', headerName: 'Name', flex: 1 },
@@ -77,11 +69,10 @@ function TeamSetting() {
       field: 'startDate',
       headerName: 'Start Date',
       width: 120,
-      valueGetter: params => {
-        if (!params) return '';
-        if (params.row && params.row.startDate) {
+      valueGetter: (_value, row) => {
+        if (row && row.startDate) {
           try {
-            return format(new Date(params.row.startDate), 'yyyy-MM-dd');
+            return format(new Date(row.startDate), 'yyyy-MM-dd');
           } catch {
             return '';
           }
@@ -93,11 +84,10 @@ function TeamSetting() {
       field: 'serviceYear',
       headerName: 'Service Year',
       width: 120,
-      valueGetter: params => {
-        if (!params) return '';
-        if (params.row && params.row.startDate) {
+      valueGetter: (_value, row) => {
+        if (row && row.startDate) {
           try {
-            return differenceInYears(new Date(), new Date(params.row.startDate));
+            return differenceInYears(new Date(), new Date(row.startDate));
           } catch {
             return '';
           }

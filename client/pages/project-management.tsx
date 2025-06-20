@@ -48,15 +48,10 @@ function ProjectManagement() {
       field: 'no',
       headerName: 'No.',
       width: 70,
-      valueGetter: params => {
-        if (!params) return '';
-        if (typeof params.rowIndex === 'number') {
-          return params.rowIndex + 1;
-        }
-        if (typeof params.id === 'number') {
-          return params.id;
-        }
-        return '';
+      valueGetter: (_value, row, _col, api) => {
+        if (!api) return '';
+        const index = api.current.getRowIndexRelativeToVisibleRows(row._id);
+        return typeof index === 'number' ? index + 1 : '';
       },
     },
     { field: 'name', headerName: 'Name', flex: 1 },
@@ -65,29 +60,31 @@ function ProjectManagement() {
       field: 'lead',
       headerName: 'Lead',
       flex: 1,
-      valueGetter: params => params.row.lead || '',
+      valueGetter: (_value, row) => row.lead || '',
     },
     { field: 'status', headerName: 'Status', flex: 1 },
     {
       field: 'totalDay',
       headerName: 'Total Day',
       width: 100,
-      valueGetter: params =>
-        differenceInDays(new Date(), new Date(params.row.start)),
+      valueGetter: (_value, row) =>
+        row.start ? differenceInDays(new Date(), new Date(row.start)) : '',
     },
     {
       field: 'remainManday',
       headerName: 'Remain Manday',
       width: 150,
-      valueGetter: params =>
-        params.row.manday -
-        differenceInDays(new Date(), new Date(params.row.start)),
+      valueGetter: (_value, row) =>
+        row.start && typeof row.manday === 'number'
+          ? row.manday - differenceInDays(new Date(), new Date(row.start))
+          : '',
     },
     {
       field: 'start',
       headerName: 'Start Date',
       width: 120,
-      valueGetter: params => format(new Date(params.row.start), 'yyyy-MM-dd'),
+      valueGetter: (_value, row) =>
+        row.start ? format(new Date(row.start), 'yyyy-MM-dd') : '',
     },
     {
       field: 'actions',

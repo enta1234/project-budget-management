@@ -21,8 +21,8 @@ function SummaryDetail() {
       field: 'date',
       headerName: 'Date',
       width: 150,
-      valueGetter: params =>
-        params.row?.date ? new Date(params.row.date).toLocaleDateString() : '',
+      valueGetter: (_value, row) =>
+        row?.date ? new Date(row.date).toLocaleDateString() : '',
     },
   ];
 
