@@ -1,6 +1,14 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Param,
+} from '@nestjs/common';
 import { TeamsService } from './teams.service';
-import { CreateTeamInput } from './data/teams.repository';
+import { CreateTeamInput, UpdateTeamInput } from './data/teams.repository';
 
 @Controller('teams')
 export class TeamsController {
@@ -14,5 +22,15 @@ export class TeamsController {
   @Get()
   getTeams() {
     return this.service.getTeams();
+  }
+
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() body: UpdateTeamInput) {
+    return this.service.update(id, body);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.service.remove(id);
   }
 }
