@@ -5,7 +5,12 @@ import DialogContent from '@mui/material/DialogContent';
 
 export default function Popup({ open, onClose, title, children }) {
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullWidth
+      PaperProps={{ sx: { width: { xs: '90%', md: '50%' } } }}
+    >
       {title && <DialogTitle>{title}</DialogTitle>}
       <DialogContent>{children}</DialogContent>
     </Dialog>

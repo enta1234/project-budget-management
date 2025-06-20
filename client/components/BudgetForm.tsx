@@ -40,7 +40,15 @@ export default function BudgetForm({ onSubmit, initial, submitText = 'Create' }:
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{
+        display: 'grid',
+        gap: 2,
+        gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+      }}
+    >
       <TextField select label="Role" value={role} onChange={e => setRole(e.target.value)} required>
         {roles.map(r => (
           <MenuItem key={r.name} value={r.name}>
