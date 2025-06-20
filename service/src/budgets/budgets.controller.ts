@@ -11,6 +11,11 @@ export class BudgetsController {
     return this.service.getBudgets();
   }
 
+  @Get('overview')
+  getOverview() {
+    return this.service.getOverview();
+  }
+
   @Post()
   create(@Body() body: CreateBudgetInput) {
     return this.service.create(body);

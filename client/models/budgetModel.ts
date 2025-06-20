@@ -9,3 +9,8 @@ export async function createBudget(budget) {
   const { data } = await api.post('/api/v1/budgets', budget);
   return data;
 }
+
+export async function fetchBudgetOverview() {
+  const { data } = await api.get('/api/v1/budgets/overview');
+  return data;
+}
