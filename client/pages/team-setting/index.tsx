@@ -57,7 +57,9 @@ function TeamSetting() {
       width: 70,
       sortable: false,
       valueGetter: params =>
-        params.api ? params.api.getRowIndex(params.id) + 1 : '',
+        params.api?.getRowIndexRelativeToVisibleRows
+          ? params.api.getRowIndexRelativeToVisibleRows(params.id) + 1
+          : '',
     },
     { field: 'name', headerName: 'Name', flex: 1 },
     { field: 'email', headerName: 'Email', flex: 1 },

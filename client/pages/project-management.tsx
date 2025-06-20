@@ -44,7 +44,10 @@ function ProjectManagement() {
       field: 'no',
       headerName: 'No.',
       width: 70,
-      valueGetter: params => params.api.getRowIndex(params.id) + 1,
+      valueGetter: params =>
+        params.api?.getRowIndexRelativeToVisibleRows
+          ? params.api.getRowIndexRelativeToVisibleRows(params.id) + 1
+          : '',
     },
     { field: 'name', headerName: 'Name', flex: 1 },
     { field: 'description', headerName: 'Description', flex: 1 },
