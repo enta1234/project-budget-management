@@ -12,7 +12,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import axios from 'axios';
-import { format } from 'date-fns';
+import { format, differenceInYears } from 'date-fns';
 import { Layout, ResourceForm, Popup } from '../../components';
 import { withAuth, useAuth } from '../../context/AuthContext';
 
@@ -70,6 +70,7 @@ function TeamSetting() {
                   <TableCell>Email</TableCell>
                   <TableCell>Position</TableCell>
                   <TableCell>Start Date</TableCell>
+                  <TableCell>Service Year</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -79,13 +80,18 @@ function TeamSetting() {
                     <TableCell>{r.name}</TableCell>
                     <TableCell>{r.email}</TableCell>
                     <TableCell>{r.position}</TableCell>
-                    <TableCell>
-                      {r.startDate
-                        ? format(new Date(r.startDate), 'yyyy-MM-dd')
-                        : ''}
-                    </TableCell>
-                  </TableRow>
-                ))}
+                  <TableCell>
+                    {r.startDate
+                      ? format(new Date(r.startDate), 'yyyy-MM-dd')
+                      : ''}
+                  </TableCell>
+                  <TableCell>
+                    {r.startDate
+                      ? differenceInYears(new Date(), new Date(r.startDate))
+                      : ''}
+                  </TableCell>
+                </TableRow>
+              ))}
               </TableBody>
             </Table>
           </TableContainer>
