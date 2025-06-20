@@ -2,14 +2,10 @@
 import { useEffect, useState } from 'react';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
-import IconButton from '@mui/material/IconButton';
-import EditIcon from '@mui/icons-material/Edit';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import { DataGrid } from '@mui/x-data-grid';
-import { Layout, Popup, BudgetForm } from '../components';
+import { Layout, Popup, BudgetForm, BudgetTable } from '../components';
 import { withAuth, useAuth } from '../context/AuthContext';
 import { createBudget, fetchBudgetOverview } from '../models/budgetModel';
 
@@ -40,28 +36,10 @@ function BudgetManagement() {
     loadData();
   };
 
-  const columns = [
-    { field: 'role', headerName: 'Role', flex: 1 },
-    { field: 'level', headerName: 'Level', width: 130 },
-    { field: 'count', headerName: 'Count', width: 100 },
-    { field: 'rate', headerName: 'Baht/MD', width: 120 },
-    {
-      field: 'actions',
-      headerName: 'Action',
-      width: 100,
-      renderCell: params => (
-        <IconButton
-          size="small"
-          onClick={() => {
-            setEditId(params.row.id);
-            setRate(String(params.row.rate));
-          }}
-        >
-          <EditIcon fontSize="small" />
-        </IconButton>
-      ),
-    },
-  ];
+  const handleEdit = row => {
+    setEditId(row.id);
+    setRate(String(row.rate));
+  };
 
   return (
     <Layout>
@@ -72,16 +50,7 @@ function BudgetManagement() {
             New Rate
           </Button>
         </Box>
-        <Paper>
-          <DataGrid
-            rows={rows}
-            columns={columns}
-            autoHeight
-            pageSize={25}
-            rowsPerPageOptions={[25]}
-            disableSelectionOnClick
-          />
-        </Paper>
+        <BudgetTable data={rows} onEdit={handleEdit} />
         <Popup open={!!editId} onClose={() => setEditId(null)} title="Edit Rate">
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
             <TextField
