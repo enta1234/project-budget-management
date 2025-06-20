@@ -9,7 +9,7 @@ export interface CreateProjectInput {
   resources: number;
   start: Date;
   end: Date;
-  manday: number;
+  manday?: number;
   priority: number;
   lead?: string;
   status?: string;
@@ -21,7 +21,11 @@ export class ProjectsRepository {
   constructor(@InjectModel(Project.name) private projectModel: Model<Project>) {}
 
   findAll(): Promise<Project[]> {
-    return this.projectModel.find().sort({ start: 1 }).exec();
+    return this.projectModel.find().sort({ start: 1 }).populate('lead', 'name').exec();
+  }
+
+  findOne(id: string): Promise<Project | null> {
+    return this.projectModel.findById(id).populate('lead', 'name').exec();
   }
 
   create(data: CreateProjectInput): Promise<Project> {

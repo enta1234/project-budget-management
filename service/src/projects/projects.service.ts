@@ -12,4 +12,8 @@ export class ProjectsService {
   getProjects() {
     return this.repo.findAll();
   }
+
+  getProject(id: string) {
+    return this.repo.findOne(id);
+  }
 }

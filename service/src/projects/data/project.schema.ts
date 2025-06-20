@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class Project extends Document {
@@ -18,14 +18,14 @@ export class Project extends Document {
   @Prop({ required: true })
   end: Date;
 
-  @Prop({ required: true })
+  @Prop()
   manday: number;
 
   @Prop({ required: true })
   priority: number;
 
-  @Prop()
-  lead: string;
+  @Prop({ type: Types.ObjectId, ref: 'Resource' })
+  lead: Types.ObjectId;
 
   @Prop()
   status: string;
