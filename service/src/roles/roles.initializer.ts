@@ -11,8 +11,8 @@ export class RolesInitializer implements OnModuleInit {
       const roleMap: Record<string, string[]> = {
         'Project Manager': ['Senior', 'Intermediate', 'Junior'],
         'System Analyst': ['Senior', 'Intermediate', 'Junior'],
-        PA: ['Senior', 'Intermediate', 'Junior'],
-        QA: ['Senior', 'Intermediate', 'Junior'],
+        'Software developer': ['Senior', 'Intermediate', 'Junior'],
+        'Software Tester': ['Senior', 'Intermediate', 'Junior'],
       };
       for (const [role, levels] of Object.entries(roleMap)) {
         const r = await this.repo.createRole({ name: role });
