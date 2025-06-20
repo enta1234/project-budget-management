@@ -21,7 +21,7 @@ export default function TeamForm({ users = [], onSubmit }) {
 
   const handleSubmit = e => {
     e.preventDefault();
-    onSubmit({ name, lead: lead?.username, members });
+    onSubmit({ name, lead: lead?.name, members });
     setName('');
     setLead(null);
     setMembers([]);
@@ -32,7 +32,7 @@ export default function TeamForm({ users = [], onSubmit }) {
       <TextField label="Team Name" value={name} onChange={e => setName(e.target.value)} required />
       <Autocomplete
         options={users}
-        getOptionLabel={o => o.username}
+        getOptionLabel={o => o.name}
         value={lead}
         onChange={(_, v) => setLead(v)}
         renderInput={params => <TextField {...params} label="Team Lead" />}
@@ -41,8 +41,8 @@ export default function TeamForm({ users = [], onSubmit }) {
         {users.map(u => (
           <FormControlLabel
             key={u.id}
-            control={<Checkbox checked={members.includes(u.username)} onChange={() => toggleMember(u.username)} />}
-            label={u.username}
+            control={<Checkbox checked={members.includes(u.name)} onChange={() => toggleMember(u.name)} />}
+            label={u.name}
           />
         ))}
       </FormGroup>

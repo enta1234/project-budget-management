@@ -1,6 +1,6 @@
-import axios from 'axios';
+import api from '../api';
 
 export async function fetchEvents() {
-  const { data } = await axios.get('/api/v1/events');
+  const { data } = await api.get('/api/v1/events');
   return data;
 }

@@ -10,7 +10,7 @@ import Stack from '@mui/material/Stack';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { DataGrid } from '@mui/x-data-grid';
-import axios from 'axios';
+import api from '../../api';
 import { Layout, Popup, TeamForm } from '../../components';
 import { withAuth, useAuth } from '../../context/AuthContext';
 import { format } from 'date-fns';
@@ -22,10 +22,9 @@ function TeamPage() {
   const [open, setOpen] = useState(false);
 
   async function loadData() {
-    const headers = { Authorization: `Bearer ${token}` };
     const [t, u] = await Promise.all([
       axios.get('/api/v1/teams', { headers }),
-      axios.get('/api/v1/users', { headers }),
+      axios.get('/api/v1/resources', { headers }),
     ]);
     setTeams(t.data);
     setUsers(u.data);
@@ -36,8 +35,7 @@ function TeamPage() {
   }, [token]);
 
   const handleCreate = async data => {
-    const headers = { Authorization: `Bearer ${token}` };
-    await axios.post('/api/v1/teams', data, { headers });
+    await api.post('/api/v1/teams', data);
     setOpen(false);
     loadData();
   };
