@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { ResourcesRepository, CreateResourceInput } from './data/resources.repository';
+import {
+  ResourcesRepository,
+  CreateResourceInput,
+  UpdateResourceInput,
+} from './data/resources.repository';
 
 @Injectable()
 export class ResourcesService {
@@ -19,5 +23,13 @@ export class ResourcesService {
 
   create(data: CreateResourceInput) {
     return this.repo.create(data);
+  }
+
+  update(id: string, data: UpdateResourceInput) {
+    return this.repo.update(id, data);
+  }
+
+  remove(id: string) {
+    return this.repo.remove(id);
   }
 }

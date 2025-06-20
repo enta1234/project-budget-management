@@ -1,6 +1,5 @@
 // @ts-nocheck
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
@@ -9,13 +8,13 @@ import { useState, useEffect } from 'react';
 import { Input } from '.';
 import api from '../api';
 
-export default function ResourceForm({ onSubmit }) {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
+export default function ResourceForm({ onSubmit, initial, submitText = 'Create' }) {
+  const [name, setName] = useState(initial?.name || '');
+  const [email, setEmail] = useState(initial?.email || '');
   const [role, setRole] = useState('');
   const [level, setLevel] = useState('');
   const [positions, setPositions] = useState([]);
-  const [startDate, setStartDate] = useState(null);
+  const [startDate, setStartDate] = useState(initial?.startDate ? new Date(initial.startDate) : null);
 
   useEffect(() => {
     async function loadPositions() {
@@ -24,6 +23,23 @@ export default function ResourceForm({ onSubmit }) {
     }
     loadPositions();
   }, []);
+
+  useEffect(() => {
+    setName(initial?.name || '');
+    setEmail(initial?.email || '');
+    setStartDate(initial?.startDate ? new Date(initial.startDate) : null);
+    if (initial?.position && positions.length > 0) {
+      const pos = positions.find(p => p.value === initial.position);
+      if (pos) {
+        const [r, l] = pos.label.split(' - ');
+        setRole(r || '');
+        setLevel(l || '');
+      }
+    } else {
+      setRole('');
+      setLevel('');
+    }
+  }, [initial, positions]);
 
   function handleSubmit(e) {
     e.preventDefault();
@@ -34,11 +50,6 @@ export default function ResourceForm({ onSubmit }) {
     if (onSubmit) {
       onSubmit({ name, email, position, startDate });
     }
-    setName('');
-    setEmail('');
-    setRole('');
-    setLevel('');
-    setStartDate(null);
   }
 
   const roles = Array.from(new Set(positions.map(p => p.label.split(' - ')[0])));
@@ -77,7 +88,7 @@ export default function ResourceForm({ onSubmit }) {
         renderInput={params => <TextField {...params} required />}
       />
       <Button variant="contained" type="submit" sx={{ gridColumn: 'span 2' }}>
-        Create
+        {submitText}
       </Button>
     </Box>
   );
