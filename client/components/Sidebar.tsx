@@ -8,6 +8,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Divider from '@mui/material/Divider';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import SettingsIcon from '@mui/icons-material/Settings';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import GroupIcon from '@mui/icons-material/Group';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import ExpandLess from '@mui/icons-material/ExpandLess';
@@ -86,7 +87,7 @@ export default function Sidebar({ open, onClose }) {
           onClick={() => setOpenPlanMgmt(!openPlanMgmt)}
         >
           <ListItemIcon>
-            <SettingsIcon />
+            <CalendarMonthIcon />
           </ListItemIcon>
           {!collapsed && (
             <>
@@ -107,7 +108,7 @@ export default function Sidebar({ open, onClose }) {
                 }}
               >
                 <ListItemIcon>
-                  <SettingsIcon fontSize="small" />
+                  <CalendarMonthIcon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText primary="Overview" />
               </ListItemButton>
@@ -120,7 +121,7 @@ export default function Sidebar({ open, onClose }) {
                 }}
               >
                 <ListItemIcon>
-                  <SettingsIcon fontSize="small" />
+                  <CalendarMonthIcon fontSize="small" />
                 </ListItemIcon>
                 <ListItemText primary="Planing Setting" />
               </ListItemButton>
