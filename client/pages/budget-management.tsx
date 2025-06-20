@@ -4,16 +4,14 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import IconButton from '@mui/material/IconButton';
-import Stack from '@mui/material/Stack';
 import EditIcon from '@mui/icons-material/Edit';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
-import api from '../api';
 import { Layout, Popup, BudgetForm } from '../components';
 import { withAuth, useAuth } from '../context/AuthContext';
-import { fetchBudgets, createBudget } from '../models/budgetModel';
+import { createBudget, fetchBudgetOverview } from '../models/budgetModel';
 
 function BudgetManagement() {
   const { token } = useAuth();
@@ -23,39 +21,8 @@ function BudgetManagement() {
   const [open, setOpen] = useState(false);
 
   async function loadData() {
-    const [res, budgets, roles] = await Promise.all([
-      api.get('/api/v1/resources'),
-      fetchBudgets(),
-      api.get('/api/v1/roles'),
-    ]);
-    const counts = {} as any;
-    res.data.forEach(r => {
-      counts[r.position] = (counts[r.position] || 0) + 1;
-    });
-    const rateMap = {} as any;
-    budgets.forEach(b => {
-      const slug = `${b.role} ${b.level}`
-        .toLowerCase()
-        .replace(/\s+/g, '_');
-      rateMap[slug] = b.rate;
-    });
-    const positions: any[] = [];
-    roles.data.forEach(r => {
-      r.levels.forEach((l: string) => {
-        const slug = `${r.name} ${l}`
-          .toLowerCase()
-          .replace(/\s+/g, '_');
-        positions.push({ value: slug, role: r.name, level: l });
-      });
-    });
-    const rws = positions.map(p => ({
-      id: p.value,
-      role: p.role,
-      level: p.level,
-      count: counts[p.value] || 0,
-      rate: rateMap[p.value] || 0,
-    }));
-    setRows(rws);
+    const data = await fetchBudgetOverview();
+    setRows(data);
   }
 
   useEffect(() => {
