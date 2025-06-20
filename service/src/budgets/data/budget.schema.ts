@@ -4,7 +4,10 @@ import { Document } from 'mongoose';
 @Schema({ timestamps: true })
 export class Budget extends Document {
   @Prop({ required: true })
-  position: string;
+  role: string;
+
+  @Prop({ required: true })
+  level: string;
 
   @Prop({ required: true })
   rate: number;
