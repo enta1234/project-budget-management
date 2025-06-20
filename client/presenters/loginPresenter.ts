@@ -16,7 +16,7 @@ export function useLoginPresenter() {
     setLoading(true);
     const data = await loginRequest(username, password);
     login(data.accessToken, data.refreshToken);
-    router.push('/plan-management');
+    router.push('/summary');
     setLoading(false);
   }
 
