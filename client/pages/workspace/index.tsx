@@ -6,15 +6,15 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
-import { fetchEvents } from '../models/eventsModel';
+import { fetchEvents } from '../../models/eventsModel';
 import Timeline from '@mui/lab/Timeline';
 import TimelineItem from '@mui/lab/TimelineItem';
 import TimelineSeparator from '@mui/lab/TimelineSeparator';
 import TimelineConnector from '@mui/lab/TimelineConnector';
 import TimelineContent from '@mui/lab/TimelineContent';
 import TimelineDot from '@mui/lab/TimelineDot';
-import { withAuth } from '../context/AuthContext';
-import { Layout, SimpleCalendar } from '../components';
+import { withAuth } from '../../context/AuthContext';
+import { Layout, SimpleCalendar } from '../../components';
 
 function Workspace() {
   const [view, setView] = useState('calendar');
