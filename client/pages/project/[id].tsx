@@ -5,6 +5,10 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
+import Breadcrumbs from '@mui/material/Breadcrumbs';
+import Link from '@mui/material/Link';
+import IconButton from '@mui/material/IconButton';
+import ArrowBackIosNew from '@mui/icons-material/ArrowBackIosNew';
 import api from '../../api';
 import { Layout } from '../../components';
 import { withAuth } from '../../context/AuthContext';
@@ -33,9 +37,25 @@ function ProjectDetail() {
   return (
     <Layout>
       <Container maxWidth={false} sx={{ mt: 4, width: '90%' }}>
-        <Typography variant="h5" gutterBottom>
-          {project.name}
-        </Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+          <IconButton size="small" onClick={() => router.back()} sx={{ mr: 1 }}>
+            <ArrowBackIosNew fontSize="small" />
+          </IconButton>
+          <Typography variant="h5" gutterBottom>
+            {project.name}
+          </Typography>
+        </Box>
+        <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 2 }}>
+          <Link
+            underline="hover"
+            color="inherit"
+            onClick={() => router.push('/project-management')}
+            sx={{ cursor: 'pointer' }}
+          >
+            Project Management
+          </Link>
+          <Typography color="text.primary">{project.name}</Typography>
+        </Breadcrumbs>
         <Paper sx={{ p: 2 }}>
           <Box sx={{ display: 'grid', rowGap: 1 }}>
             <Typography>
