@@ -59,6 +59,8 @@ function TeamSetting() {
       valueGetter: params =>
         params.api?.getRowIndexRelativeToVisibleRows
           ? params.api.getRowIndexRelativeToVisibleRows(params.id) + 1
+          : params.api?.getRowIndex
+          ? params.api.getRowIndex(params.id) + 1
           : '',
     },
     { field: 'name', headerName: 'Name', flex: 1 },
