@@ -36,7 +36,7 @@ function TeamSetting() {
     const months = differenceInMonths(now, afterYears);
     const afterMonths = addMonths(afterYears, months);
     const days = differenceInDays(now, afterMonths);
-    return `${years}ปี ${months}เดือน ${days}วัน`;
+    return `${years}y ${months}m ${days}d`;
   }
 
   async function loadData() {
