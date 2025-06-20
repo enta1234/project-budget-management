@@ -13,24 +13,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import api from '../api';
 import { Layout, Popup, BudgetForm } from '../components';
 import { withAuth, useAuth } from '../context/AuthContext';
-import positions from '../models/positions';
 import { fetchBudgets, createBudget } from '../models/budgetModel';
-
-
-const defaultRates = {
-  project_manager_sr: 10000,
-  project_manager_inter: 8000,
-  project_manager_jr: 6000,
-  sa_sr: 9000,
-  sa_inter: 7000,
-  sa_jr: 5000,
-  pa_sr: 8000,
-  pa_inter: 6000,
-  pa_jr: 4000,
-  qa_sr: 7000,
-  qa_inter: 5000,
-  qa_jr: 3000,
-};
 
 function BudgetManagement() {
   const { token } = useAuth();
@@ -40,9 +23,10 @@ function BudgetManagement() {
   const [open, setOpen] = useState(false);
 
   async function loadData() {
-    const [res, budgets] = await Promise.all([
+    const [res, budgets, pos] = await Promise.all([
       api.get('/api/v1/resources'),
       fetchBudgets(),
+      api.get('/api/v1/positions'),
     ]);
     const counts = {} as any;
     res.data.forEach(r => {
@@ -52,14 +36,14 @@ function BudgetManagement() {
     budgets.forEach(b => {
       rateMap[b.position] = b.rate;
     });
-    const rws = positions.map(p => {
+    const rws = pos.data.map(p => {
       const [role, level] = p.label.split(' - ');
       return {
         id: p.value,
         role,
         level,
         count: counts[p.value] || 0,
-        rate: (rateMap[p.value] ?? defaultRates[p.value]) || 0,
+        rate: rateMap[p.value] || 0,
       };
     });
     setRows(rws);
@@ -105,7 +89,7 @@ function BudgetManagement() {
 
   return (
     <Layout>
-      <Container maxWidth="md" sx={{ mt: 4 }}>
+      <Container maxWidth={false} sx={{ mt: 4, width: '90%' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
           <Typography variant="h5">Budget Management</Typography>
           <Button variant="contained" onClick={() => setOpen(true)}>

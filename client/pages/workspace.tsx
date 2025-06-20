@@ -26,7 +26,7 @@ function Workspace() {
 
   return (
     <Layout>
-      <Container maxWidth="md" sx={{ mt: 4 }}>
+      <Container maxWidth={false} sx={{ mt: 4, width: '90%' }}>
         <Paper sx={{ p: 2 }} elevation={3}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
           <Typography variant="h5">Workspace</Typography>
