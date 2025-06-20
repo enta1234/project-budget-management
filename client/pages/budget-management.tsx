@@ -59,7 +59,7 @@ function BudgetManagement() {
         role,
         level,
         count: counts[p.value] || 0,
-        rate: rateMap[p.value] ?? defaultRates[p.value] || 0,
+        rate: (rateMap[p.value] ?? defaultRates[p.value]) || 0,
       };
     });
     setRows(rws);
