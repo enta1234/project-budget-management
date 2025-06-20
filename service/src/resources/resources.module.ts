@@ -9,5 +9,6 @@ import { Resource, ResourceSchema } from './data/resource.schema';
   imports: [MongooseModule.forFeature([{ name: Resource.name, schema: ResourceSchema }])],
   controllers: [ResourcesController],
   providers: [ResourcesService, ResourcesRepository],
+  exports: [ResourcesService],
 })
 export class ResourcesModule {}
