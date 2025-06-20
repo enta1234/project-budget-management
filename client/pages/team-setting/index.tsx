@@ -94,6 +94,7 @@ function TeamSetting() {
       headerName: 'Service Year',
       width: 120,
       valueGetter: params => {
+        if (!params) return '';
         if (params.row && params.row.startDate) {
           try {
             return differenceInYears(new Date(), new Date(params.row.startDate));
