@@ -172,7 +172,10 @@ export default function Sidebar({ open, onClose }) {
               <ListItemButton
                 sx={{ pl: 4 }}
                 selected={router.pathname === '/team-setting'}
-                onClick={() => router.push('/team-setting')}
+                onClick={() => {
+                  router.push('/team-setting');
+                  onClose();
+                }}
               >
                 <ListItemIcon>
                   <GroupIcon fontSize="small" />
@@ -182,7 +185,10 @@ export default function Sidebar({ open, onClose }) {
               <ListItemButton
                 sx={{ pl: 4 }}
                 selected={router.pathname === '/team-setting/team'}
-                onClick={() => router.push('/team-setting/team')}
+                onClick={() => {
+                  router.push('/team-setting/team');
+                  onClose();
+                }}
               >
                 <ListItemIcon>
                   <GroupIcon fontSize="small" />
