@@ -25,11 +25,13 @@ export default function BudgetTable({ data, onEdit }) {
   return (
     <TableContainer component={Paper}>
       <Table size="small">
-        <TableHead>
+        <TableHead sx={{ backgroundColor: 'rgba(0, 0, 0, 0.04)' }}>
           <TableRow>
-            <TableCell />
-            <TableCell>Role</TableCell>
-            <TableCell align="right">Total Count</TableCell>
+            <TableCell sx={{ fontWeight: 'bold' }} />
+            <TableCell sx={{ fontWeight: 'bold' }}>Role</TableCell>
+            <TableCell sx={{ fontWeight: 'bold' }} align="right">
+              Total Count
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -61,12 +63,18 @@ function RoleRow({ role, rows, onEdit }) {
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1 }}>
               <Table size="small">
-                <TableHead>
+                <TableHead sx={{ backgroundColor: 'rgba(0, 0, 0, 0.04)' }}>
                   <TableRow>
-                    <TableCell>Level</TableCell>
-                    <TableCell align="right">Count</TableCell>
-                    <TableCell align="right">Baht/MD</TableCell>
-                    <TableCell align="right">Action</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }}>Level</TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }} align="right">
+                      Count
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }} align="right">
+                      Baht/MD
+                    </TableCell>
+                    <TableCell sx={{ fontWeight: 'bold' }} align="right">
+                      Action
+                    </TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
