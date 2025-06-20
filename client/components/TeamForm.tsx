@@ -28,7 +28,15 @@ export default function TeamForm({ users = [], onSubmit }) {
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ display: 'grid', gap: 2 }}>
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{
+        display: 'grid',
+        gap: 2,
+        gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+      }}
+    >
       <TextField label="Team Name" value={name} onChange={e => setName(e.target.value)} required />
       <Autocomplete
         options={users}
@@ -37,7 +45,7 @@ export default function TeamForm({ users = [], onSubmit }) {
         onChange={(_, v) => setLead(v)}
         renderInput={params => <TextField {...params} label="Team Lead" />}
       />
-      <FormGroup>
+      <FormGroup sx={{ gridColumn: 'span 2' }}>
         {users.map(u => (
           <FormControlLabel
             key={u.id}
@@ -46,7 +54,9 @@ export default function TeamForm({ users = [], onSubmit }) {
           />
         ))}
       </FormGroup>
-      <Button variant="contained" type="submit">Create</Button>
+      <Button variant="contained" type="submit" sx={{ gridColumn: 'span 2' }}>
+        Create
+      </Button>
     </Box>
   );
 }

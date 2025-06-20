@@ -31,7 +31,15 @@ export default function BudgetForm({ onSubmit }) {
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{
+        display: 'grid',
+        gap: 2,
+        gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+      }}
+    >
       <TextField select label="Role" value={role} onChange={e => setRole(e.target.value)} required>
         {roles.map(r => (
           <MenuItem key={r.name} value={r.name}>
@@ -53,7 +61,7 @@ export default function BudgetForm({ onSubmit }) {
         onChange={e => setRate(e.target.value)}
         required
       />
-      <Button variant="contained" type="submit">
+      <Button variant="contained" type="submit" sx={{ gridColumn: 'span 2' }}>
         Create
       </Button>
     </Box>

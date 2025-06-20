@@ -37,13 +37,22 @@ export default function ProjectForm({ users = [], onSubmit }) {
   };
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ display: 'grid', gap: 2 }}>
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{
+        display: 'grid',
+        gap: 2,
+        gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+      }}
+    >
       <TextField label="Name" value={name} onChange={e => setName(e.target.value)} required />
       <TextField
         label="Description"
         value={description}
         onChange={e => setDescription(e.target.value)}
         multiline
+        sx={{ gridColumn: 'span 2' }}
       />
       <DatePicker
         label="Start Date"
@@ -65,6 +74,7 @@ export default function ProjectForm({ users = [], onSubmit }) {
         value={members}
         onChange={(_, v) => setMembers(v)}
         renderInput={params => <TextField {...params} label="Members" />}
+        sx={{ gridColumn: 'span 2' }}
       />
       <TextField
         label="Manday"
@@ -73,7 +83,9 @@ export default function ProjectForm({ users = [], onSubmit }) {
         onChange={e => setManday(e.target.value)}
         required
       />
-      <Button type="submit" variant="contained">Create</Button>
+      <Button type="submit" variant="contained" sx={{ gridColumn: 'span 2' }}>
+        Create
+      </Button>
     </Box>
   );
 }

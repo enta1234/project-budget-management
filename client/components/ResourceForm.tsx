@@ -45,7 +45,15 @@ export default function ResourceForm({ onSubmit }) {
   const levels = Array.from(new Set(positions.map(p => p.label.split(' - ')[1])));
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      sx={{
+        display: 'grid',
+        gap: 2,
+        gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr' },
+      }}
+    >
       <Input label="Name" value={name} onChange={e => setName(e.target.value)} required />
       <Input label="Email" type="email" value={email} onChange={e => setEmail(e.target.value)} required />
       <TextField select label="Role" value={role} onChange={e => setRole(e.target.value)} required>
@@ -68,7 +76,9 @@ export default function ResourceForm({ onSubmit }) {
         onChange={setStartDate}
         renderInput={params => <TextField {...params} required />}
       />
-      <Button variant="contained" type="submit">Create</Button>
+      <Button variant="contained" type="submit" sx={{ gridColumn: 'span 2' }}>
+        Create
+      </Button>
     </Box>
   );
 }
