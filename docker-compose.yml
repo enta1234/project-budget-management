@@ -3,10 +3,16 @@ services:
     image: mongo:6
     ports:
       - "27017:27017"
+    networks:
+      - budget_network
+
   redis:
     image: redis:7
     ports:
       - "6379:6379"
+    networks:
+      - budget_network
+      
   service:
     build:
       context: .
@@ -21,6 +27,9 @@ services:
     depends_on:
       - mongo
       - redis
+    networks:
+      - budget_network
+
   client:
     build:
       context: .
@@ -32,3 +41,9 @@ services:
       - "8080:3000"
     depends_on:
       - service
+    networks:
+      - budget_network
+
+networks:
+  budget_network:
+    driver: bridge
