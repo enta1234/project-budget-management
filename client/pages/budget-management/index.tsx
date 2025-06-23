@@ -4,14 +4,20 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
-import { Layout, Popup, BudgetForm, BudgetTable, useToast } from '../components';
-import { withAuth, useAuth } from '../context/AuthContext';
+import {
+  Layout,
+  Popup,
+  BudgetForm,
+  BudgetTable,
+  useToast,
+} from '../../components';
+import { withAuth, useAuth } from '../../context/AuthContext';
 import {
   createBudget,
   updateBudget,
   deleteBudget,
   fetchBudgetOverview,
-} from '../models/budgetModel';
+} from '../../models/budgetModel';
 
 function BudgetManagement() {
   const { token } = useAuth();

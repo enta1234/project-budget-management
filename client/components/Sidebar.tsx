@@ -25,6 +25,7 @@ export default function Sidebar({ open, onClose }) {
   const [collapsed, setCollapsed] = useState(false);
   const [openDashboard, setOpenDashboard] = useState(false);
   const [openPlanMgmt, setOpenPlanMgmt] = useState(false);
+  const [openBudgetMgmt, setOpenBudgetMgmt] = useState(false);
   const [openTeamMgmt, setOpenTeamMgmt] = useState(false);
 
   // width to use when sidebar is collapsed
@@ -141,17 +142,51 @@ export default function Sidebar({ open, onClose }) {
           {!collapsed && <ListItemText primary="Project Management" />}
         </ListItemButton>
         <ListItemButton
-          selected={router.pathname === '/budget-management'}
-          onClick={() => {
-            router.push('/budget-management');
-            onClose();
-          }}
+          selected={router.pathname.startsWith('/budget-management')}
+          onClick={() => setOpenBudgetMgmt(!openBudgetMgmt)}
         >
           <ListItemIcon>
             <AttachMoneyIcon />
           </ListItemIcon>
-          {!collapsed && <ListItemText primary="Budget Management" />}
+          {!collapsed && (
+            <>
+              <ListItemText primary="Budget Management" />
+              {openBudgetMgmt ? <ExpandLess /> : <ExpandMore />}
+            </>
+          )}
         </ListItemButton>
+        {!collapsed && (
+          <Collapse in={openBudgetMgmt} timeout="auto" unmountOnExit>
+            <List component="div" disablePadding>
+              <ListItemButton
+                sx={{ pl: 4 }}
+                selected={router.pathname === '/budget-management'}
+                onClick={() => {
+                  router.push('/budget-management');
+                  onClose();
+                }}
+              >
+                <ListItemIcon>
+                  <AttachMoneyIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText primary="Budget Setting" />
+              </ListItemButton>
+              <ListItemButton
+                sx={{ pl: 4 }}
+                selected={router.pathname === '/budget-management/role-setting'}
+                onClick={() => {
+                  router.push('/budget-management/role-setting');
+                  onClose();
+                }}
+              >
+                <ListItemIcon>
+                  <SettingsIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText primary="Role Setting" />
+              </ListItemButton>
+            </List>
+          </Collapse>
+        )}
         <ListItemButton
           selected={router.pathname.startsWith('/team-setting')}
           onClick={() => setOpenTeamMgmt(!openTeamMgmt)}
