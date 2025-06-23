@@ -32,6 +32,10 @@ export class BudgetsService {
     return this.repo.create(data);
   }
 
+  createRole(name: string) {
+    return this.rolesService.createRole({ name });
+  }
+
   update(id: string, data: UpdateBudgetInput) {
     return this.repo.update(id, data);
   }
