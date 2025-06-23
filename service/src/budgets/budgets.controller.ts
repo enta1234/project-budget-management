@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Patch, Param } from '@nestjs/common';
+import { Body, Controller, Get, Post, Patch, Delete, Param } from '@nestjs/common';
 import { BudgetsService } from './budgets.service';
 import { CreateBudgetInput, UpdateBudgetInput } from './data/budgets.repository';
 
@@ -24,5 +24,10 @@ export class BudgetsController {
   @Patch(':id')
   update(@Param('id') id: string, @Body() body: UpdateBudgetInput) {
     return this.service.update(id, body);
+  }
+
+  @Delete(':id')
+  delete(@Param('id') id: string) {
+    return this.service.delete(id);
   }
 }

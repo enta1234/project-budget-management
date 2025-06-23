@@ -15,6 +15,11 @@ export async function updateBudget(id, budget) {
   return data;
 }
 
+export async function deleteBudget(id) {
+  const { data } = await api.delete(`/api/v1/budgets/${id}`);
+  return data;
+}
+
 export async function fetchBudgetOverview() {
   const { data } = await api.get('/api/v1/budgets/overview');
   return data;

@@ -36,6 +36,10 @@ export class BudgetsService {
     return this.repo.update(id, data);
   }
 
+  delete(id: string) {
+    return this.repo.delete(id);
+  }
+
   async getOverview() {
     const [resources, budgets, roles] = await Promise.all([
       this.resourceModel.find().exec(),
