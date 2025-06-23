@@ -7,8 +7,10 @@ with Docker.
 ## Running with Docker
 
 ```sh
-./start.sh
+./start.sh [-d]
 ```
+
+Add `-d` to start the containers in detached mode so they run in the background.
 
 When run, the script prompts for what to start. Select **1** to launch all
 containers, **2** to start only MongoDB and Redis, or **3** to start the service
