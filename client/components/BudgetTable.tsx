@@ -4,6 +4,7 @@ import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { DataGrid } from '@mui/x-data-grid';
+import Paper from '@mui/material/Paper';
 
 export default function BudgetTable({ data, onEdit, onDelete }) {
   const columns = [
@@ -43,13 +44,15 @@ export default function BudgetTable({ data, onEdit, onDelete }) {
   ];
 
   return (
-    <DataGrid
-      rows={data}
-      columns={columns}
-      getRowId={row => row.id}
-      autoHeight
-      pageSize={25}
-      rowsPerPageOptions={[25]}
-    />
+    <Paper>
+      <DataGrid
+        rows={data}
+        columns={columns}
+        getRowId={row => row.id}
+        autoHeight
+        pageSize={25}
+        rowsPerPageOptions={[25]}
+      />
+    </Paper>
   );
 }
