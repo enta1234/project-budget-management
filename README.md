@@ -41,6 +41,9 @@ npm run start:prod
 ```
 Create a `.env` file in the `service` directory by copying one of the files
 from `service/env` and adjusting values to set database URLs and other options.
+If the databases run inside Docker while the service runs locally (for example
+inside the VS Code devcontainer), use `host.docker.internal` instead of
+`localhost` so the service can reach the containers.
 
 To run the client manually:
 
@@ -73,6 +76,10 @@ client/env/staging.env
 client/env/uat.env
 client/env/production.env
 ```
+
+When running the Next.js client inside a container while the service runs
+locally, update `client/env/local.env` to point `SERVICE_URL` at
+`http://host.docker.internal:3000`.
 
 You may also copy one of the files in `service/env` to `service/.env` if you
 prefer not to rely on the predefined `NODE_ENV` values.
