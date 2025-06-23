@@ -34,6 +34,10 @@ export class BudgetsRepository {
       .exec();
   }
 
+  findById(id: string): Promise<Budget | null> {
+    return this.budgetModel.findById(id).exec();
+  }
+
   delete(id: string): Promise<Budget | null> {
     return this.budgetModel.findByIdAndDelete(id).exec();
   }

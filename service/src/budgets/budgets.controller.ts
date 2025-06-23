@@ -16,6 +16,11 @@ export class BudgetsController {
     return this.service.getOverview();
   }
 
+  @Get(':id')
+  getBudget(@Param('id') id: string) {
+    return this.service.getBudget(id);
+  }
+
   @Post()
   create(@Body() body: CreateBudgetInput) {
     return this.service.create(body);
