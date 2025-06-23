@@ -9,6 +9,7 @@ import { withAuth, useAuth } from '../context/AuthContext';
 import {
   createBudget,
   updateBudget,
+  deleteBudget,
   fetchBudgetOverview,
 } from '../models/budgetModel';
 
@@ -59,6 +60,18 @@ function BudgetManagement() {
     setEditRow(row);
   };
 
+  const handleDelete = async row => {
+    if (window.confirm('Delete this rate?')) {
+      try {
+        await deleteBudget(row.budgetId);
+        showToast('Rate deleted');
+        loadData();
+      } catch (e) {
+        showToast('Error deleting rate', { severity: 'error' });
+      }
+    }
+  };
+
   return (
     <Layout>
       <Container maxWidth={false} sx={{ mt: 4, width: '90%' }}>
@@ -68,7 +81,7 @@ function BudgetManagement() {
             New Rate
           </Button>
         </Box>
-        <BudgetTable data={rows} onEdit={handleEdit} />
+        <BudgetTable data={rows} onEdit={handleEdit} onDelete={handleDelete} />
         <Popup open={!!editRow} onClose={() => setEditRow(null)} title="Edit Rate">
           {editRow && (
             <BudgetForm

@@ -33,4 +33,8 @@ export class BudgetsRepository {
       .findByIdAndUpdate(id, data, { new: true })
       .exec();
   }
+
+  delete(id: string): Promise<Budget | null> {
+    return this.budgetModel.findByIdAndDelete(id).exec();
+  }
 }

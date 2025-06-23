@@ -13,8 +13,9 @@ import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
-export default function BudgetTable({ data, onEdit }) {
+export default function BudgetTable({ data, onEdit, onDelete }) {
   const groups = data.reduce((acc, item) => {
     const list = acc[item.role] || [];
     list.push(item);
@@ -36,7 +37,7 @@ export default function BudgetTable({ data, onEdit }) {
         </TableHead>
         <TableBody>
           {Object.entries(groups).map(([role, rows]) => (
-            <RoleRow key={role} role={role} rows={rows} onEdit={onEdit} />
+            <RoleRow key={role} role={role} rows={rows} onEdit={onEdit} onDelete={onDelete} />
           ))}
         </TableBody>
       </Table>
@@ -44,7 +45,7 @@ export default function BudgetTable({ data, onEdit }) {
   );
 }
 
-function RoleRow({ role, rows, onEdit }) {
+function RoleRow({ role, rows, onEdit, onDelete }) {
   const [open, setOpen] = useState(false);
   const total = rows.reduce((sum, r) => sum + (r.count || 0), 0);
   return (
@@ -87,6 +88,11 @@ function RoleRow({ role, rows, onEdit }) {
                         <IconButton size="small" onClick={() => onEdit(r)}>
                           <EditIcon fontSize="small" />
                         </IconButton>
+                        {onDelete && (
+                          <IconButton size="small" onClick={() => onDelete(r)}>
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        )}
                       </TableCell>
                     </TableRow>
                   ))}
