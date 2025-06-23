@@ -16,6 +16,7 @@ const envFile = path.join(
   `${process.env.NODE_ENV || 'local'}.env`,
 );
 config({ path: envFile });
+console.log('envFile: ', envFile);
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
