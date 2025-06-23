@@ -26,6 +26,11 @@ export class BudgetsController {
     return this.service.create(body);
   }
 
+  @Post('roles')
+  createRole(@Body() body: { name: string }) {
+    return this.service.createRole(body.name);
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() body: UpdateBudgetInput) {
     return this.service.update(id, body);
