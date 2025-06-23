@@ -1,22 +1,9 @@
+import './load-env';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { LoggingInterceptor } from './logger/logging.interceptor';
 import { LoggerService } from './logger/logger.service';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import * as path from 'path';
-import { config } from 'dotenv';
-
-// When compiled the entry point lives in dist/src so we need to go two levels up
-// to reach the original env directory.
-const envFile = path.join(
-  __dirname,
-  '..',
-  '..',
-  'env',
-  `${process.env.NODE_ENV || 'local'}.env`,
-);
-config({ path: envFile });
-console.log('envFile: ', envFile);
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
