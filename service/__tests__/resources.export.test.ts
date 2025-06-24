@@ -13,9 +13,18 @@ class MockRepo {
   }
 }
 
+class MockPositionsService {
+  getPositions() {
+    return Promise.resolve([{ value: 'dev_junior', label: 'Dev - junior' }]);
+  }
+}
+
 describe('ResourcesService exportExcel', () => {
   it('should return a buffer', async () => {
-    const service = new ResourcesService(new MockRepo() as any);
+    const service = new ResourcesService(
+      new MockRepo() as any,
+      new MockPositionsService() as any,
+    );
     const buf = await service.exportExcel();
     expect(Buffer.isBuffer(buf)).toBe(true);
     expect(buf.byteLength).toBeGreaterThan(0);
