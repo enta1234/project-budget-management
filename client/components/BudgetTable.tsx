@@ -6,6 +6,11 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { DataGrid } from '@mui/x-data-grid';
 import Paper from '@mui/material/Paper';
 
+const currencyFormatter = new Intl.NumberFormat('th-TH', {
+  style: 'currency',
+  currency: 'THB',
+});
+
 export default function BudgetTable({ data, onEdit, onDelete }) {
   const columns = [
     {
@@ -22,7 +27,13 @@ export default function BudgetTable({ data, onEdit, onDelete }) {
     { field: 'role', headerName: 'Role', flex: 1 },
     { field: 'level', headerName: 'Level', width: 130 },
     { field: 'count', headerName: 'Count', width: 100 },
-    { field: 'rate', headerName: 'Baht/MD', width: 120 },
+    {
+      field: 'rate',
+      headerName: 'Baht/MD',
+      width: 120,
+      valueFormatter: ({ value }) =>
+        typeof value === 'number' ? currencyFormatter.format(value) : value,
+    },
     {
       field: 'actions',
       headerName: 'Action',
