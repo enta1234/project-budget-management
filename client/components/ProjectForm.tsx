@@ -50,7 +50,7 @@ export default function ProjectForm({
 
   const handleSubmit = e => {
     e.preventDefault();
-    if (active < 2) return handleNext();
+    if (active < 3) return handleNext();
     if (onSubmit) {
       onSubmit({
         name,
@@ -279,7 +279,7 @@ export default function ProjectForm({
             Next
           </Button>
         ) : (
-          <Button type="submit" variant="contained">
+          <Button type="submit" variant="contained" onClick={handleSubmit}>
             {submitText}
           </Button>
         )}
