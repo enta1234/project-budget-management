@@ -45,7 +45,11 @@ function ProjectDetail() {
 
   const members = users.filter(u => project?.members?.includes(u.id));
   const leadResource = users.find(u => u.id === project?.lead?._id);
-  const resourceCount = members.length + (leadResource ? 1 : 0);
+  const memberList = [...(leadResource ? [leadResource] : []), ...members];
+  const uniqueMembers = memberList.filter(
+    (m, idx) => memberList.findIndex(u => u.id === m.id) === idx,
+  );
+  const resourceCount = uniqueMembers.length;
   const days = project?.start
     ? differenceInDays(new Date(), new Date(project.start)) + 1
     : 0;
@@ -59,7 +63,7 @@ function ProjectDetail() {
     };
   });
   const roleMap = {} as Record<string, number>;
-  [...(leadResource ? [leadResource] : []), ...members].forEach(m => {
+  uniqueMembers.forEach(m => {
     const key = m.position.replace('_', ' ');
     roleMap[key] = (roleMap[key] || 0) + 1;
   });
@@ -175,13 +179,13 @@ function ProjectDetail() {
             />
           </Paper>
         )}
-        {members.length > 0 && (
+        {uniqueMembers.length > 0 && (
           <Paper sx={{ mt: 2 }}>
             <Typography variant="h6" sx={{ p: 2 }}>
               Members
             </Typography>
             <DataGrid
-              rows={[...(leadResource ? [leadResource] : []), ...members]}
+              rows={uniqueMembers}
               columns={memberColumns}
               autoHeight
               pageSize={25}
