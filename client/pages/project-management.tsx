@@ -12,10 +12,73 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DownloadIcon from '@mui/icons-material/Download';
 import { DataGrid } from '@mui/x-data-grid';
-import { differenceInDays, format } from 'date-fns';
+import {
+  differenceInDays,
+  format,
+  differenceInYears,
+  differenceInMonths,
+  addYears,
+  addMonths,
+} from 'date-fns';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import Chip from '@mui/material/Chip';
 import api from '../api';
 import { Layout, Popup, ProjectForm, useToast } from '../components';
 import { withAuth, useAuth } from '../context/AuthContext';
+
+const statusOptions = [
+  'planing',
+  'in progress',
+  'break',
+  'production',
+  'waiting payment',
+  'paid',
+  'cancelled',
+];
+
+const statusColors: Record<string, any> = {
+  planing: 'default',
+  'in progress': 'info',
+  break: 'warning',
+  production: 'primary',
+  'waiting payment': 'secondary',
+  paid: 'success',
+  cancelled: 'error',
+};
+
+function StatusCell({ id, value }: { id: string; value: string }) {
+  const { showToast } = useToast();
+  const [status, setStatus] = useState(value);
+
+  const handleChange = async (e: any) => {
+    const newStatus = e.target.value;
+    setStatus(newStatus);
+    try {
+      await api.patch(`/api/v1/projects/${id}`, { status: newStatus });
+      showToast('Status updated');
+    } catch {
+      showToast('Error updating status', { severity: 'error' });
+    }
+  };
+
+  return (
+    <Select
+      value={status}
+      onChange={handleChange}
+      size="small"
+      renderValue={s => (
+        <Chip label={s} color={statusColors[s as string] || 'default'} size="small" />
+      )}
+    >
+      {statusOptions.map(s => (
+        <MenuItem key={s} value={s}>
+          <Chip label={s} color={statusColors[s] || 'default'} size="small" />
+        </MenuItem>
+      ))}
+    </Select>
+  );
+}
 
 function ProjectManagement() {
   const router = useRouter();
@@ -59,6 +122,17 @@ function ProjectManagement() {
     }
   };
 
+  function getServiceDuration(date: string | Date) {
+    const start = new Date(date);
+    const now = new Date();
+    const years = differenceInYears(now, start);
+    const afterYears = addYears(start, years);
+    const months = differenceInMonths(now, afterYears);
+    const afterMonths = addMonths(afterYears, months);
+    const days = differenceInDays(now, afterMonths);
+    return `${years}y ${months}m ${days}d`;
+  }
+
   const columns = [
     {
       field: 'no',
@@ -78,7 +152,14 @@ function ProjectManagement() {
       flex: 1,
       valueGetter: (_value, row) => row.lead?.name || '',
     },
-    { field: 'status', headerName: 'Status', flex: 1 },
+    {
+      field: 'status',
+      headerName: 'Status',
+      flex: 1,
+      renderCell: params => (
+        <StatusCell id={params.row._id} value={params.row.status || 'planing'} />
+      ),
+    },
     {
       field: 'totalMember',
       headerName: 'Total Member',
@@ -110,7 +191,8 @@ function ProjectManagement() {
       field: 'projectService',
       headerName: 'Project Service',
       width: 130,
-      valueGetter: (_value, row) => row.priority ?? '',
+      valueGetter: (_value, row) =>
+        row.start ? getServiceDuration(row.start) : '',
     },
     {
       field: 'actions',
