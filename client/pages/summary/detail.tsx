@@ -28,7 +28,7 @@ function SummaryDetail() {
 
   return (
     <Layout>
-      <Container maxWidth={false} sx={{ mt: 4, width: '90%' }}>
+      <Container maxWidth={false} sx={{ mt: 4 }}>
         <Typography variant="h5" gutterBottom>
           Summary Detail
         </Typography>

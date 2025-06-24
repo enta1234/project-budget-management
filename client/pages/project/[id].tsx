@@ -87,7 +87,7 @@ function ProjectDetail() {
   if (!project) {
     return (
       <Layout>
-        <Container maxWidth={false} sx={{ mt: 4, width: '90%' }}>
+        <Container maxWidth={false} sx={{ mt: 4 }}>
           <Typography>Loading...</Typography>
         </Container>
       </Layout>
@@ -96,7 +96,7 @@ function ProjectDetail() {
 
   return (
     <Layout>
-      <Container maxWidth={false} sx={{ mt: 4, width: '90%' }}>
+      <Container maxWidth={false} sx={{ mt: 4 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
           <IconButton size="small" onClick={() => router.back()} sx={{ mr: 1 }}>
             <ArrowBackIosNew fontSize="small" />

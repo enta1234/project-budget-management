@@ -16,7 +16,7 @@ export default function Layout({ children }) {
     <Box sx={{ display: 'flex' }}>
       <Topbar onMenuClick={handleToggleSidebar} />
       <Sidebar open={sidebarOpen} onClose={() => setOpen(false)} />
-      <Box component="main" sx={{ flexGrow: 1, p: 3, width: '90%', mx: 'auto' }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
         {children}
       </Box>
