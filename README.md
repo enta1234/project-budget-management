@@ -27,6 +27,8 @@ endpoint for creating projects with a structured body containing the project
 name, resources, start and end dates, manday estimate and priority.
 For convenience the service also offers `GET /api/v1/users` which lists all
 registered users so the client can populate team selection menus.
+It additionally supports `GET /api/v1/resources/export` to download all
+resources as an Excel file.
 
 An admin user is created automatically with username `admin` and password taken
 from the `ADMIN_PASSWORD` environment variable (default `admin`).

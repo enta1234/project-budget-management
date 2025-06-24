@@ -10,6 +10,7 @@ import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
+import DownloadIcon from '@mui/icons-material/Download';
 import {
   format,
   differenceInYears,
@@ -25,6 +26,7 @@ import {
   createResource,
   updateResource,
   deleteResource,
+  exportResources,
 } from '../../models/resourceModel';
 import api from '../../api';
 
@@ -111,6 +113,21 @@ function TeamSetting() {
       }
     }
   };
+
+  const handleExport = async () => {
+    try {
+      const blob = await exportResources();
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'resources.xlsx');
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (e) {
+      showToast('Error exporting resources', { severity: 'error' });
+    }
+  };
   const columns = [
     {
       field: 'no',
@@ -191,13 +208,21 @@ function TeamSetting() {
   return (
     <Layout>
       <Container maxWidth={false} sx={{ mt: 4 }}>
-        <Box
-          sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}
-        >
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
           <Typography variant="h5">Resources</Typography>
-          <Button variant="contained" onClick={() => setOpen(true)}>
-            New Resource
-          </Button>
+          <Box>
+            <Button
+              variant="outlined"
+              startIcon={<DownloadIcon />}
+              onClick={handleExport}
+              sx={{ mr: 1 }}
+            >
+              Export
+            </Button>
+            <Button variant="contained" onClick={() => setOpen(true)}>
+              New Resource
+            </Button>
+          </Box>
         </Box>
         <Paper>
           <DataGrid
