@@ -2,7 +2,6 @@
 import { useEffect, useState } from 'react';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import {
   Layout,
@@ -24,7 +23,6 @@ function BudgetManagement() {
   const { showToast } = useToast();
   const [rows, setRows] = useState([]);
   const [editRow, setEditRow] = useState(null);
-  const [open, setOpen] = useState(false);
 
   async function loadData() {
     const data = await fetchBudgetOverview();
@@ -51,16 +49,6 @@ function BudgetManagement() {
     }
   };
 
-  const handleCreate = async data => {
-    try {
-      await createBudget(data);
-      showToast('Rate created');
-      setOpen(false);
-      loadData();
-    } catch (e) {
-      showToast('Error creating rate', { severity: 'error' });
-    }
-  };
 
   const handleEdit = row => {
     setEditRow(row);
@@ -83,9 +71,6 @@ function BudgetManagement() {
       <Container maxWidth={false} sx={{ mt: 4, width: '90%' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
           <Typography variant="h5">Budget Management</Typography>
-          <Button variant="contained" onClick={() => setOpen(true)}>
-            New Rate
-          </Button>
         </Box>
         <BudgetTable data={rows} onEdit={handleEdit} onDelete={handleDelete} />
         <Popup open={!!editRow} onClose={() => setEditRow(null)} title="Edit Rate">
@@ -100,9 +85,6 @@ function BudgetManagement() {
               submitText="Save"
             />
           )}
-        </Popup>
-        <Popup open={open} onClose={() => setOpen(false)} title="Add Rate">
-          <BudgetForm onSubmit={handleCreate} />
         </Popup>
       </Container>
     </Layout>
