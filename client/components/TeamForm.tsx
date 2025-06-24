@@ -124,18 +124,19 @@ export default function TeamForm({ users = [], onSubmit, initial, submitText = '
         onChange={(_, v) => setLead(v)}
         renderInput={params => <TextField {...params} label="Team Lead" />}
       />
-      <Paper sx={{ gridColumn: 'span 2', height: 300 }}>
-        <DataGrid
-          rows={rows}
-          columns={columns}
-          checkboxSelection
-          disableRowSelectionOnClick
-          isRowSelectable={params => params.id !== lead?.id}
-          rowSelectionModel={selectionModel}
-          onRowSelectionModelChange={handleSelectionChange}
-          getRowId={row => row.id}
-        />
-      </Paper>
+        <Paper sx={{ gridColumn: 'span 2', height: 300 }}>
+          <DataGrid
+            rows={rows}
+            columns={columns}
+            checkboxSelection
+            disableRowSelectionOnClick
+            isRowSelectable={params => params.id !== lead?.id}
+            rowSelectionModel={selectionModel}
+            onRowSelectionModelChange={handleSelectionChange}
+            getRowId={row => row.id}
+            sx={{ width: '100%' }}
+          />
+        </Paper>
       <Button variant="contained" type="submit" sx={{ gridColumn: 'span 2' }}>
         {submitText}
       </Button>

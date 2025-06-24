@@ -142,6 +142,7 @@ function TeamPage() {
             autoHeight
             pageSize={25}
             rowsPerPageOptions={[25]}
+            sx={{ width: '100%' }}
           />
         </Paper>
         <Popup open={open} onClose={() => setOpen(false)} title="Add Team">

@@ -184,14 +184,15 @@ function ProjectDetail() {
             <Typography variant="h6" sx={{ p: 2 }}>
               Members
             </Typography>
-            <DataGrid
-              rows={uniqueMembers}
-              columns={memberColumns}
-              autoHeight
-              pageSize={25}
-              rowsPerPageOptions={[25]}
-              getRowId={row => row.id}
-            />
+          <DataGrid
+            rows={uniqueMembers}
+            columns={memberColumns}
+            autoHeight
+            pageSize={25}
+            rowsPerPageOptions={[25]}
+            getRowId={row => row.id}
+            sx={{ width: '100%' }}
+          />
           </Paper>
         )}
         <Popup open={open} onClose={() => setOpen(false)} title="Edit Project">

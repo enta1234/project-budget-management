@@ -65,6 +65,7 @@ export default function BudgetTable({ data, onEdit, onDelete }) {
         autoHeight
         pageSize={25}
         rowsPerPageOptions={[25]}
+        sx={{ width: '100%' }}
       />
     </Paper>
   );

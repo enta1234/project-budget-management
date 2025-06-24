@@ -40,6 +40,7 @@ function SummaryDetail() {
             autoHeight
             pageSize={25}
             rowsPerPageOptions={[25]}
+            sx={{ width: '100%' }}
           />
         </Paper>
       </Container>

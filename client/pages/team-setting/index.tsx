@@ -237,6 +237,7 @@ function TeamSetting() {
                 sortModel: [{ field: 'startDate', sort: 'asc' }],
               },
             }}
+            sx={{ width: '100%' }}
           />
         </Paper>
         <Popup open={open} onClose={() => setOpen(false)} title="Add Resource">
