@@ -58,7 +58,7 @@ export default function ProjectForm({ users = [], onSubmit }) {
         label="Start Date"
         value={start}
         onChange={setStart}
-        renderInput={params => <TextField {...params} required />}
+        slotProps={{ textField: { required: true } }}
       />
       <Autocomplete
         options={users}

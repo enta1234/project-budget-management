@@ -52,13 +52,13 @@ function DashboardOverview() {
           Dashboard Overview
         </Typography>
         <Grid container spacing={2}>
-          <Grid item xs={12} md={4}>
+          <Grid xs={12} md={4}>
             <Paper sx={{ p: 2, textAlign: 'center' }}>
               <Typography variant="h6">Unassigned Resources</Typography>
               <Typography variant="h4">{unassigned}</Typography>
             </Paper>
           </Grid>
-          <Grid item xs={12} md={8}>
+          <Grid xs={12} md={8}>
             <Paper sx={{ p: 2 }}>
               <Typography variant="h6" gutterBottom>
                 Resource Distribution
@@ -66,7 +66,7 @@ function DashboardOverview() {
               <PieChart height={200} series={[{ data: pieData }]} />
             </Paper>
           </Grid>
-          <Grid item xs={12}>
+          <Grid xs={12}>
             <Paper sx={{ p: 2 }}>
               <Typography variant="h6" gutterBottom>
                 Monthly Cost Target (10% Reduction)
