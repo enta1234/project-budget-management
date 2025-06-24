@@ -23,6 +23,8 @@ function ProjectDetail() {
   const { showToast } = useToast();
   const [project, setProject] = useState(null);
   const [users, setUsers] = useState([]);
+  const [teams, setTeams] = useState([]);
+  const [budgets, setBudgets] = useState([]);
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -30,9 +32,13 @@ function ProjectDetail() {
       Promise.all([
         api.get(`/api/v1/projects/${id}`),
         api.get('/api/v1/resources'),
-      ]).then(([p, u]) => {
+        api.get('/api/v1/teams'),
+        api.get('/api/v1/budgets/overview'),
+      ]).then(([p, u, t, b]) => {
         setProject(p.data);
         setUsers(u.data);
+        setTeams(t.data);
+        setBudgets(b.data);
       });
     }
   }, [id]);
@@ -188,6 +194,8 @@ function ProjectDetail() {
           {project && (
             <ProjectForm
               users={users}
+              teams={teams}
+              budgets={budgets}
               onSubmit={handleSave}
               initial={{
                 name: project.name,
