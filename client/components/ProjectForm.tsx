@@ -45,12 +45,12 @@ export default function ProjectForm({
     setStatus(initial?.status || 'planing');
   }, [initial]);
 
+  const handleNext = () => setActive(a => Math.min(a + 1, 2));
+  const handleBack = () => setActive(a => Math.max(a - 1, 0));
+
   const handleSubmit = e => {
     e.preventDefault();
-    if (active < 2) {
-      setActive(a => a + 1);
-      return;
-    }
+    if (active < 2) return handleNext();
     if (onSubmit) {
       onSubmit({
         name,
@@ -270,12 +270,12 @@ export default function ProjectForm({
 
       <Box sx={{ gridColumn: 'span 2', display: 'flex', justifyContent: 'space-between' }}>
         {active > 0 && (
-          <Button type="button" onClick={() => setActive(a => a - 1)}>
+          <Button type="button" onClick={handleBack}>
             Back
           </Button>
         )}
         {active < 2 ? (
-          <Button type="button" variant="contained" onClick={() => setActive(a => a + 1)}>
+          <Button type="button" variant="contained" onClick={handleNext}>
             Next
           </Button>
         ) : (
