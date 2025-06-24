@@ -80,20 +80,24 @@ function ProjectManagement() {
     },
     { field: 'status', headerName: 'Status', flex: 1 },
     {
-      field: 'totalDay',
-      headerName: 'Total Day',
-      width: 100,
-      valueGetter: (_value, row) =>
-        row.start ? differenceInDays(new Date(), new Date(row.start)) : '',
+      field: 'totalMember',
+      headerName: 'Total Member',
+      width: 120,
+      valueGetter: (_value, row) => row.resources ?? row.members?.length ?? 0,
     },
     {
-      field: 'remainManday',
-      headerName: 'Remain Manday',
-      width: 150,
+      field: 'actualManday',
+      headerName: 'Total Actual Manday',
+      width: 160,
       valueGetter: (_value, row) =>
-        row.start && typeof row.manday === 'number'
-          ? row.manday - differenceInDays(new Date(), new Date(row.start))
+        row.start && row.resources
+          ? differenceInDays(new Date(), new Date(row.start)) * row.resources
           : '',
+    },
+    {
+      field: 'manday',
+      headerName: 'Estimate Manday',
+      width: 150,
     },
     {
       field: 'start',
@@ -101,6 +105,12 @@ function ProjectManagement() {
       width: 120,
       valueGetter: (_value, row) =>
         row.start ? format(new Date(row.start), 'yyyy-MM-dd') : '',
+    },
+    {
+      field: 'projectService',
+      headerName: 'Project Service',
+      width: 130,
+      valueGetter: (_value, row) => row.priority ?? '',
     },
     {
       field: 'actions',

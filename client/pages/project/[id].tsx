@@ -201,6 +201,7 @@ function ProjectDetail() {
                 name: project.name,
                 description: project.description,
                 start: project.start ? new Date(project.start) : null,
+                status: project.status || 'planing',
                 lead: leadResource || null,
                 members,
                 manday: project.manday ?? ''
