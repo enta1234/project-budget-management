@@ -178,8 +178,8 @@ function ProjectDetail() {
               rows={[...(leadResource ? [leadResource] : []), ...members]}
               columns={memberColumns}
               autoHeight
-              pageSize={5}
-              rowsPerPageOptions={[5]}
+              pageSize={25}
+              rowsPerPageOptions={[25]}
               getRowId={row => row.id}
             />
           </Paper>
