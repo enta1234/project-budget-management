@@ -33,7 +33,8 @@ function WorkdayPage() {
 
   async function loadData() {
     const data = await fetchWorkdays(year);
-    setRows(data);
+    const filtered = data.filter(row => !String(row?.id).startsWith('weekend-'));
+    setRows(filtered);
   }
 
   useEffect(() => {
