@@ -7,7 +7,7 @@ import { withAuth } from '../../context/AuthContext';
 function PlanManagementSetting() {
   return (
     <Layout>
-      <Container maxWidth={false} sx={{ mt: 4, width: '90%' }}>
+      <Container maxWidth={false} sx={{ mt: 4 }}>
         <Typography variant="h5" gutterBottom>
           Planing Setting
         </Typography>

@@ -26,7 +26,7 @@ function PlanManagementOverview() {
 
   return (
     <Layout>
-      <Container maxWidth={false} sx={{ mt: 4, width: '90%' }}>
+      <Container maxWidth={false} sx={{ mt: 4 }}>
         <Paper sx={{ p: 2 }} elevation={3}>
           <Box
             sx={{

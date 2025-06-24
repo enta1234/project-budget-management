@@ -68,7 +68,7 @@ function BudgetManagement() {
 
   return (
     <Layout>
-      <Container maxWidth={false} sx={{ mt: 4, width: '90%' }}>
+      <Container maxWidth={false} sx={{ mt: 4 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
           <Typography variant="h5">Budget Management</Typography>
         </Box>
