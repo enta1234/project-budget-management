@@ -161,9 +161,11 @@ export default function ProjectForm({
             options={[
               'planing',
               'in progress',
+              'break',
               'production',
               'waiting payment',
               'paid',
+              'cancelled',
             ]}
             value={status}
             onChange={(_, v) => setStatus(v)}
