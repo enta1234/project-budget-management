@@ -92,6 +92,7 @@ function RoleSetting() {
                 <Chip
                   key={level}
                   label={level}
+                  onClick={() => handleRemoveLevel(r._id, level)}
                   onDelete={() => handleRemoveLevel(r._id, level)}
                 />
               ))}
