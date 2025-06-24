@@ -2,8 +2,21 @@
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
+import { useEffect } from 'react';
 
 export default function Popup({ open, onClose, title, children }) {
+  useEffect(() => {
+    const root = document.getElementById('__next');
+    if (!root) return;
+    if (open) {
+      root.setAttribute('inert', '');
+    } else {
+      root.removeAttribute('inert');
+    }
+    return () => {
+      root.removeAttribute('inert');
+    };
+  }, [open]);
   return (
     <Dialog
       open={open}
