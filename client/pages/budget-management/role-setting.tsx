@@ -7,6 +7,7 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
+import Paper from '@mui/material/Paper';
 import { Layout, useToast } from '../../components';
 import { withAuth, useAuth } from '../../context/AuthContext';
 import {
@@ -73,19 +74,31 @@ function RoleSetting() {
         <Typography variant="h5" gutterBottom>
           Role Setting
         </Typography>
+        <Typography variant="body2" sx={{ mb: 2 }}>
+          Manage your roles and their levels. Press Enter or click Add to save. Click a level chip to remove it.
+        </Typography>
         <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
           <TextField
             label="New Role"
+            placeholder="Enter role name"
             value={newRole}
             onChange={e => setNewRole(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === 'Enter') handleCreateRole();
+            }}
             size="small"
           />
           <Button variant="contained" onClick={handleCreateRole}>
             Add
           </Button>
         </Box>
+        {roles.length === 0 && (
+          <Typography variant="body2" sx={{ mb: 2 }}>
+            No roles defined yet. Add one above.
+          </Typography>
+        )}
         {roles.map(r => (
-          <Box key={r._id} sx={{ mb: 2 }}>
+          <Paper key={r._id} sx={{ mb: 2, p: 2 }}>
             <Typography variant="h6">{r.name}</Typography>
             <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
               {r.levels.map(level => (
@@ -100,17 +113,21 @@ function RoleSetting() {
             <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
               <TextField
                 label="New Level"
+                placeholder="Enter level name"
                 size="small"
                 value={levelInputs[r._id] || ''}
                 onChange={e =>
                   setLevelInputs({ ...levelInputs, [r._id]: e.target.value })
                 }
+                onKeyDown={e => {
+                  if (e.key === 'Enter') handleAddLevel(r._id);
+                }}
               />
               <Button variant="outlined" onClick={() => handleAddLevel(r._id)}>
                 Add Level
               </Button>
             </Box>
-          </Box>
+          </Paper>
         ))}
       </Container>
     </Layout>
