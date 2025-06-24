@@ -46,6 +46,14 @@ function TeamSetting() {
     return `${years}y ${months}m ${days}d`;
   }
 
+  function getServiceExp(date: string | Date) {
+    const years = differenceInYears(new Date(), new Date(date));
+    if (years <= 2) return 'junior';
+    if (years <= 4) return 'intermediate';
+    if (years <= 6) return 'senior';
+    return 'advance';
+  }
+
   async function loadData() {
     const [res, pos] = await Promise.all([
       fetchResources(),
@@ -142,6 +150,21 @@ function TeamSetting() {
         if (row && row.startDate) {
           try {
             return getServiceDuration(row.startDate);
+          } catch {
+            return '';
+          }
+        }
+        return '';
+      },
+    },
+    {
+      field: 'serviceExp',
+      headerName: 'Service Exp',
+      width: 120,
+      valueGetter: (_value, row) => {
+        if (row && row.startDate) {
+          try {
+            return getServiceExp(row.startDate);
           } catch {
             return '';
           }
