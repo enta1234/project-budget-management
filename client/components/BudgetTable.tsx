@@ -34,16 +34,18 @@ export default function BudgetTable({ data, onEdit, onDelete }) {
       valueFormatter: ({ value }) =>
         typeof value === 'number' ? currencyFormatter.format(value) : value,
     },
-    {
+    (onEdit || onDelete) && {
       field: 'actions',
       headerName: 'Action',
       width: 120,
       sortable: false,
       renderCell: params => (
         <Box>
-          <IconButton size="small" onClick={() => onEdit(params.row)}>
-            <EditIcon fontSize="small" />
-          </IconButton>
+          {onEdit && (
+            <IconButton size="small" onClick={() => onEdit(params.row)}>
+              <EditIcon fontSize="small" />
+            </IconButton>
+          )}
           {onDelete && (
             <IconButton size="small" onClick={() => onDelete(params.row)}>
               <DeleteIcon fontSize="small" />
@@ -52,7 +54,7 @@ export default function BudgetTable({ data, onEdit, onDelete }) {
         </Box>
       ),
     },
-  ];
+  ].filter(Boolean);
 
   return (
     <Paper>
