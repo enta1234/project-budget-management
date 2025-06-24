@@ -85,7 +85,7 @@ export default function ResourceForm({ onSubmit, initial, submitText = 'Create' 
         label="Service Start Date"
         value={startDate}
         onChange={setStartDate}
-        renderInput={params => <TextField {...params} required />}
+        slotProps={{ textField: { required: true } }}
       />
       <Button variant="contained" type="submit" sx={{ gridColumn: 'span 2' }}>
         {submitText}
