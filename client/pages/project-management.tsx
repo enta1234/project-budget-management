@@ -144,18 +144,17 @@ function ProjectManagement() {
         return typeof index === 'number' ? index + 1 : '';
       },
     },
-    { field: 'name', headerName: 'Name', flex: 1 },
-    { field: 'description', headerName: 'Description', flex: 1 },
+    { field: 'name', headerName: 'Name', width: 160 },
     {
       field: 'lead',
       headerName: 'Lead',
-      flex: 1,
+      width: 120,
       valueGetter: (_value, row) => row.lead?.name || '',
     },
     {
       field: 'status',
       headerName: 'Status',
-      flex: 1,
+      width: 120,
       renderCell: params => (
         <StatusCell id={params.row._id} value={params.row.status || 'planing'} />
       ),
