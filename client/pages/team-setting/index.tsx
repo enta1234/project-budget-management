@@ -185,8 +185,13 @@ function TeamSetting() {
             columns={columns}
             getRowId={row => row.id}
             autoHeight
-            pageSize={25}
-            rowsPerPageOptions={[25]}
+            pageSize={10}
+            rowsPerPageOptions={[10]}
+            initialState={{
+              sorting: {
+                sortModel: [{ field: 'startDate', sort: 'asc' }],
+              },
+            }}
           />
         </Paper>
         <Popup open={open} onClose={() => setOpen(false)} title="Add Resource">

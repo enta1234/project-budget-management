@@ -22,7 +22,7 @@ export class ResourcesRepository {
   constructor(@InjectModel(Resource.name) private resourceModel: Model<Resource>) {}
 
   findAll(): Promise<Resource[]> {
-    return this.resourceModel.find().sort({ name: 1 }).exec();
+    return this.resourceModel.find().sort({ startDate: 1 }).exec();
   }
 
   create(data: CreateResourceInput): Promise<Resource> {
