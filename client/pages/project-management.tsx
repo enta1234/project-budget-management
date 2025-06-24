@@ -144,7 +144,12 @@ function ProjectManagement() {
         return typeof index === 'number' ? index + 1 : '';
       },
     },
-    { field: 'name', headerName: 'Name', width: 160 },
+    {
+      field: 'name',
+      headerName: 'Name',
+      flex: 1,
+      minWidth: 160,
+    },
     {
       field: 'lead',
       headerName: 'Lead',
