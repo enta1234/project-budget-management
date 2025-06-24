@@ -234,6 +234,7 @@ function ProjectManagement() {
             pageSize={25}
             rowsPerPageOptions={[25]}
             autoHeight
+            sx={{ width: '100%' }}
           />
         </Paper>
         <Popup open={open} onClose={() => setOpen(false)} title="Add Project">
