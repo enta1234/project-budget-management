@@ -241,11 +241,24 @@ export default function Sidebar({ open, onClose }) {
                 <ListItemIcon>
                   <GroupIcon fontSize="small" />
                 </ListItemIcon>
-                <ListItemText primary="Team" />
-              </ListItemButton>
-            </List>
-          </Collapse>
-        )}
+              <ListItemText primary="Team" />
+            </ListItemButton>
+            <ListItemButton
+              sx={{ pl: 4 }}
+              selected={router.pathname === '/team-setting/workday'}
+              onClick={() => {
+                router.push('/team-setting/workday');
+                onClose();
+              }}
+            >
+              <ListItemIcon>
+                <CalendarMonthIcon fontSize="small" />
+              </ListItemIcon>
+              <ListItemText primary="Workday" />
+            </ListItemButton>
+          </List>
+        </Collapse>
+      )}
       </List>
     </Drawer>
   );

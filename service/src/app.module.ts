@@ -11,6 +11,7 @@ import { TeamsModule } from './teams/teams.module';
 import { BudgetsModule } from './budgets/budgets.module';
 import { PositionsModule } from './positions/positions.module';
 import { RolesModule } from './roles/roles.module';
+import { WorkdaysModule } from './workdays/workdays.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { RolesModule } from './roles/roles.module';
     BudgetsModule,
     PositionsModule,
     RolesModule,
+    WorkdaysModule,
   ],
   providers: [LoggerService],
   exports: [LoggerService],
