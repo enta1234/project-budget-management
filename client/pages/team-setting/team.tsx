@@ -87,7 +87,8 @@ function TeamPage() {
       width: 120,
       valueGetter: (_value, row) => {
         if (Array.isArray(row?.members)) {
-          return row.members.length;
+          const count = row.members.length + (row.lead ? 1 : 0);
+          return count;
         }
         return '';
       },
