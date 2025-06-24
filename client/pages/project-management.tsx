@@ -24,12 +24,20 @@ function ProjectManagement() {
   const [projects, setProjects] = useState([]);
   const [users, setUsers] = useState([]);
   const [open, setOpen] = useState(false);
+  const [teams, setTeams] = useState([]);
+  const [budgets, setBudgets] = useState([]);
 
   async function loadData() {
-    const pro = await api.get('/api/v1/projects');
+    const [pro, usr, tm, bg] = await Promise.all([
+      api.get('/api/v1/projects'),
+      api.get('/api/v1/resources'),
+      api.get('/api/v1/teams'),
+      api.get('/api/v1/budgets/overview'),
+    ]);
     setProjects(pro.data);
-    const usr = await api.get('/api/v1/resources');
     setUsers(usr.data);
+    setTeams(tm.data);
+    setBudgets(bg.data);
   }
 
   useEffect(() => {
@@ -137,7 +145,12 @@ function ProjectManagement() {
           />
         </Paper>
         <Popup open={open} onClose={() => setOpen(false)} title="Add Project">
-          <ProjectForm users={users} onSubmit={handleCreate} />
+          <ProjectForm
+            users={users}
+            teams={teams}
+            budgets={budgets}
+            onSubmit={handleCreate}
+          />
         </Popup>
       </Container>
     </Layout>
