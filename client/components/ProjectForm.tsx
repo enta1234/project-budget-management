@@ -28,6 +28,7 @@ export default function ProjectForm({
   const [name, setName] = useState(initial?.name || '');
   const [description, setDescription] = useState(initial?.description || '');
   const [start, setStart] = useState(initial?.start || null);
+  const [status, setStatus] = useState(initial?.status || 'planing');
   const [lead, setLead] = useState(initial?.lead || null);
   const [members, setMembers] = useState(initial?.members || []);
   const [manday, setManday] = useState(
@@ -41,6 +42,7 @@ export default function ProjectForm({
     setLead(initial?.lead || null);
     setMembers(initial?.members || []);
     setManday(initial?.manday != null ? String(initial.manday) : '');
+    setStatus(initial?.status || 'planing');
   }, [initial]);
 
   const handleSubmit = e => {
@@ -55,6 +57,7 @@ export default function ProjectForm({
         description,
         start,
         end: start,
+        status,
         ...(manday ? { manday: Number(manday) } : {}),
         priority: 1,
         lead: lead?.id,
@@ -67,6 +70,7 @@ export default function ProjectForm({
     setLead(null);
     setMembers([]);
     setManday('');
+    setStatus('planing');
     setActive(0);
     setTeam(null);
   };
@@ -125,7 +129,7 @@ export default function ProjectForm({
       }}
     >
       <Stepper activeStep={active} sx={{ gridColumn: 'span 2' }}>
-        {['General', 'Members', 'Review'].map(label => (
+        {['General', 'Members', 'Preview'].map(label => (
           <Step key={label}>
             <StepLabel>{label}</StepLabel>
           </Step>
@@ -152,6 +156,20 @@ export default function ProjectForm({
             value={start}
             onChange={setStart}
             slotProps={{ textField: { required: true } }}
+          />
+          <Autocomplete
+            options={[
+              'planing',
+              'in progress',
+              'production',
+              'waiting payment',
+              'paid',
+            ]}
+            value={status}
+            onChange={(_, v) => setStatus(v)}
+            renderInput={params => (
+              <TextField {...params} label="Status" required />
+            )}
           />
           <TextField
             label="Manday"
@@ -194,7 +212,7 @@ export default function ProjectForm({
       {active === 2 && (
         <>
           <Typography sx={{ gridColumn: 'span 2' }} variant="h6">
-            Review
+            Preview
           </Typography>
           <Box sx={{ gridColumn: 'span 2', display: 'grid', rowGap: 1 }}>
             <Typography>
@@ -203,16 +221,19 @@ export default function ProjectForm({
             <Typography>
               <strong>Description:</strong> {description}
             </Typography>
-            <Typography>
-              <strong>Start:</strong>{' '}
-              {start ? new Date(start).toLocaleDateString() : ''}
-            </Typography>
-            <Typography>
-              <strong>Manday:</strong> {manday}
-            </Typography>
-            <Typography>
-              <strong>Lead:</strong> {lead?.name || ''}
-            </Typography>
+          <Typography>
+            <strong>Start:</strong>{' '}
+            {start ? new Date(start).toLocaleDateString() : ''}
+          </Typography>
+          <Typography>
+            <strong>Manday:</strong> {manday}
+          </Typography>
+          <Typography>
+            <strong>Status:</strong> {status}
+          </Typography>
+          <Typography>
+            <strong>Lead:</strong> {lead?.name || ''}
+          </Typography>
             <Typography>
               <strong>Members:</strong>{' '}
               {members.map(m => m.name).join(', ')}
