@@ -19,3 +19,10 @@ export async function deleteResource(id) {
   const { data } = await api.delete(`/api/v1/resources/${id}`);
   return data;
 }
+
+export async function exportResources() {
+  const { data } = await api.get('/api/v1/resources/export', {
+    responseType: 'blob',
+  });
+  return data;
+}

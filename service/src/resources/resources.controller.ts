@@ -6,7 +6,9 @@ import {
   Patch,
   Delete,
   Param,
+  Res,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { ResourcesService } from './resources.service';
 import {
   CreateResourceInput,
@@ -20,6 +22,17 @@ export class ResourcesController {
   @Get()
   getResources() {
     return this.service.getResources();
+  }
+
+  @Get('export')
+  async exportResources(@Res() res: Response) {
+    const buffer = await this.service.exportExcel();
+    res.set({
+      'Content-Type':
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'Content-Disposition': 'attachment; filename=resources.xlsx',
+    });
+    res.send(buffer);
   }
 
   @Post()
