@@ -103,12 +103,11 @@ export default function ProjectForm({
     list.forEach(r => {
       counts[r.position] = (counts[r.position] || 0) + 1;
     });
-    const rows = Object.entries(counts).map(([pos, count]) => ({
-      pos,
-      count,
-      rate: rateMap[pos] || 0,
-      cost: count * (rateMap[pos] || 0),
-    }));
+    const rows = Object.entries(counts).map(([pos, count]) => {
+      const rate = rateMap[pos] || 0;
+      const cost = count * rate * 0.83; // apply 17% reduction
+      return { pos, count, rate, cost };
+    });
     const total = rows.reduce((s, r) => s + r.cost, 0);
     return { rows, total };
   }, [lead, members, rateMap]);
