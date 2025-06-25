@@ -44,8 +44,10 @@ export default function BudgetTable({ data, onEdit, onDelete }) {
       type: 'number',
       headerAlign: 'right',
       align: 'right',
-      valueFormatter: ({ value }) =>
-        typeof value === 'number' ? currencyFormatter.format(value) : value,
+      valueFormatter: params => {
+        const value = params?.value;
+        return typeof value === 'number' ? currencyFormatter.format(value) : value;
+      },
     },
     (onEdit || onDelete) && {
       field: 'actions',
