@@ -128,16 +128,16 @@ export default function Sidebar({ open, onClose }) {
               </ListItemButton>
               <ListItemButton
                 sx={{ pl: 4 }}
-                selected={router.pathname === '/plan-management/planing-setting'}
+                selected={router.pathname === '/plan-management/planning-setting'}
                 onClick={() => {
-                  router.push('/plan-management/planing-setting');
+                  router.push('/plan-management/planning-setting');
                   onClose();
                 }}
               >
                 <ListItemIcon>
                   <CalendarMonthIcon fontSize="small" />
                 </ListItemIcon>
-                <ListItemText primary="Planing Setting" />
+                <ListItemText primary="Planning Setting" />
               </ListItemButton>
             </List>
           </Collapse>
