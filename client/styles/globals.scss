@@ -7,5 +7,10 @@ body {
 }
 
 .project-disabled {
-  opacity: 0.5;
+  background-color: #f0f0f0;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.project-disabled .restore-button {
+  color: #1976d2;
 }

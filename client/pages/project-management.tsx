@@ -266,7 +266,11 @@ function ProjectManagement() {
             <DownloadIcon fontSize="small" />
           </IconButton>
           {params.row.deleted ? (
-            <IconButton size="small" onClick={() => handleRestore(params.row)}>
+            <IconButton
+              size="small"
+              onClick={() => handleRestore(params.row)}
+              className="restore-button"
+            >
               <RestoreIcon fontSize="small" />
             </IconButton>
           ) : (
