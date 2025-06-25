@@ -10,12 +10,14 @@ import Drawer from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
+import { useRouter } from 'next/router';
 import { useAuth } from '../context/AuthContext';
 
 export default function Topbar({ onMenuClick }) {
   const { logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
   const [openProfile, setOpenProfile] = useState(false);
+  const router = useRouter();
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -52,6 +54,14 @@ export default function Topbar({ onMenuClick }) {
             }}
           >
             My Profile
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              handleClose();
+              router.push('/activity');
+            }}
+          >
+            Activity
           </MenuItem>
           <MenuItem
             onClick={() => {

@@ -12,6 +12,7 @@ import { BudgetsModule } from './budgets/budgets.module';
 import { PositionsModule } from './positions/positions.module';
 import { RolesModule } from './roles/roles.module';
 import { WorkdaysModule } from './workdays/workdays.module';
+import { ActivityLogsModule } from './activity-logs/activity-logs.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { WorkdaysModule } from './workdays/workdays.module';
     PositionsModule,
     RolesModule,
     WorkdaysModule,
+    ActivityLogsModule,
   ],
   providers: [LoggerService],
   exports: [LoggerService],
