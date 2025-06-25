@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { triggerError } from './context/ErrorContext';
 
 const api = axios.create();
 
@@ -14,5 +15,16 @@ api.interceptors.request.use(config => {
   }
   return config;
 });
+
+api.interceptors.response.use(
+  res => res,
+  err => {
+    if (err.response && err.response.status === 500) {
+      const msg = err.response.data?.message || 'Internal Server Error';
+      triggerError(msg);
+    }
+    return Promise.reject(err);
+  }
+);
 
 export default api;

@@ -7,7 +7,7 @@ import Head from 'next/head';
 import theme from '../theme';
 import { AuthProvider } from '../context/AuthContext';
 import { SidebarProvider } from '../context/SidebarContext';
-import { ToastProvider } from '../components';
+import { ToastProvider, ErrorProvider } from '../components';
 import '../styles/globals.scss';
 
 export default function MyApp({ Component, pageProps }) {
@@ -20,9 +20,11 @@ export default function MyApp({ Component, pageProps }) {
         </Head>
         <AuthProvider>
           <SidebarProvider>
-            <ToastProvider>
-              <Component {...pageProps} />
-            </ToastProvider>
+            <ErrorProvider>
+              <ToastProvider>
+                <Component {...pageProps} />
+              </ToastProvider>
+            </ErrorProvider>
           </SidebarProvider>
         </AuthProvider>
       </ThemeProvider>
