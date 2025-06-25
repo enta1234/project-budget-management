@@ -24,6 +24,8 @@ import TreeItem from '@mui/lab/TreeItem';
 import Grid from '@mui/material/Grid';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import IconButton from '@mui/material/IconButton';
+import EditIcon from '@mui/icons-material/Edit';
 import {
   Gantt,
   ViewMode,
@@ -40,6 +42,7 @@ function PlanningSetting() {
   const [members, setMembers] = useState([]);
   const [viewMode, setViewMode] = useState(ViewMode.Day);
   const [dialog, setDialog] = useState('');
+  const [editTask, setEditTask] = useState(null);
 
   useEffect(() => {
     api
@@ -97,6 +100,13 @@ function PlanningSetting() {
     await api.post('/api/v1/planning/milestones', { ...data, project: project._id });
     await refreshAll();
     setDialog('');
+  };
+
+  const handleUpdateTask = async data => {
+    if (!editTask) return;
+    await api.patch(`/api/v1/planning/tasks/${editTask._id || editTask.id}`, data);
+    await refreshAll();
+    setEditTask(null);
   };
 
   const handleDateChange = async (task: GanttTask) => {
@@ -210,6 +220,20 @@ function PlanningSetting() {
                     { field: 'duration', headerName: 'Duration', width: 100, type: 'number' },
                     { field: 'blockedBy', headerName: 'Blocked By', width: 120 },
                     { field: 'type', headerName: 'Type', width: 120 },
+                    {
+                      field: 'actions',
+                      headerName: 'Action',
+                      width: 80,
+                      renderCell: params =>
+                        params.row.type !== 'milestone' ? (
+                          <IconButton
+                            size="small"
+                            onClick={() => setEditTask(params.row)}
+                          >
+                            <EditIcon fontSize="small" />
+                          </IconButton>
+                        ) : null,
+                    },
                   ]}
                   autoHeight
                   hideFooter
@@ -286,6 +310,17 @@ function PlanningSetting() {
           )}
         <Popup open={dialog === 'task'} onClose={() => setDialog('')} title="Add Task/Feature">
           <TaskForm onSubmit={handleCreateTask} members={members} tasks={tasks} milestones={milestones} />
+        </Popup>
+        <Popup open={!!editTask} onClose={() => setEditTask(null)} title="Edit Task/Feature">
+          {editTask && (
+            <TaskForm
+              onSubmit={handleUpdateTask}
+              initial={editTask}
+              members={members}
+              tasks={tasks}
+              milestones={milestones}
+            />
+          )}
         </Popup>
         <Popup open={dialog === 'milestone'} onClose={() => setDialog('')} title="Add Milestone">
           <MilestoneForm onSubmit={handleCreateMilestone} existingDates={milestoneDates} />
