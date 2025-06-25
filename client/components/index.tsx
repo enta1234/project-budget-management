@@ -15,4 +15,5 @@ export { default as BudgetForm } from './BudgetForm';
 export { default as BudgetTable } from './BudgetTable';
 export { ToastProvider, useToast } from '../context/ToastContext';
 export { default as WorkdayForm } from './WorkdayForm';
+export { default as ConfirmDialog } from './ConfirmDialog';
 export { default as PageBreadcrumbs } from './PageBreadcrumbs';

@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import {
   Layout,
   Popup,
+  ConfirmDialog,
   BudgetForm,
   BudgetTable,
   useToast,
@@ -24,6 +25,7 @@ function BudgetManagement() {
   const { showToast } = useToast();
   const [rows, setRows] = useState([]);
   const [editRow, setEditRow] = useState(null);
+  const [deleteRow, setDeleteRow] = useState(null);
 
   async function loadData() {
     const data = await fetchBudgetOverview();
@@ -55,16 +57,19 @@ function BudgetManagement() {
     setEditRow(row);
   };
 
-  const handleDelete = async row => {
-    if (window.confirm('Delete this rate?')) {
-      try {
-        await deleteBudget(row.budgetId);
-        showToast('Rate deleted');
-        loadData();
-      } catch (e) {
-        showToast('Error deleting rate', { severity: 'error' });
-      }
+  const handleDelete = row => {
+    setDeleteRow(row);
+  };
+
+  const confirmDelete = async () => {
+    try {
+      await deleteBudget(deleteRow.budgetId);
+      showToast('Rate deleted');
+      loadData();
+    } catch (e) {
+      showToast('Error deleting rate', { severity: 'error' });
     }
+    setDeleteRow(null);
   };
 
   return (
@@ -88,6 +93,13 @@ function BudgetManagement() {
             />
           )}
         </Popup>
+        <ConfirmDialog
+          open={!!deleteRow}
+          title="Confirm Delete"
+          content="Delete this rate?"
+          onClose={() => setDeleteRow(null)}
+          onConfirm={confirmDelete}
+        />
       </Container>
     </Layout>
   );

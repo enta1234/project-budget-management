@@ -11,7 +11,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { DataGrid } from '@mui/x-data-grid';
 import api from '../../api';
-import { Layout, Popup, TeamForm, useToast, PageBreadcrumbs } from '../../components';
+import { Layout, Popup, TeamForm, useToast, ConfirmDialog, PageBreadcrumbs } from '../../components';
 import {
   fetchTeams,
   createTeam,
@@ -28,6 +28,7 @@ function TeamPage() {
   const [users, setUsers] = useState([]);
   const [open, setOpen] = useState(false);
   const [editRow, setEditRow] = useState(null);
+  const [deleteRow, setDeleteRow] = useState(null);
 
   async function loadData() {
     const [t, u] = await Promise.all([
@@ -66,16 +67,19 @@ function TeamPage() {
     }
   };
 
-  const handleDelete = async row => {
-    if (window.confirm('Delete this team?')) {
-      try {
-        await deleteTeam(row._id);
-        showToast('Team deleted');
-        loadData();
-      } catch (e) {
-        showToast('Error deleting team', { severity: 'error' });
-      }
+  const handleDelete = row => {
+    setDeleteRow(row);
+  };
+
+  const confirmDelete = async () => {
+    try {
+      await deleteTeam(deleteRow._id);
+      showToast('Team deleted');
+      loadData();
+    } catch (e) {
+      showToast('Error deleting team', { severity: 'error' });
     }
+    setDeleteRow(null);
   };
 
   const columns = [
@@ -162,6 +166,13 @@ function TeamPage() {
             />
           )}
         </Popup>
+        <ConfirmDialog
+          open={!!deleteRow}
+          title="Confirm Delete"
+          content="Delete this team?"
+          onClose={() => setDeleteRow(null)}
+          onConfirm={confirmDelete}
+        />
       </Container>
     </Layout>
   );
