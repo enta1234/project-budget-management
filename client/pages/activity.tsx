@@ -10,7 +10,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
 import TextField from '@mui/material/TextField';
 import { DataGrid } from '@mui/x-data-grid';
-import { Layout, PageBreadcrumbs } from '../components';
+import { Layout, PageBreadcrumbs, PageLoading } from '../components';
 import { withAuth } from '../context/AuthContext';
 import { fetchActivityLogs } from '../models/activityLogModel';
 
@@ -18,9 +18,14 @@ function ActivityPage() {
   const [logs, setLogs] = useState([]);
   const [methodFilter, setMethodFilter] = useState('');
   const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchActivityLogs().then(setLogs).catch(console.error);
+    setLoading(true);
+    fetchActivityLogs()
+      .then(setLogs)
+      .catch(console.error)
+      .finally(() => setLoading(false));
   }, []);
 
   const methods = useMemo(() => {
@@ -92,17 +97,21 @@ function ActivityPage() {
             onChange={e => setSearch(e.target.value)}
           />
         </Box>
-        <Paper>
-          <DataGrid
-            rows={filteredLogs}
-            columns={columns}
-            getRowId={row => row._id}
-            autoHeight
-            pageSize={25}
-            rowsPerPageOptions={[25]}
-            sx={{ width: '100%' }}
-          />
-        </Paper>
+        {loading ? (
+          <PageLoading />
+        ) : (
+          <Paper>
+            <DataGrid
+              rows={filteredLogs}
+              columns={columns}
+              getRowId={row => row._id}
+              autoHeight
+              pageSize={25}
+              rowsPerPageOptions={[25]}
+              sx={{ width: '100%' }}
+            />
+          </Paper>
+        )}
       </Container>
     </Layout>
   );

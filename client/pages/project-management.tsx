@@ -25,7 +25,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Chip from '@mui/material/Chip';
 import api from '../api';
-import { Layout, Popup, ProjectForm, useToast, ConfirmDialog, PageBreadcrumbs } from '../components';
+import { Layout, Popup, ProjectForm, useToast, ConfirmDialog, PageBreadcrumbs, PageLoading } from '../components';
 import { withAuth, useAuth } from '../context/AuthContext';
 
 const statusOptions = [
@@ -91,25 +91,31 @@ function ProjectManagement() {
   const [teams, setTeams] = useState([]);
   const [budgets, setBudgets] = useState([]);
   const [deleteRow, setDeleteRow] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   async function loadData() {
-    const [pro, usr, tm, bg] = await Promise.all([
-      api.get('/api/v1/projects'),
-      api.get('/api/v1/resources'),
-      api.get('/api/v1/teams'),
-      api.get('/api/v1/budgets/overview'),
-    ]);
-    const cleaned = pro.data.map((p: any) => {
-      if (typeof p.onClick !== 'undefined') {
-        const { onClick, ...rest } = p;
-        return rest;
-      }
-      return p;
-    });
-    setProjects(cleaned);
-    setUsers(usr.data);
-    setTeams(tm.data);
-    setBudgets(bg.data);
+    try {
+      setLoading(true);
+      const [pro, usr, tm, bg] = await Promise.all([
+        api.get('/api/v1/projects'),
+        api.get('/api/v1/resources'),
+        api.get('/api/v1/teams'),
+        api.get('/api/v1/budgets/overview'),
+      ]);
+      const cleaned = pro.data.map((p: any) => {
+        if (typeof p.onClick !== 'undefined') {
+          const { onClick, ...rest } = p;
+          return rest;
+        }
+        return p;
+      });
+      setProjects(cleaned);
+      setUsers(usr.data);
+      setTeams(tm.data);
+      setBudgets(bg.data);
+    } finally {
+      setLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -304,18 +310,24 @@ function ProjectManagement() {
           </Button>
         </Box>
         <PageBreadcrumbs items={[{ label: 'Project Management' }]} />
-        <Paper>
-          <DataGrid
-            rows={projects}
-            columns={columns}
-            getRowId={row => row._id}
-            getRowClassName={params => (params.row.deleted ? 'project-disabled' : '')}
-            pageSize={25}
-            rowsPerPageOptions={[25]}
-            autoHeight
-            sx={{ width: '100%' }}
-          />
-        </Paper>
+        {loading ? (
+          <PageLoading />
+        ) : (
+          <Paper>
+            <DataGrid
+              rows={projects}
+              columns={columns}
+              getRowId={row => row._id}
+              getRowClassName={params =>
+                params.row.deleted ? 'project-disabled' : ''
+              }
+              pageSize={25}
+              rowsPerPageOptions={[25]}
+              autoHeight
+              sx={{ width: '100%' }}
+            />
+          </Paper>
+        )}
         <Popup open={open} onClose={() => setOpen(false)} title="Add Project">
           <ProjectForm
             users={users}
