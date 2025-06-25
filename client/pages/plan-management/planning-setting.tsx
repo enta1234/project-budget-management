@@ -250,7 +250,17 @@ function PlanningSetting() {
                     </TreeView>
                   </Grid>
                   <Grid item xs={8}>
-                    <Gantt tasks={ganttTasks} viewMode={viewMode} onDateChange={handleDateChange} />
+                    {ganttTasks.length > 0 ? (
+                      <Gantt
+                        tasks={ganttTasks}
+                        viewMode={viewMode}
+                        onDateChange={handleDateChange}
+                      />
+                    ) : (
+                      <Typography variant="body2" align="center">
+                        No schedule data
+                      </Typography>
+                    )}
                   </Grid>
                 </Grid>
               </Paper>
