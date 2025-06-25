@@ -181,9 +181,7 @@ function ProjectManagement() {
       minWidth: 80,
       renderCell: params => (
           <>
-          <Typography>
-            { params.value }
-          </Typography>
+          { params.value }
           {params.row.deleted && params.row.deletedAt && (
             <Typography variant="caption" color="error">
               {`will be deleted on ${format(new Date(params.row.deletedAt), 'yyyy-MM-dd')}`}
