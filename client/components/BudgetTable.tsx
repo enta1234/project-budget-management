@@ -18,6 +18,9 @@ export default function BudgetTable({ data, onEdit, onDelete }) {
       headerName: 'No.',
       width: 70,
       sortable: false,
+      type: 'number',
+      headerAlign: 'right',
+      align: 'right',
       valueGetter: (_value, row, _col, api) => {
         if (!api) return '';
         const index = api.current.getRowIndexRelativeToVisibleRows(row.id);
@@ -26,11 +29,21 @@ export default function BudgetTable({ data, onEdit, onDelete }) {
     },
     { field: 'role', headerName: 'Role', flex: 1 },
     { field: 'level', headerName: 'Level', width: 130 },
-    { field: 'count', headerName: 'Count', width: 100 },
+    {
+      field: 'count',
+      headerName: 'Count',
+      width: 100,
+      type: 'number',
+      headerAlign: 'right',
+      align: 'right',
+    },
     {
       field: 'rate',
       headerName: 'Baht/MD',
       width: 120,
+      type: 'number',
+      headerAlign: 'right',
+      align: 'right',
       valueFormatter: ({ value }) =>
         typeof value === 'number' ? currencyFormatter.format(value) : value,
     },

@@ -134,6 +134,9 @@ function TeamSetting() {
       headerName: 'No.',
       width: 70,
       sortable: false,
+      type: 'number',
+      headerAlign: 'right',
+      align: 'right',
       valueGetter: (_value, row, _col, api) => {
         if (!api) return '';
         const index = api.current.getRowIndexRelativeToVisibleRows(row.id);
