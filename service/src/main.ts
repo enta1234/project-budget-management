@@ -3,6 +3,8 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { LoggingInterceptor } from './logger/logging.interceptor';
 import { LoggerService } from './logger/logger.service';
+import { ActivityLogsService } from './activity-logs/activity-logs.service';
+import { ActivityLogsInterceptor } from './activity-logs/activity-logs.interceptor';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
@@ -11,7 +13,11 @@ async function bootstrap() {
   app.enableCors();
   app.setGlobalPrefix('api/v1');
   const logger = app.get(LoggerService);
-  app.useGlobalInterceptors(new LoggingInterceptor(logger));
+  const activityLogs = app.get(ActivityLogsService);
+  app.useGlobalInterceptors(
+    new LoggingInterceptor(logger),
+    new ActivityLogsInterceptor(activityLogs),
+  );
   if (process.env.NODE_ENV !== 'production') {
     const swaggerConfig = new DocumentBuilder()
       .setTitle('Budget Management API')
