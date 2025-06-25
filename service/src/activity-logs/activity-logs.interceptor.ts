@@ -2,6 +2,7 @@ import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nes
 import { Observable } from 'rxjs';
 import { tap, catchError } from 'rxjs/operators';
 import { ActivityLogsService } from './activity-logs.service';
+import { getActivityDescription } from './activity.constants';
 
 @Injectable()
 export class ActivityLogsInterceptor implements NestInterceptor {
@@ -16,22 +17,28 @@ export class ActivityLogsInterceptor implements NestInterceptor {
     return next.handle().pipe(
       tap(() => {
         const processTime = Date.now() - start;
+        const { name, detail } = getActivityDescription(method, url);
         this.logsService.create({
           method,
           url,
           body,
           statusCode: res.statusCode,
           processTime,
+          name,
+          detail,
         });
       }),
       catchError(err => {
         const processTime = Date.now() - start;
+        const { name, detail } = getActivityDescription(method, url);
         this.logsService.create({
           method,
           url,
           body,
           statusCode: res.statusCode,
           processTime,
+          name,
+          detail,
         });
         throw err;
       }),
