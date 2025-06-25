@@ -2,36 +2,115 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Project } from './project.schema';
+import { IsString, IsOptional, IsNumber, IsArray, IsDate } from 'class-validator';
+import { Type } from 'class-transformer';
 
-export interface CreateProjectInput {
-  name: string;
+export class CreateProjectInput {
+  @IsString()
+  name!: string;
+
+  @IsOptional()
+  @IsString()
   description?: string;
-  resources: number;
-  start: Date;
-  end: Date;
+
+  @IsNumber()
+  resources!: number;
+
+  @Type(() => Date)
+  @IsDate()
+  start!: Date;
+
+  @Type(() => Date)
+  @IsDate()
+  end!: Date;
+
+  @IsOptional()
+  @IsNumber()
   manday?: number;
+
+  @IsOptional()
+  @IsNumber()
   sprintLength?: number;
-  priority: number;
+
+  @IsNumber()
+  priority!: number;
+
+  @IsOptional()
+  @IsString()
   lead?: string;
+
+  @IsOptional()
+  @IsString()
   status?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   members?: string[];
+
+  @IsOptional()
   deleted?: boolean;
+
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
   deletedAt?: Date;
 }
 
-export interface UpdateProjectInput {
+export class UpdateProjectInput {
+  @IsOptional()
+  @IsString()
   name?: string;
+
+  @IsOptional()
+  @IsString()
   description?: string;
+
+  @IsOptional()
+  @IsNumber()
   resources?: number;
+
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
   start?: Date;
+
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
   end?: Date;
+
+  @IsOptional()
+  @IsNumber()
   manday?: number;
+
+  @IsOptional()
+  @IsNumber()
   sprintLength?: number;
+
+  @IsOptional()
+  @IsNumber()
   priority?: number;
+
+  @IsOptional()
+  @IsString()
   lead?: string;
+
+  @IsOptional()
+  @IsString()
   status?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   members?: string[];
+
+  @IsOptional()
   deleted?: boolean;
+
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
   deletedAt?: Date;
 }
 

@@ -2,29 +2,89 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Task } from './task.schema';
+import { IsString, IsOptional, IsBoolean, IsNumber } from 'class-validator';
+import { Type } from 'class-transformer';
 
-export interface CreateTaskInput {
-  project: Types.ObjectId;
+export class CreateTaskInput {
+  @Type(() => String)
+  @IsString()
+  project!: Types.ObjectId;
+
+  @IsOptional()
+  @Type(() => String)
+  @IsString()
   phase?: Types.ObjectId;
-  name: string;
+
+  @IsString()
+  name!: string;
+
+  @IsOptional()
+  @IsBoolean()
   isFeature?: boolean;
+
+  @IsOptional()
+  @IsString()
   detail?: string;
+
+  @IsOptional()
+  @Type(() => Date)
   startDate?: Date;
+
+  @IsOptional()
+  @Type(() => Date)
   endDate?: Date;
+
+  @IsOptional()
+  @IsString()
   owner?: string;
+
+  @IsOptional()
+  @IsNumber()
   manday?: number;
+
+  @IsOptional()
+  @Type(() => String)
+  @IsString()
   blockedBy?: Types.ObjectId;
 }
 
-export interface UpdateTaskInput {
+export class UpdateTaskInput {
+  @IsOptional()
+  @Type(() => String)
+  @IsString()
   phase?: Types.ObjectId;
+
+  @IsOptional()
+  @IsString()
   name?: string;
+
+  @IsOptional()
+  @IsBoolean()
   isFeature?: boolean;
+
+  @IsOptional()
+  @IsString()
   detail?: string;
-  startDate?: Date;
+
+  @IsOptional()
+  @Type(() => Date)
   endDate?: Date;
+
+  @IsOptional()
+  @Type(() => Date)
+  startDate?: Date;
+
+  @IsOptional()
+  @IsString()
   owner?: string;
+
+  @IsOptional()
+  @IsNumber()
   manday?: number;
+
+  @IsOptional()
+  @Type(() => String)
+  @IsString()
   blockedBy?: Types.ObjectId;
 }
 

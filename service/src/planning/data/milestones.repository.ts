@@ -2,17 +2,38 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Milestone } from './milestone.schema';
+import { IsString, IsOptional, IsDate } from 'class-validator';
+import { Type } from 'class-transformer';
 
-export interface CreateMilestoneInput {
-  project: Types.ObjectId;
-  name: string;
-  date: Date;
+export class CreateMilestoneInput {
+  @Type(() => String)
+  @IsString()
+  project!: Types.ObjectId;
+
+  @IsString()
+  name!: string;
+
+  @Type(() => Date)
+  @IsDate()
+  date!: Date;
+
+  @IsOptional()
+  @IsString()
   detail?: string;
 }
 
-export interface UpdateMilestoneInput {
+export class UpdateMilestoneInput {
+  @IsOptional()
+  @IsString()
   name?: string;
+
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
   date?: Date;
+
+  @IsOptional()
+  @IsString()
   detail?: string;
 }
 

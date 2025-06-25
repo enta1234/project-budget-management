@@ -2,16 +2,34 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Team } from './team.schema';
+import { IsString, IsOptional, IsArray } from 'class-validator';
 
-export interface CreateTeamInput {
-  name: string;
+export class CreateTeamInput {
+  @IsString()
+  name!: string;
+
+  @IsOptional()
+  @IsString()
   lead?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   members?: string[];
 }
 
-export interface UpdateTeamInput {
+export class UpdateTeamInput {
+  @IsOptional()
+  @IsString()
   name?: string;
+
+  @IsOptional()
+  @IsString()
   lead?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
   members?: string[];
 }
 

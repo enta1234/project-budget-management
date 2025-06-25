@@ -2,14 +2,26 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Workday } from './workday.schema';
+import { IsString, IsDate, IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
 
-export interface CreateWorkdayInput {
-  name: string;
-  date: Date;
+export class CreateWorkdayInput {
+  @IsString()
+  name!: string;
+
+  @Type(() => Date)
+  @IsDate()
+  date!: Date;
 }
 
-export interface UpdateWorkdayInput {
+export class UpdateWorkdayInput {
+  @IsOptional()
+  @IsString()
   name?: string;
+
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
   date?: Date;
 }
 
