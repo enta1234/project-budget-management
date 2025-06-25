@@ -10,11 +10,13 @@ import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import ArrowBackIosNew from '@mui/icons-material/ArrowBackIosNew';
 import { DataGrid } from '@mui/x-data-grid';
-import { BarChart, PieChart } from '@mui/x-charts';
+import { BarChart } from '@mui/x-charts';
+import Chip from '@mui/material/Chip';
 import api from '../../api';
 import { Layout, Popup, ProjectForm, useToast } from '../../components';
 import { withAuth } from '../../context/AuthContext';
-import { differenceInDays, addDays, format } from 'date-fns';
+import { differenceInDays, addDays, format, isAfter } from 'date-fns';
+import { fetchWorkdays } from '../../models/workdayModel';
 
 function ProjectDetail() {
   const router = useRouter();
@@ -24,6 +26,7 @@ function ProjectDetail() {
   const [users, setUsers] = useState([]);
   const [teams, setTeams] = useState([]);
   const [budgets, setBudgets] = useState([]);
+  const [holidays, setHolidays] = useState<Record<string, boolean>>({});
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -42,40 +45,95 @@ function ProjectDetail() {
     }
   }, [id]);
 
+  useEffect(() => {
+    async function loadWorkdays() {
+      if (!project?.start) return;
+      const startYear = new Date(project.start).getFullYear();
+      const endYear = new Date().getFullYear();
+      const years = [] as number[];
+      for (let y = startYear; y <= endYear; y++) years.push(y);
+      const data = await Promise.all(years.map(y => fetchWorkdays(y)));
+      const map: Record<string, boolean> = {};
+      data.flat().forEach(d => {
+        const key = new Date(d.date).toISOString().split('T')[0];
+        map[key] = true;
+      });
+      setHolidays(map);
+    }
+    loadWorkdays();
+  }, [project?.start]);
+
   const members = users.filter(u => project?.members?.includes(u.id));
   const leadResource = users.find(u => u.id === project?.lead?._id);
   const memberList = [...(leadResource ? [leadResource] : []), ...members];
   const uniqueMembers = memberList.filter(
     (m, idx) => memberList.findIndex(u => u.id === m.id) === idx,
   );
-  const resourceCount = uniqueMembers.length;
-  const days = project?.start
-    ? differenceInDays(new Date(), new Date(project.start)) + 1
-    : 0;
-  const dailyData = Array.from({ length: days }, (_, i) => {
-    const date = addDays(new Date(project.start), i);
-    const manday = resourceCount;
-    return {
-      day: format(date, 'MM-dd'),
-      manday,
-      money: manday * 100,
-    };
-  });
-  const roleMap = {} as Record<string, number>;
-  uniqueMembers.forEach(m => {
-    const key = m.position.replace('_', ' ');
-    roleMap[key] = (roleMap[key] || 0) + 1;
-  });
-  const roleData = Object.entries(roleMap).map(([label, value]) => ({
-    label,
-    value,
+  const memberRows = uniqueMembers.map(m => ({
+    ...m,
+    isLead: m.id === project?.lead?._id,
   }));
+  const resourceCount = uniqueMembers.length;
+  const rateMap = budgets.reduce((m, b) => {
+    m[b.id] = b.rate;
+    return m;
+  }, {} as Record<string, number>);
+  const dailyCost = uniqueMembers.reduce(
+    (s, r) => s + (rateMap[r.position] || 0),
+    0,
+  );
+  const workStart = project?.start ? new Date(project.start) : null;
+  const workEnd = project?.end ? new Date(project.end) : new Date();
+  const lastDay = workEnd && isAfter(workEnd, new Date()) ? new Date() : workEnd;
+  const diff = workStart && lastDay ? differenceInDays(lastDay, workStart) + 1 : 0;
+  const dailyData = [] as { day: string; manday: number; money: number }[];
+  const roleCounts = {} as Record<string, number>;
+  uniqueMembers.forEach(m => {
+    roleCounts[m.position] = (roleCounts[m.position] || 0) + 1;
+  });
+  for (let i = 0; i < diff; i++) {
+    const date = addDays(workStart as Date, i);
+    const key = date.toISOString().split('T')[0];
+    if (holidays[key]) continue;
+    dailyData.push({
+      day: format(date, 'MM-dd'),
+      manday: resourceCount,
+      money: dailyCost,
+    });
+  }
+  const totalMandayUsed = dailyData.reduce((s, d) => s + d.manday, 0);
+  const totalMoneyUsed = dailyData.reduce((s, d) => s + d.money, 0);
+  const roleSlugs = Object.keys(roleCounts);
+  const roleSeries = roleSlugs.map(s => ({ dataKey: s, label: s.replace('_', ' ') }));
+  const roleDailyData = dailyData.map(d => {
+    const entry: any = { day: d.day };
+    roleSlugs.forEach(slug => {
+      entry[slug] = roleCounts[slug];
+    });
+    return entry;
+  });
+
 
   const memberColumns = [
-    { field: 'name', headerName: 'Name', flex: 1 },
+    {
+      field: 'name',
+      headerName: 'Name',
+      flex: 1,
+      renderCell: params => (
+        <>
+          {params.row.name}
+          {params.row.isLead && <Chip label="Lead" size="small" sx={{ ml: 1 }} />}
+        </>
+      ),
+    },
     { field: 'email', headerName: 'Email', flex: 1 },
     { field: 'position', headerName: 'Position', flex: 1 },
   ];
+
+  const currencyFormatter = new Intl.NumberFormat('th-TH', {
+    style: 'currency',
+    currency: 'THB',
+  });
 
   const handleSave = async data => {
     try {
@@ -156,37 +214,43 @@ function ProjectDetail() {
             <Typography variant="h6" gutterBottom>
               Manday & Money Usage Per Day
             </Typography>
+            <Typography variant="body2">
+              Total Manday Used: {totalMandayUsed}
+            </Typography>
+            <Typography variant="body2" gutterBottom>
+              Total Cost Spent: {currencyFormatter.format(totalMoneyUsed)}
+            </Typography>
             <BarChart
               height={300}
               dataset={dailyData}
               xAxis={[{ dataKey: 'day', scaleType: 'band' }]}
               series={[
                 { dataKey: 'manday', label: 'Manday' },
-                { dataKey: 'money', label: 'Money' },
+                { dataKey: 'money', label: 'Cost' },
               ]}
             />
           </Paper>
         )}
-        {roleData.length > 0 && (
+        {roleSeries.length > 0 && (
           <Paper sx={{ mt: 2, p: 2 }}>
             <Typography variant="h6" gutterBottom>
               Manday By Role & Level
             </Typography>
-            <PieChart
-              height={200}
-              series={[{
-                data: roleData.map(r => ({ id: r.label, value: r.value, label: r.label }))
-              }]}
+            <BarChart
+              height={300}
+              dataset={roleDailyData}
+              xAxis={[{ dataKey: 'day', scaleType: 'band' }]}
+              series={roleSeries}
             />
           </Paper>
         )}
-        {uniqueMembers.length > 0 && (
+        {memberRows.length > 0 && (
           <Paper sx={{ mt: 2 }}>
             <Typography variant="h6" sx={{ p: 2 }}>
               Members
             </Typography>
           <DataGrid
-            rows={uniqueMembers}
+            rows={memberRows}
             columns={memberColumns}
             autoHeight
             pageSize={25}
