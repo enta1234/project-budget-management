@@ -176,12 +176,18 @@ function ProjectManagement() {
       field: 'totalMember',
       headerName: 'Team Size',
       width: 120,
+      type: 'number',
+      headerAlign: 'right',
+      align: 'right',
       valueGetter: (_value, row) => row.resources ?? row.members?.length ?? 0,
     },
     {
       field: 'actualManday',
       headerName: 'Actual Mandays',
       width: 160,
+      type: 'number',
+      headerAlign: 'right',
+      align: 'right',
       valueGetter: (_value, row) =>
         row.start && row.resources
           ? differenceInDays(new Date(), new Date(row.start)) * row.resources
@@ -191,6 +197,9 @@ function ProjectManagement() {
       field: 'manday',
       headerName: 'Estimated Mandays',
       width: 150,
+      type: 'number',
+      headerAlign: 'right',
+      align: 'right',
     },
     {
       field: 'start',

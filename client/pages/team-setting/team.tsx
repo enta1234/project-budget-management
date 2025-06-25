@@ -85,6 +85,9 @@ function TeamPage() {
       field: 'totalMember',
       headerName: 'Total Member',
       width: 120,
+      type: 'number',
+      headerAlign: 'right',
+      align: 'right',
       valueGetter: (_value, row) => {
         if (Array.isArray(row?.members)) {
           const count = row.members.length + (row.lead ? 1 : 0);
