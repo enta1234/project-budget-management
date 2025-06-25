@@ -20,12 +20,25 @@ import TimelineSeparator from '@mui/lab/TimelineSeparator';
 import TimelineConnector from '@mui/lab/TimelineConnector';
 import TimelineContent from '@mui/lab/TimelineContent';
 import TimelineDot from '@mui/lab/TimelineDot';
+import TreeView from '@mui/lab/TreeView';
+import TreeItem from '@mui/lab/TreeItem';
+import Grid from '@mui/material/Grid';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
+import {
+  Gantt,
+  ViewMode,
+  Task as GanttTask,
+} from 'gantt-task-react';
+import 'gantt-task-react/dist/index.css';
 
 function PlanningSetting() {
   const [projects, setProjects] = useState([]);
   const [project, setProject] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [milestones, setMilestones] = useState([]);
+  const [phases, setPhases] = useState([]);
+  const [viewMode, setViewMode] = useState(ViewMode.Day);
   const [dialog, setDialog] = useState('');
 
   useEffect(() => {
@@ -38,6 +51,7 @@ function PlanningSetting() {
   useEffect(() => {
     if (!project) return;
     const pid = project._id || project.id;
+    api.get('/api/v1/planning/phases', { params: { project: pid } }).then(res => setPhases(res.data));
     api.get('/api/v1/planning/tasks', { params: { project: pid } }).then(res => setTasks(res.data));
     api.get('/api/v1/planning/milestones', { params: { project: pid } }).then(res => setMilestones(res.data));
   }, [project]);
@@ -45,10 +59,12 @@ function PlanningSetting() {
   const refreshAll = async () => {
     if (!project) return;
     const pid = project._id || project.id;
-    const [t, m] = await Promise.all([
+    const [p, t, m] = await Promise.all([
+      api.get('/api/v1/planning/phases', { params: { project: pid } }),
       api.get('/api/v1/planning/tasks', { params: { project: pid } }),
       api.get('/api/v1/planning/milestones', { params: { project: pid } }),
     ]);
+    setPhases(p.data);
     setTasks(t.data);
     setMilestones(m.data);
   };
@@ -65,7 +81,50 @@ function PlanningSetting() {
     setDialog('');
   };
 
+  const handleDateChange = async (task: GanttTask) => {
+    if (task.type !== 'task') return;
+    await api.patch(`/api/v1/planning/tasks/${task.id}`, {
+      startDate: task.start,
+      endDate: task.end,
+    });
+    await refreshAll();
+  };
+
   const milestoneDates = milestones.map(m => new Date(m.date).toDateString());
+
+  const taskStatus = t => {
+    const now = new Date();
+    const start = t.startDate ? new Date(t.startDate) : null;
+    const end = t.endDate ? new Date(t.endDate) : null;
+    if (end && end.getTime() < now.getTime()) return 'late';
+    if (start && start.getTime() > now.getTime()) return 'not-started';
+    if (start && end && start.getTime() <= now.getTime() && end.getTime() >= now.getTime()) return 'in-progress';
+    return 'not-started';
+  };
+
+  const statusColor = status =>
+    ({ 'not-started': 'grey', 'in-progress': '#2196f3', late: 'red' }[status] || 'grey');
+
+  const ganttTasks: GanttTask[] = [
+    ...tasks.map(t => ({
+      start: t.startDate ? new Date(t.startDate) : new Date(),
+      end: t.endDate ? new Date(t.endDate) : new Date(),
+      name: t.name,
+      id: t._id || t.id,
+      type: 'task',
+      progress: 0,
+      dependencies: t.blockedBy ? [String(t.blockedBy)] : [],
+      styles: { backgroundColor: statusColor(taskStatus(t)) },
+    })),
+    ...milestones.map(m => ({
+      start: new Date(m.date),
+      end: new Date(m.date),
+      name: m.name,
+      id: m._id || m.id,
+      type: 'milestone',
+      progress: 0,
+    })),
+  ];
 
   return (
     <Layout>
@@ -142,25 +201,56 @@ function PlanningSetting() {
               </Paper>
             </Box>
             <Box>
-              <Typography variant="h6" sx={{ mb: 1 }}>Timeline</Typography>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                <Typography variant="h6">Schedule</Typography>
+                <ToggleButtonGroup
+                  value={viewMode}
+                  exclusive
+                  onChange={(_, v) => v && setViewMode(v)}
+                  size="small"
+                >
+                  <ToggleButton value={ViewMode.Day}>Day</ToggleButton>
+                  <ToggleButton value={ViewMode.Week}>Week</ToggleButton>
+                  <ToggleButton value={ViewMode.Month}>Month</ToggleButton>
+                </ToggleButtonGroup>
+              </Box>
               <Paper sx={{ p: 2 }}>
-                <Timeline>
-                  {[...tasks.map(t => ({ type: 'task', date: t.startDate || t.endDate, title: t.name })),
-                    ...milestones.map(m => ({ type: 'milestone', date: m.date, title: m.name }))]
-                    .filter(i => i.date)
-                    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-                    .map((item, idx, arr) => (
-                      <TimelineItem key={idx}>
-                        <TimelineSeparator>
-                          <TimelineDot />
-                          {idx < arr.length - 1 && <TimelineConnector />}
-                        </TimelineSeparator>
-                        <TimelineContent>
-                          {item.title} - {new Date(item.date).toLocaleDateString()}
-                        </TimelineContent>
-                      </TimelineItem>
-                    ))}
-                </Timeline>
+                <Grid container spacing={2}>
+                  <Grid item xs={4} sx={{ maxHeight: 400, overflow: 'auto' }}>
+                    <TreeView>
+                      {phases.map(ph => (
+                        <TreeItem nodeId={String(ph._id || ph.id)} label={ph.name} key={ph._id || ph.id}>
+                          {tasks
+                            .filter(t => String(t.phase) === String(ph._id || ph.id))
+                            .map(t => (
+                              <TreeItem
+                                nodeId={`task-${t._id || t.id}`}
+                                key={t._id || t.id}
+                                label={`${t.name} (${t.startDate ? new Date(t.startDate).toLocaleDateString() : ''} - ${t.endDate ? new Date(t.endDate).toLocaleDateString() : ''})`}
+                              />
+                            ))}
+                        </TreeItem>
+                      ))}
+                      {tasks.filter(t => !t.phase).map(t => (
+                        <TreeItem
+                          nodeId={`task-${t._id || t.id}`}
+                          key={t._id || t.id}
+                          label={`${t.name} (${t.startDate ? new Date(t.startDate).toLocaleDateString() : ''} - ${t.endDate ? new Date(t.endDate).toLocaleDateString() : ''})`}
+                        />
+                      ))}
+                      {milestones.map(m => (
+                        <TreeItem
+                          nodeId={`milestone-${m._id || m.id}`}
+                          key={`m-${m._id || m.id}`}
+                          label={`${m.name} (${new Date(m.date).toLocaleDateString()})`}
+                        />
+                      ))}
+                    </TreeView>
+                  </Grid>
+                  <Grid item xs={8}>
+                    <Gantt tasks={ganttTasks} viewMode={viewMode} onDateChange={handleDateChange} />
+                  </Grid>
+                </Grid>
               </Paper>
             </Box>
           </Stack>
