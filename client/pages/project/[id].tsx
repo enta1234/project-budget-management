@@ -13,7 +13,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import { BarChart } from '@mui/x-charts';
 import Chip from '@mui/material/Chip';
 import api from '../../api';
-import { Layout, Popup, ProjectForm, useToast } from '../../components';
+import { Layout, Popup, ProjectForm, useToast, PageLoading } from '../../components';
 import { withAuth } from '../../context/AuthContext';
 import { differenceInDays, addDays, format, isAfter } from 'date-fns';
 import { fetchWorkdays } from '../../models/workdayModel';
@@ -155,7 +155,7 @@ function ProjectDetail() {
     return (
       <Layout>
         <Container maxWidth={false} sx={{ mt: 4 }}>
-          <Typography>Loading...</Typography>
+          <PageLoading />
         </Container>
       </Layout>
     );
