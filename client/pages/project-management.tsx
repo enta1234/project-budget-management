@@ -97,7 +97,14 @@ function ProjectManagement() {
       api.get('/api/v1/teams'),
       api.get('/api/v1/budgets/overview'),
     ]);
-    setProjects(pro.data);
+    const cleaned = pro.data.map((p: any) => {
+      if (typeof p.onClick !== 'undefined') {
+        const { onClick, ...rest } = p;
+        return rest;
+      }
+      return p;
+    });
+    setProjects(cleaned);
     setUsers(usr.data);
     setTeams(tm.data);
     setBudgets(bg.data);
