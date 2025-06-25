@@ -15,6 +15,7 @@ export { default as ProjectForm } from './ProjectForm';
 export { default as BudgetForm } from './BudgetForm';
 export { default as BudgetTable } from './BudgetTable';
 export { ToastProvider, useToast } from '../context/ToastContext';
+export { ErrorProvider } from '../context/ErrorContext';
 export { default as WorkdayForm } from './WorkdayForm';
 export { default as ConfirmDialog } from './ConfirmDialog';
 export { default as PageBreadcrumbs } from './PageBreadcrumbs';
