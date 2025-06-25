@@ -13,6 +13,7 @@ import { PositionsModule } from './positions/positions.module';
 import { RolesModule } from './roles/roles.module';
 import { WorkdaysModule } from './workdays/workdays.module';
 import { ActivityLogsModule } from './activity-logs/activity-logs.module';
+import { PlanningModule } from './planning/planning.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { ActivityLogsModule } from './activity-logs/activity-logs.module';
     RolesModule,
     WorkdaysModule,
     ActivityLogsModule,
+    PlanningModule,
   ],
   providers: [LoggerService],
   exports: [LoggerService],
