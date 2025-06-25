@@ -7,7 +7,6 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
-import Stack from '@mui/material/Stack';
 import { Layout, PageBreadcrumbs, Popup } from '../../components';
 import { withAuth } from '../../context/AuthContext';
 import api from '../../api';
@@ -151,8 +150,8 @@ function PlanningSetting() {
           />
         </Paper>
         {project && (
-          <Stack spacing={2}>
-            <Box>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                 <Typography variant="h6">Tasks / Features</Typography>
                 <Button variant="contained" onClick={() => setDialog('task')}>Add</Button>
@@ -180,8 +179,8 @@ function PlanningSetting() {
                   hideFooter
                 />
               </Paper>
-            </Box>
-            <Box>
+            </Grid>
+            <Grid item xs={12} md={6}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                 <Typography variant="h6">Milestones</Typography>
                 <Button variant="contained" onClick={() => setDialog('milestone')}>Add Milestone</Button>
@@ -201,8 +200,8 @@ function PlanningSetting() {
                   hideFooter
                 />
               </Paper>
-            </Box>
-            <Box>
+            </Grid>
+            <Grid item xs={12}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                 <Typography variant="h6">Schedule</Typography>
                 <ToggleButtonGroup
@@ -265,7 +264,7 @@ function PlanningSetting() {
                 </Grid>
               </Paper>
             </Box>
-          </Stack>
+          </Grid>
         )}
         <Popup open={dialog === 'task'} onClose={() => setDialog('')} title="Add Task/Feature">
           <TaskForm onSubmit={handleCreateTask} />
