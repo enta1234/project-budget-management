@@ -7,11 +7,13 @@ export interface CreateMilestoneInput {
   project: Types.ObjectId;
   name: string;
   date: Date;
+  detail?: string;
 }
 
 export interface UpdateMilestoneInput {
   name?: string;
   date?: Date;
+  detail?: string;
 }
 
 @Injectable()

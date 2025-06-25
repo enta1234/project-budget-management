@@ -15,6 +15,24 @@ export class Task extends Document {
 
   @Prop({ default: false })
   isFeature: boolean;
+
+  @Prop()
+  detail?: string;
+
+  @Prop()
+  startDate?: Date;
+
+  @Prop()
+  endDate?: Date;
+
+  @Prop()
+  owner?: string;
+
+  @Prop()
+  manday?: number;
+
+  @Prop({ type: Types.ObjectId, ref: Task.name })
+  blockedBy?: Types.ObjectId;
 }
 
 export const TaskSchema = SchemaFactory.createForClass(Task);

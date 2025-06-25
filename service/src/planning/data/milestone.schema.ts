@@ -11,6 +11,9 @@ export class Milestone extends Document {
 
   @Prop({ required: true })
   date: Date;
+
+  @Prop()
+  detail?: string;
 }
 
 export const MilestoneSchema = SchemaFactory.createForClass(Milestone);

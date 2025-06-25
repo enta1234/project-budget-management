@@ -11,14 +11,19 @@ import Stack from '@mui/material/Stack';
 import { Layout, PageBreadcrumbs, Popup } from '../../components';
 import { withAuth } from '../../context/AuthContext';
 import api from '../../api';
-import PhaseForm from '../../components/PhaseForm';
 import TaskForm from '../../components/TaskForm';
 import MilestoneForm from '../../components/MilestoneForm';
+import { DataGrid } from '@mui/x-data-grid';
+import Timeline from '@mui/lab/Timeline';
+import TimelineItem from '@mui/lab/TimelineItem';
+import TimelineSeparator from '@mui/lab/TimelineSeparator';
+import TimelineConnector from '@mui/lab/TimelineConnector';
+import TimelineContent from '@mui/lab/TimelineContent';
+import TimelineDot from '@mui/lab/TimelineDot';
 
 function PlanningSetting() {
   const [projects, setProjects] = useState([]);
   const [project, setProject] = useState(null);
-  const [phases, setPhases] = useState([]);
   const [tasks, setTasks] = useState([]);
   const [milestones, setMilestones] = useState([]);
   const [dialog, setDialog] = useState('');
@@ -33,7 +38,6 @@ function PlanningSetting() {
   useEffect(() => {
     if (!project) return;
     const pid = project._id || project.id;
-    api.get('/api/v1/planning/phases', { params: { project: pid } }).then(res => setPhases(res.data));
     api.get('/api/v1/planning/tasks', { params: { project: pid } }).then(res => setTasks(res.data));
     api.get('/api/v1/planning/milestones', { params: { project: pid } }).then(res => setMilestones(res.data));
   }, [project]);
@@ -41,20 +45,12 @@ function PlanningSetting() {
   const refreshAll = async () => {
     if (!project) return;
     const pid = project._id || project.id;
-    const [p, t, m] = await Promise.all([
-      api.get('/api/v1/planning/phases', { params: { project: pid } }),
+    const [t, m] = await Promise.all([
       api.get('/api/v1/planning/tasks', { params: { project: pid } }),
       api.get('/api/v1/planning/milestones', { params: { project: pid } }),
     ]);
-    setPhases(p.data);
     setTasks(t.data);
     setMilestones(m.data);
-  };
-
-  const handleCreatePhase = async data => {
-    await api.post('/api/v1/planning/phases', { ...data, project: project._id });
-    await refreshAll();
-    setDialog('');
   };
 
   const handleCreateTask = async data => {
@@ -97,24 +93,25 @@ function PlanningSetting() {
           <Stack spacing={2}>
             <Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                <Typography variant="h6">Phases</Typography>
-                <Button variant="contained" onClick={() => setDialog('phase')}>Add Phase</Button>
-              </Box>
-              <Paper sx={{ p: 2 }}>
-                {phases.map((p, idx) => (
-                  <Typography key={p._id || idx}>{p.name}</Typography>
-                ))}
-              </Paper>
-            </Box>
-            <Box>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                 <Typography variant="h6">Tasks / Features</Typography>
-                <Button variant="contained" onClick={() => setDialog('task')} disabled={phases.length === 0}>Add</Button>
+                <Button variant="contained" onClick={() => setDialog('task')}>Add</Button>
               </Box>
               <Paper sx={{ p: 2 }}>
-                {tasks.map((t, idx) => (
-                  <Typography key={t._id || idx}>{t.name} {t.isFeature ? '(Feature)' : ''}</Typography>
-                ))}
+                <DataGrid
+                  rows={tasks.map(t => ({ id: t._id || t.id, ...t }))}
+                  columns={[
+                    { field: 'name', headerName: 'Name', flex: 1 },
+                    { field: 'detail', headerName: 'Detail', flex: 1 },
+                    { field: 'startDate', headerName: 'Start', valueFormatter: ({ value }) => value ? new Date(value).toLocaleDateString() : '', width: 120 },
+                    { field: 'endDate', headerName: 'End', valueFormatter: ({ value }) => value ? new Date(value).toLocaleDateString() : '', width: 120 },
+                    { field: 'owner', headerName: 'Owner', width: 120 },
+                    { field: 'manday', headerName: 'Manday', width: 100, type: 'number' },
+                    { field: 'blockedBy', headerName: 'Blocked By', width: 120 },
+                    { field: 'isFeature', headerName: 'Feature', width: 80, type: 'boolean' },
+                  ]}
+                  autoHeight
+                  hideFooter
+                />
               </Paper>
             </Box>
             <Box>
@@ -123,18 +120,44 @@ function PlanningSetting() {
                 <Button variant="contained" onClick={() => setDialog('milestone')}>Add Milestone</Button>
               </Box>
               <Paper sx={{ p: 2 }}>
-                {milestones.map((m, idx) => (
-                  <Typography key={m._id || idx}>{m.name} - {new Date(m.date).toLocaleDateString()}</Typography>
-                ))}
+                <DataGrid
+                  rows={milestones.map(m => ({ id: m._id || m.id, ...m }))}
+                  columns={[
+                    { field: 'name', headerName: 'Name', flex: 1 },
+                    { field: 'detail', headerName: 'Detail', flex: 1 },
+                    { field: 'date', headerName: 'Date', valueFormatter: ({ value }) => value ? new Date(value).toLocaleDateString() : '', width: 120 },
+                  ]}
+                  autoHeight
+                  hideFooter
+                />
+              </Paper>
+            </Box>
+            <Box>
+              <Typography variant="h6" sx={{ mb: 1 }}>Timeline</Typography>
+              <Paper sx={{ p: 2 }}>
+                <Timeline>
+                  {[...tasks.map(t => ({ type: 'task', date: t.startDate || t.endDate, title: t.name })),
+                    ...milestones.map(m => ({ type: 'milestone', date: m.date, title: m.name }))]
+                    .filter(i => i.date)
+                    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+                    .map((item, idx, arr) => (
+                      <TimelineItem key={idx}>
+                        <TimelineSeparator>
+                          <TimelineDot />
+                          {idx < arr.length - 1 && <TimelineConnector />}
+                        </TimelineSeparator>
+                        <TimelineContent>
+                          {item.title} - {new Date(item.date).toLocaleDateString()}
+                        </TimelineContent>
+                      </TimelineItem>
+                    ))}
+                </Timeline>
               </Paper>
             </Box>
           </Stack>
         )}
-        <Popup open={dialog === 'phase'} onClose={() => setDialog('')} title="Add Phase">
-          <PhaseForm onSubmit={handleCreatePhase} />
-        </Popup>
         <Popup open={dialog === 'task'} onClose={() => setDialog('')} title="Add Task/Feature">
-          <TaskForm phases={phases} onSubmit={handleCreateTask} />
+          <TaskForm onSubmit={handleCreateTask} />
         </Popup>
         <Popup open={dialog === 'milestone'} onClose={() => setDialog('')} title="Add Milestone">
           <MilestoneForm onSubmit={handleCreateMilestone} existingDates={milestoneDates} />
