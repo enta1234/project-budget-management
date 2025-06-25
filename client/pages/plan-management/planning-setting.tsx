@@ -137,7 +137,9 @@ function PlanningSetting() {
           <Autocomplete
             options={projects}
             getOptionLabel={o => o.name}
-            isOptionEqualToValue={(o, v) => (o._id || o.id) === (v._id || v.id)}
+            isOptionEqualToValue={(o, v) =>
+              v ? (o._id || o.id) === (v._id || v.id) : false
+            }
             renderOption={(props, option) => (
               <li {...props} key={option._id || option.id}>
                 {option.name}
