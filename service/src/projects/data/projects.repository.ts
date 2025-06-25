@@ -15,6 +15,7 @@ export interface CreateProjectInput {
   status?: string;
   members?: string[];
   deleted?: boolean;
+  deletedAt?: Date;
 }
 
 export interface UpdateProjectInput {
@@ -29,6 +30,7 @@ export interface UpdateProjectInput {
   status?: string;
   members?: string[];
   deleted?: boolean;
+  deletedAt?: Date;
 }
 
 @Injectable()
@@ -60,13 +62,17 @@ export class ProjectsRepository {
 
   remove(id: string): Promise<Project | null> {
     return this.projectModel
-      .findByIdAndUpdate(id, { deleted: true }, { new: true })
+      .findByIdAndUpdate(
+        id,
+        { deleted: true, deletedAt: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000) },
+        { new: true },
+      )
       .exec();
   }
 
   restore(id: string): Promise<Project | null> {
     return this.projectModel
-      .findByIdAndUpdate(id, { deleted: false }, { new: true })
+      .findByIdAndUpdate(id, { deleted: false, deletedAt: null }, { new: true })
       .exec();
   }
 }

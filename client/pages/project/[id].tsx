@@ -111,9 +111,16 @@ function ProjectDetail() {
           <IconButton size="small" onClick={() => router.back()} sx={{ mr: 1 }}>
             <ArrowBackIosNew fontSize="small" />
           </IconButton>
-          <Typography variant="h5" gutterBottom>
-            {project.name}
-          </Typography>
+          <Box>
+            <Typography variant="h5" gutterBottom>
+              {project.name}
+            </Typography>
+            {project.deleted && project.deletedAt && (
+              <Typography variant="body2" color="error" sx={{ ml: 0.5 }}>
+                {`This project will be deleted on ${new Date(project.deletedAt).toLocaleDateString()}`}
+              </Typography>
+            )}
+          </Box>
           <Box sx={{ flexGrow: 1 }} />
           <Button variant="outlined" onClick={() => setOpen(true)}>
             Edit
