@@ -5,3 +5,8 @@ body {
   color: #24292e;
   background-color: #f6f8fa;
 }
+
+.project-disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}

@@ -24,4 +24,12 @@ export class ProjectsService {
   updateProject(id: string, data: UpdateProjectInput) {
     return this.repo.update(id, data);
   }
+
+  removeProject(id: string) {
+    return this.repo.remove(id);
+  }
+
+  restoreProject(id: string) {
+    return this.repo.restore(id);
+  }
 }

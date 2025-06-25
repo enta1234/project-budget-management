@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Patch, Param } from '@nestjs/common';
+import { Body, Controller, Get, Post, Patch, Param, Delete } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectInput, UpdateProjectInput } from './data/projects.repository';
 
@@ -24,5 +24,15 @@ export class ProjectsController {
   @Patch(':id')
   updateProject(@Param('id') id: string, @Body() body: UpdateProjectInput) {
     return this.service.updateProject(id, body);
+  }
+
+  @Delete(':id')
+  removeProject(@Param('id') id: string) {
+    return this.service.removeProject(id);
+  }
+
+  @Patch(':id/restore')
+  restoreProject(@Param('id') id: string) {
+    return this.service.restoreProject(id);
   }
 }
