@@ -10,6 +10,9 @@ export interface Crumb {
 
 export default function PageBreadcrumbs({ items }: { items: Crumb[] }) {
   const router = useRouter();
+  if (items.length <= 1) {
+    return null;
+  }
   return (
     <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 2 }}>
       {items.map((item, idx) =>
