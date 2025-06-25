@@ -146,13 +146,13 @@ function ProjectManagement() {
     },
     {
       field: 'name',
-      headerName: 'Name',
+      headerName: 'Project Name',
       flex: 1,
       minWidth: 160,
     },
     {
       field: 'lead',
-      headerName: 'Lead',
+      headerName: 'Project Lead',
       flex: 1,
       valueGetter: (_value, row) => row.lead?.name || '',
     },
@@ -167,13 +167,13 @@ function ProjectManagement() {
     },
     {
       field: 'totalMember',
-      headerName: 'Total Member',
+      headerName: 'Team Size',
       width: 120,
       valueGetter: (_value, row) => row.resources ?? row.members?.length ?? 0,
     },
     {
       field: 'actualManday',
-      headerName: 'Total Actual Manday',
+      headerName: 'Actual Mandays',
       width: 160,
       valueGetter: (_value, row) =>
         row.start && row.resources
@@ -182,7 +182,7 @@ function ProjectManagement() {
     },
     {
       field: 'manday',
-      headerName: 'Estimate Manday',
+      headerName: 'Estimated Mandays',
       width: 150,
     },
     {
@@ -194,14 +194,14 @@ function ProjectManagement() {
     },
     {
       field: 'projectService',
-      headerName: 'Project Service',
+      headerName: 'Service Duration',
       width: 130,
       valueGetter: (_value, row) =>
         row.start ? getServiceDuration(row.start) : '',
     },
     {
       field: 'actions',
-      headerName: 'Action',
+      headerName: 'Actions',
       width: 150,
       renderCell: params => (
         <Stack direction="row" spacing={1}>
