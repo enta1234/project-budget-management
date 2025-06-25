@@ -20,6 +20,12 @@ export class ActivityLog extends Document {
 
   @Prop({ default: Date.now })
   timestamp: Date;
+
+  @Prop()
+  name: string;
+
+  @Prop()
+  detail: string;
 }
 
 export const ActivityLogSchema = SchemaFactory.createForClass(ActivityLog);

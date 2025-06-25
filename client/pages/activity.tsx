@@ -16,6 +16,8 @@ function ActivityPage() {
   }, []);
 
   const columns = [
+    { field: 'name', headerName: 'Activity', width: 180 },
+    { field: 'detail', headerName: 'Detail', flex: 1 },
     { field: 'method', headerName: 'Method', width: 100 },
     { field: 'url', headerName: 'URL', flex: 1 },
     { field: 'statusCode', headerName: 'Status', width: 100 },

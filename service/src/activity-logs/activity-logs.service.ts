@@ -9,7 +9,15 @@ export class ActivityLogsService {
     return this.repo.findAll();
   }
 
-  create(data: { method: string; url: string; body: any; statusCode: number; processTime: number }) {
+  create(data: {
+    method: string;
+    url: string;
+    body: any;
+    statusCode: number;
+    processTime: number;
+    name?: string;
+    detail?: string;
+  }) {
     return this.repo.create({ ...data, timestamp: new Date() });
   }
 }
