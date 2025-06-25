@@ -13,6 +13,9 @@ export class Task extends Document {
   @Prop({ required: true })
   name: string;
 
+  @Prop({ enum: ['feature', 'milestone'], default: 'feature' })
+  type: string;
+
   @Prop({ default: false })
   isFeature: boolean;
 

@@ -3,8 +3,8 @@ import { useState, useEffect, useMemo } from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
+import ToggleButton from '@mui/material/ToggleButton';
+import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { addDays } from 'date-fns';
 
@@ -17,7 +17,9 @@ export default function TaskForm({ onSubmit, initial, members = [], tasks = [], 
   const [manday, setManday] = useState(initial?.manday != null ? String(initial.manday) : '');
   const [duration, setDuration] = useState(initial?.duration != null ? String(initial.duration) : '');
   const [blocked, setBlocked] = useState(null);
-  const [feature, setFeature] = useState(initial?.isFeature || false);
+  const [taskType, setTaskType] = useState(
+    initial?.type || (initial?.isFeature ? 'feature' : 'milestone')
+  );
 
   useEffect(() => {
     setName(initial?.name || '');
@@ -28,7 +30,7 @@ export default function TaskForm({ onSubmit, initial, members = [], tasks = [], 
     setManday(initial?.manday != null ? String(initial.manday) : '');
     setDuration(initial?.duration != null ? String(initial.duration) : '');
     setBlocked(null);
-    setFeature(initial?.isFeature || false);
+    setTaskType(initial?.type || (initial?.isFeature ? 'feature' : 'milestone'));
   }, [initial]);
 
   const dateError = useMemo(
@@ -75,7 +77,7 @@ export default function TaskForm({ onSubmit, initial, members = [], tasks = [], 
         manday: manday ? Number(manday) : undefined,
         duration: duration ? Number(duration) : undefined,
         blockedBy: blocked ? blocked.id : undefined,
-        ...(feature ? { isFeature: true } : {}),
+        type: taskType,
       });
     setName('');
     setDetail('');
@@ -85,7 +87,7 @@ export default function TaskForm({ onSubmit, initial, members = [], tasks = [], 
     setManday('');
     setDuration('');
     setBlocked(null);
-    setFeature(false);
+    setTaskType('feature');
   };
 
   return (
@@ -130,7 +132,16 @@ export default function TaskForm({ onSubmit, initial, members = [], tasks = [], 
         renderInput={params => <TextField {...params} label="Blocked By" />}
         sx={{ mb: 2 }}
       />
-      <FormControlLabel control={<Checkbox checked={feature} onChange={e => setFeature(e.target.checked)} />} label="Feature" />
+      <ToggleButtonGroup
+        value={taskType}
+        exclusive
+        onChange={(_, v) => v && setTaskType(v)}
+        size="small"
+        sx={{ mb: 2 }}
+      >
+        <ToggleButton value="feature">Feature</ToggleButton>
+        <ToggleButton value="milestone">Milestone</ToggleButton>
+      </ToggleButtonGroup>
       <Button
         type="submit"
         variant="contained"

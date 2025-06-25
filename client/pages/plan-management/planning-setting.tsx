@@ -172,7 +172,7 @@ function PlanningSetting() {
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                <Typography variant="h6">Tasks / Features</Typography>
+                <Typography variant="h6">Tasks</Typography>
                 <Button variant="contained" onClick={() => setDialog('task')}>Add</Button>
               </Box>
               <Paper sx={{ p: 2 }}>
@@ -193,7 +193,7 @@ function PlanningSetting() {
                     { field: 'manday', headerName: 'Manday', width: 100, type: 'number' },
                     { field: 'duration', headerName: 'Duration', width: 100, type: 'number' },
                     { field: 'blockedBy', headerName: 'Blocked By', width: 120 },
-                    { field: 'isFeature', headerName: 'Feature', width: 80, type: 'boolean' },
+                    { field: 'type', headerName: 'Type', width: 120 },
                   ]}
                   autoHeight
                   hideFooter
