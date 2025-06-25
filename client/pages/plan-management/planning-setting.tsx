@@ -95,8 +95,8 @@ function PlanningSetting() {
                 <Button variant="contained" onClick={() => setDialog('phase')}>Add Phase</Button>
               </Box>
               <Paper sx={{ p: 2 }}>
-                {phases.map(p => (
-                  <Typography key={p._id}>{p.name}</Typography>
+                {phases.map((p, idx) => (
+                  <Typography key={p._id || idx}>{p.name}</Typography>
                 ))}
               </Paper>
             </Box>
@@ -106,8 +106,8 @@ function PlanningSetting() {
                 <Button variant="contained" onClick={() => setDialog('task')} disabled={phases.length === 0}>Add</Button>
               </Box>
               <Paper sx={{ p: 2 }}>
-                {tasks.map(t => (
-                  <Typography key={t._id}>{t.name} {t.isFeature ? '(Feature)' : ''}</Typography>
+                {tasks.map((t, idx) => (
+                  <Typography key={t._id || idx}>{t.name} {t.isFeature ? '(Feature)' : ''}</Typography>
                 ))}
               </Paper>
             </Box>
@@ -117,8 +117,8 @@ function PlanningSetting() {
                 <Button variant="contained" onClick={() => setDialog('milestone')}>Add Milestone</Button>
               </Box>
               <Paper sx={{ p: 2 }}>
-                {milestones.map(m => (
-                  <Typography key={m._id}>{m.name} - {new Date(m.date).toLocaleDateString()}</Typography>
+                {milestones.map((m, idx) => (
+                  <Typography key={m._id || idx}>{m.name} - {new Date(m.date).toLocaleDateString()}</Typography>
                 ))}
               </Paper>
             </Box>
