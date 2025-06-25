@@ -8,12 +8,24 @@ export interface CreateTaskInput {
   phase?: Types.ObjectId;
   name: string;
   isFeature?: boolean;
+  detail?: string;
+  startDate?: Date;
+  endDate?: Date;
+  owner?: string;
+  manday?: number;
+  blockedBy?: Types.ObjectId;
 }
 
 export interface UpdateTaskInput {
   phase?: Types.ObjectId;
   name?: string;
   isFeature?: boolean;
+  detail?: string;
+  startDate?: Date;
+  endDate?: Date;
+  owner?: string;
+  manday?: number;
+  blockedBy?: Types.ObjectId;
 }
 
 @Injectable()
