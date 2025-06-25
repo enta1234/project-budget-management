@@ -10,6 +10,7 @@ export interface CreateProjectInput {
   start: Date;
   end: Date;
   manday?: number;
+  sprintLength?: number;
   priority: number;
   lead?: string;
   status?: string;
@@ -25,6 +26,7 @@ export interface UpdateProjectInput {
   start?: Date;
   end?: Date;
   manday?: number;
+  sprintLength?: number;
   priority?: number;
   lead?: string;
   status?: string;
