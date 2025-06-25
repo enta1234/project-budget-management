@@ -43,6 +43,10 @@ export class CreateTaskInput {
   manday?: number;
 
   @IsOptional()
+  @IsNumber()
+  duration?: number;
+
+  @IsOptional()
   @Type(() => String)
   @IsString()
   blockedBy?: Types.ObjectId;
@@ -81,6 +85,10 @@ export class UpdateTaskInput {
   @IsOptional()
   @IsNumber()
   manday?: number;
+
+  @IsOptional()
+  @IsNumber()
+  duration?: number;
 
   @IsOptional()
   @Type(() => String)

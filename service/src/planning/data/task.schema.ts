@@ -31,6 +31,9 @@ export class Task extends Document {
   @Prop()
   manday?: number;
 
+  @Prop()
+  duration?: number;
+
   @Prop({ type: Types.ObjectId, ref: Task.name })
   blockedBy?: Types.ObjectId;
 }

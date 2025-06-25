@@ -37,6 +37,7 @@ function PlanningSetting() {
   const [tasks, setTasks] = useState([]);
   const [milestones, setMilestones] = useState([]);
   const [phases, setPhases] = useState([]);
+  const [members, setMembers] = useState([]);
   const [viewMode, setViewMode] = useState(ViewMode.Day);
   const [dialog, setDialog] = useState('');
 
@@ -50,22 +51,40 @@ function PlanningSetting() {
   useEffect(() => {
     if (!project) return;
     const pid = project._id || project.id;
-    api.get('/api/v1/planning/phases', { params: { project: pid } }).then(res => setPhases(res.data));
-    api.get('/api/v1/planning/tasks', { params: { project: pid } }).then(res => setTasks(res.data));
-    api.get('/api/v1/planning/milestones', { params: { project: pid } }).then(res => setMilestones(res.data));
+    Promise.all([
+      api.get('/api/v1/planning/phases', { params: { project: pid } }),
+      api.get('/api/v1/planning/tasks', { params: { project: pid } }),
+      api.get('/api/v1/planning/milestones', { params: { project: pid } }),
+      api.get(`/api/v1/projects/${pid}`),
+      api.get('/api/v1/resources'),
+    ]).then(([ph, t, m, proj, res]) => {
+      setPhases(ph.data);
+      setTasks(t.data);
+      setMilestones(m.data);
+      const memIds = proj.data.members || [];
+      const leadId = proj.data.lead?._id;
+      const list = res.data.filter(u => memIds.includes(u.id) || u.id === leadId);
+      setMembers(list);
+    });
   }, [project]);
 
   const refreshAll = async () => {
     if (!project) return;
     const pid = project._id || project.id;
-    const [p, t, m] = await Promise.all([
+    const [p, t, m, proj, res] = await Promise.all([
       api.get('/api/v1/planning/phases', { params: { project: pid } }),
       api.get('/api/v1/planning/tasks', { params: { project: pid } }),
       api.get('/api/v1/planning/milestones', { params: { project: pid } }),
+      api.get(`/api/v1/projects/${pid}`),
+      api.get('/api/v1/resources'),
     ]);
     setPhases(p.data);
     setTasks(t.data);
     setMilestones(m.data);
+    const memIds = proj.data.members || [];
+    const leadId = proj.data.lead?._id;
+    const list = res.data.filter(u => memIds.includes(u.id) || u.id === leadId);
+    setMembers(list);
   };
 
   const handleCreateTask = async data => {
@@ -172,6 +191,7 @@ function PlanningSetting() {
                     }, width: 120 },
                     { field: 'owner', headerName: 'Owner', width: 120 },
                     { field: 'manday', headerName: 'Manday', width: 100, type: 'number' },
+                    { field: 'duration', headerName: 'Duration', width: 100, type: 'number' },
                     { field: 'blockedBy', headerName: 'Blocked By', width: 120 },
                     { field: 'isFeature', headerName: 'Feature', width: 80, type: 'boolean' },
                   ]}
@@ -248,13 +268,15 @@ function PlanningSetting() {
                       ))}
                     </TreeView>
                   </Grid>
-                  <Grid item xs={8}>
+                  <Grid item xs={8} sx={{ overflowX: 'auto' }}>
                     {ganttTasks.length > 0 ? (
-                      <Gantt
-                        tasks={ganttTasks}
-                        viewMode={viewMode}
-                        onDateChange={handleDateChange}
-                      />
+                      <Box sx={{ minWidth: 600 }}>
+                        <Gantt
+                          tasks={ganttTasks}
+                          viewMode={viewMode}
+                          onDateChange={handleDateChange}
+                        />
+                      </Box>
                     ) : (
                       <Typography variant="body2" align="center">
                         No schedule data
@@ -268,7 +290,7 @@ function PlanningSetting() {
             </Grid>
           )}
         <Popup open={dialog === 'task'} onClose={() => setDialog('')} title="Add Task/Feature">
-          <TaskForm onSubmit={handleCreateTask} />
+          <TaskForm onSubmit={handleCreateTask} members={members} tasks={tasks} milestones={milestones} />
         </Popup>
         <Popup open={dialog === 'milestone'} onClose={() => setDialog('')} title="Add Milestone">
           <MilestoneForm onSubmit={handleCreateMilestone} existingDates={milestoneDates} />
