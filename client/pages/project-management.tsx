@@ -180,7 +180,14 @@ function ProjectManagement() {
       flex: 1,
       minWidth: 80,
       renderCell: params => (
-        <Box sx={{ display: 'flex', flexDirection: 'column', lineHeight: 1 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            lineHeight: 1,
+          }}
+        >
           <Typography variant="body2">{params.value}</Typography>
           {params.row.deleted && params.row.deletedAt && (
             <Typography variant="caption" color="error" sx={{ fontSize: '0.5em' }}>
