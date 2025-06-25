@@ -24,7 +24,10 @@ function PlanningSetting() {
   const [dialog, setDialog] = useState('');
 
   useEffect(() => {
-    api.get('/api/v1/projects').then(res => setProjects(res.data)).catch(console.error);
+    api
+      .get('/api/v1/projects')
+      .then(res => setProjects(res.data.filter(p => !p.deleted)))
+      .catch(console.error);
   }, []);
 
   useEffect(() => {
