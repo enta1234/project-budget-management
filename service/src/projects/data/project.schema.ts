@@ -21,6 +21,9 @@ export class Project extends Document {
   @Prop()
   manday: number;
 
+  @Prop()
+  sprintLength: number;
+
   @Prop({ required: true })
   priority: number;
 

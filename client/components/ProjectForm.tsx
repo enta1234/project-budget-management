@@ -35,6 +35,9 @@ export default function ProjectForm({
   const [manday, setManday] = useState(
     initial?.manday != null ? String(initial.manday) : ''
   );
+  const [sprintLength, setSprintLength] = useState(
+    initial?.sprintLength != null ? String(initial.sprintLength) : ''
+  );
 
   useEffect(() => {
     setName(initial?.name || '');
@@ -43,21 +46,25 @@ export default function ProjectForm({
     setLead(initial?.lead || null);
     setMembers(initial?.members || []);
     setManday(initial?.manday != null ? String(initial.manday) : '');
+    setSprintLength(
+      initial?.sprintLength != null ? String(initial.sprintLength) : ''
+    );
     setStatus(initial?.status || 'planing');
   }, [initial]);
 
   useEffect(() => {
     if (!open) {
       setActive(0);
+      setSprintLength('');
     }
   }, [open]);
 
-  const handleNext = () => setActive(a => Math.min(a + 1, 2));
+  const handleNext = () => setActive(a => Math.min(a + 1, 3));
   const handleBack = () => setActive(a => Math.max(a - 1, 0));
 
   const handleSubmit = e => {
     e.preventDefault();
-    if (active < 2) return handleNext();
+    if (active < 3) return handleNext();
     if (onSubmit) {
       onSubmit({
         name,
@@ -66,6 +73,7 @@ export default function ProjectForm({
         end: start,
         status,
         ...(manday ? { manday: Number(manday) } : {}),
+        ...(sprintLength ? { sprintLength: Number(sprintLength) } : {}),
         priority: 1,
         lead: lead?.id,
         members: members.map(m => m.id),
@@ -77,6 +85,7 @@ export default function ProjectForm({
     setLead(null);
     setMembers([]);
     setManday('');
+    setSprintLength('');
     setStatus('planing');
     setActive(0);
     setTeam(null);
@@ -135,7 +144,7 @@ export default function ProjectForm({
       }}
     >
       <Stepper activeStep={active} sx={{ gridColumn: 'span 2' }}>
-        {['General', 'Members', 'Preview'].map(label => (
+        {['General', 'Members', 'Sprint', 'Preview'].map(label => (
           <Step key={label}>
             <StepLabel>{label}</StepLabel>
           </Step>
@@ -219,6 +228,16 @@ export default function ProjectForm({
       )}
 
       {active === 2 && (
+        <TextField
+          label="Sprint Length (days)"
+          type="number"
+          value={sprintLength}
+          onChange={e => setSprintLength(e.target.value)}
+          sx={{ gridColumn: 'span 2' }}
+        />
+      )}
+
+      {active === 3 && (
         <>
           <Typography sx={{ gridColumn: 'span 2' }} variant="h6">
             Preview
@@ -236,6 +255,9 @@ export default function ProjectForm({
           </Typography>
           <Typography>
             <strong>Manday:</strong> {manday}
+          </Typography>
+          <Typography>
+            <strong>Sprint Length:</strong> {sprintLength}
           </Typography>
           <Typography>
             <strong>Status:</strong> {status}
@@ -283,7 +305,7 @@ export default function ProjectForm({
             Back
           </Button>
         )}
-        {active < 2 ? (
+        {active < 3 ? (
           <Button type="button" variant="contained" onClick={handleNext}>
             Next
           </Button>
