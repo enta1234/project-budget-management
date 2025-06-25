@@ -8,7 +8,7 @@ import TextField from '@mui/material/TextField';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
-import { Layout, useToast } from '../../components';
+import { Layout, useToast, PageBreadcrumbs } from '../../components';
 import { withAuth, useAuth } from '../../context/AuthContext';
 import {
   fetchRoles,
@@ -74,6 +74,7 @@ function RoleSetting() {
         <Typography variant="h5" gutterBottom>
           Role Setting
         </Typography>
+        <PageBreadcrumbs items={[{ label: 'Role Setting' }]} />
         <Typography variant="body2" sx={{ mb: 2 }}>
           Manage your roles and their levels. Press Enter or click Add to save. Click a level chip to remove it.
         </Typography>

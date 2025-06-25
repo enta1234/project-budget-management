@@ -9,6 +9,7 @@ import {
   BudgetForm,
   BudgetTable,
   useToast,
+  PageBreadcrumbs,
 } from '../../components';
 import { withAuth, useAuth } from '../../context/AuthContext';
 import {
@@ -72,6 +73,7 @@ function BudgetManagement() {
         <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
           <Typography variant="h5">Budget Management</Typography>
         </Box>
+        <PageBreadcrumbs items={[{ label: 'Budget Management' }]} />
         <BudgetTable data={rows} onEdit={handleEdit} onDelete={handleDelete} />
         <Popup open={!!editRow} onClose={() => setEditRow(null)} title="Edit Rate">
           {editRow && (
