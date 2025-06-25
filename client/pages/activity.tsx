@@ -1,8 +1,14 @@
 // @ts-nocheck
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
+import Box from '@mui/material/Box';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Select from '@mui/material/Select';
+import TextField from '@mui/material/TextField';
 import { DataGrid } from '@mui/x-data-grid';
 import { Layout } from '../components';
 import { withAuth } from '../context/AuthContext';
@@ -10,10 +16,35 @@ import { fetchActivityLogs } from '../models/activityLogModel';
 
 function ActivityPage() {
   const [logs, setLogs] = useState([]);
+  const [methodFilter, setMethodFilter] = useState('');
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     fetchActivityLogs().then(setLogs).catch(console.error);
   }, []);
+
+  const methods = useMemo(() => {
+    return Array.from(new Set(logs.map(l => l.method))).sort();
+  }, [logs]);
+
+  const filteredLogs = useMemo(() => {
+    return logs.filter(log => {
+      if (methodFilter && log.method !== methodFilter) {
+        return false;
+      }
+      if (search) {
+        const text = search.toLowerCase();
+        const values = [log.name, log.detail, log.method, log.url, String(log.statusCode)];
+        return values.some(v =>
+          (v ?? '')
+            .toString()
+            .toLowerCase()
+            .includes(text),
+        );
+      }
+      return true;
+    });
+  }, [logs, methodFilter, search]);
 
   const columns = [
     { field: 'name', headerName: 'Activity', width: 180 },
@@ -36,9 +67,33 @@ function ActivityPage() {
         <Typography variant="h5" gutterBottom>
           Activity Logs
         </Typography>
+        <Box sx={{ display: 'flex', gap: 2, mb: 2 }}>
+          <FormControl size="small" sx={{ minWidth: 120 }}>
+            <InputLabel id="method-filter-label">Method</InputLabel>
+            <Select
+              labelId="method-filter-label"
+              label="Method"
+              value={methodFilter}
+              onChange={e => setMethodFilter(e.target.value)}
+            >
+              <MenuItem value="">All</MenuItem>
+              {methods.map(m => (
+                <MenuItem key={m} value={m}>
+                  {m}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <TextField
+            size="small"
+            label="Search"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+        </Box>
         <Paper>
           <DataGrid
-            rows={logs}
+            rows={filteredLogs}
             columns={columns}
             getRowId={row => row._id}
             autoHeight
