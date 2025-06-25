@@ -102,8 +102,14 @@ function PlanningSetting() {
                   columns={[
                     { field: 'name', headerName: 'Name', flex: 1 },
                     { field: 'detail', headerName: 'Detail', flex: 1 },
-                    { field: 'startDate', headerName: 'Start', valueFormatter: ({ value }) => value ? new Date(value).toLocaleDateString() : '', width: 120 },
-                    { field: 'endDate', headerName: 'End', valueFormatter: ({ value }) => value ? new Date(value).toLocaleDateString() : '', width: 120 },
+                    { field: 'startDate', headerName: 'Start', valueFormatter: params => {
+                      const value = params?.value;
+                      return value ? new Date(value).toLocaleDateString() : '';
+                    }, width: 120 },
+                    { field: 'endDate', headerName: 'End', valueFormatter: params => {
+                      const value = params?.value;
+                      return value ? new Date(value).toLocaleDateString() : '';
+                    }, width: 120 },
                     { field: 'owner', headerName: 'Owner', width: 120 },
                     { field: 'manday', headerName: 'Manday', width: 100, type: 'number' },
                     { field: 'blockedBy', headerName: 'Blocked By', width: 120 },
@@ -125,7 +131,10 @@ function PlanningSetting() {
                   columns={[
                     { field: 'name', headerName: 'Name', flex: 1 },
                     { field: 'detail', headerName: 'Detail', flex: 1 },
-                    { field: 'date', headerName: 'Date', valueFormatter: ({ value }) => value ? new Date(value).toLocaleDateString() : '', width: 120 },
+                    { field: 'date', headerName: 'Date', valueFormatter: params => {
+                      const value = params?.value;
+                      return value ? new Date(value).toLocaleDateString() : '';
+                    }, width: 120 },
                   ]}
                   autoHeight
                   hideFooter
