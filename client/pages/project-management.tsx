@@ -330,6 +330,7 @@ function ProjectManagement() {
         )}
         <Popup open={open} onClose={() => setOpen(false)} title="Add Project">
           <ProjectForm
+            open={open}
             users={users}
             teams={teams}
             budgets={budgets}

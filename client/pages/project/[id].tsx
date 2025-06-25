@@ -263,6 +263,7 @@ function ProjectDetail() {
         <Popup open={open} onClose={() => setOpen(false)} title="Edit Project">
           {project && (
             <ProjectForm
+              open={open}
               users={users}
               teams={teams}
               budgets={budgets}
