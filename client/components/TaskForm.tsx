@@ -1,19 +1,22 @@
 // @ts-nocheck
 import { useState, useEffect, useMemo } from 'react';
+import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { addDays } from 'date-fns';
 
-export default function TaskForm({ onSubmit, initial }) {
+export default function TaskForm({ onSubmit, initial, members = [], tasks = [], milestones = [] }) {
   const [name, setName] = useState(initial?.name || '');
   const [detail, setDetail] = useState(initial?.detail || '');
   const [startDate, setStartDate] = useState(initial?.startDate || null);
   const [endDate, setEndDate] = useState(initial?.endDate || null);
   const [owner, setOwner] = useState(initial?.owner || '');
   const [manday, setManday] = useState(initial?.manday != null ? String(initial.manday) : '');
-  const [blockedBy, setBlockedBy] = useState(initial?.blockedBy || '');
+  const [duration, setDuration] = useState(initial?.duration != null ? String(initial.duration) : '');
+  const [blocked, setBlocked] = useState(null);
   const [feature, setFeature] = useState(initial?.isFeature || false);
 
   useEffect(() => {
@@ -23,7 +26,8 @@ export default function TaskForm({ onSubmit, initial }) {
     setEndDate(initial?.endDate || null);
     setOwner(initial?.owner || '');
     setManday(initial?.manday != null ? String(initial.manday) : '');
-    setBlockedBy(initial?.blockedBy || '');
+    setDuration(initial?.duration != null ? String(initial.duration) : '');
+    setBlocked(null);
     setFeature(initial?.isFeature || false);
   }, [initial]);
 
@@ -42,6 +46,22 @@ export default function TaskForm({ onSubmit, initial }) {
     [name, dateError],
   );
 
+  useEffect(() => {
+    if (startDate && duration) {
+      try {
+        const d = addDays(new Date(startDate), Number(duration));
+        setEndDate(d);
+      } catch {}
+    }
+  }, [startDate, duration]);
+
+  useEffect(() => {
+    if (blocked?.date) {
+      const d = addDays(new Date(blocked.date), 1);
+      setStartDate(d);
+    }
+  }, [blocked]);
+
   const handleSubmit = e => {
     e.preventDefault();
     if (!formValid) return;
@@ -53,7 +73,8 @@ export default function TaskForm({ onSubmit, initial }) {
         endDate,
         owner,
         manday: manday ? Number(manday) : undefined,
-        blockedBy: blockedBy || undefined,
+        duration: duration ? Number(duration) : undefined,
+        blockedBy: blocked ? blocked.id : undefined,
         ...(feature ? { isFeature: true } : {}),
       });
     setName('');
@@ -62,7 +83,8 @@ export default function TaskForm({ onSubmit, initial }) {
     setEndDate(null);
     setOwner('');
     setManday('');
-    setBlockedBy('');
+    setDuration('');
+    setBlocked(null);
     setFeature(false);
   };
 
@@ -89,9 +111,25 @@ export default function TaskForm({ onSubmit, initial }) {
           },
         }}
       />
-      <TextField label="Owner" value={owner} onChange={e => setOwner(e.target.value)} fullWidth sx={{ mb: 2 }} />
+      <TextField label="Duration (days)" type="number" value={duration} onChange={e => setDuration(e.target.value)} fullWidth sx={{ mb: 2 }} />
+      <Autocomplete
+        options={members}
+        getOptionLabel={o => o.name}
+        value={members.find(m => m.id === owner) || null}
+        onChange={(_, v) => setOwner(v ? v.id : '')}
+        renderInput={params => <TextField {...params} label="Owner" />}
+        sx={{ mb: 2 }}
+      />
       <TextField label="Manday" type="number" value={manday} onChange={e => setManday(e.target.value)} fullWidth sx={{ mb: 2 }} />
-      <TextField label="Blocked By" value={blockedBy} onChange={e => setBlockedBy(e.target.value)} fullWidth sx={{ mb: 2 }} />
+      <Autocomplete
+        options={[...tasks.map(t => ({ id: t._id || t.id, label: t.name, date: t.endDate })),
+                  ...milestones.map(m => ({ id: m._id || m.id, label: m.name, date: m.date }))]}
+        getOptionLabel={o => o.label}
+        value={blocked}
+        onChange={(_, v) => setBlocked(v)}
+        renderInput={params => <TextField {...params} label="Blocked By" />}
+        sx={{ mb: 2 }}
+      />
       <FormControlLabel control={<Checkbox checked={feature} onChange={e => setFeature(e.target.checked)} />} label="Feature" />
       <Button
         type="submit"
