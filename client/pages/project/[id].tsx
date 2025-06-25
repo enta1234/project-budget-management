@@ -5,8 +5,7 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
-import Breadcrumbs from '@mui/material/Breadcrumbs';
-import Link from '@mui/material/Link';
+import { PageBreadcrumbs } from '../../components';
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import ArrowBackIosNew from '@mui/icons-material/ArrowBackIosNew';
@@ -126,17 +125,12 @@ function ProjectDetail() {
             Edit
           </Button>
         </Box>
-        <Breadcrumbs aria-label="breadcrumb" sx={{ mb: 2 }}>
-          <Link
-            underline="hover"
-            color="inherit"
-            onClick={() => router.push('/project-management')}
-            sx={{ cursor: 'pointer' }}
-          >
-            Project Management
-          </Link>
-          <Typography color="text.primary">{project.name}</Typography>
-        </Breadcrumbs>
+        <PageBreadcrumbs
+          items={[
+            { label: 'Project Management', href: '/project-management' },
+            { label: project.name },
+          ]}
+        />
         <Paper sx={{ p: 2 }}>
           <Box sx={{ display: 'grid', rowGap: 1 }}>
             <Typography>

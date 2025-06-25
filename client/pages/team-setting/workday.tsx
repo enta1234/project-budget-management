@@ -13,7 +13,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { DataGrid } from '@mui/x-data-grid';
 import { format } from 'date-fns';
-import { Layout, Popup, WorkdayForm, useToast, ConfirmDialog } from '../../components';
+import { Layout, Popup, WorkdayForm, useToast, ConfirmDialog, PageBreadcrumbs } from '../../components';
 import { withAuth, useAuth } from '../../context/AuthContext';
 import {
   fetchWorkdays,
@@ -159,6 +159,7 @@ function WorkdayPage() {
             </Button>
           </Box>
         </Box>
+        <PageBreadcrumbs items={[{ label: 'Workday Setting' }]} />
         <Paper>
           <DataGrid
             rows={rows}

@@ -25,7 +25,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Chip from '@mui/material/Chip';
 import api from '../api';
-import { Layout, Popup, ProjectForm, useToast, ConfirmDialog } from '../components';
+import { Layout, Popup, ProjectForm, useToast, ConfirmDialog, PageBreadcrumbs } from '../components';
 import { withAuth, useAuth } from '../context/AuthContext';
 
 const statusOptions = [
@@ -184,14 +184,21 @@ function ProjectManagement() {
       flex: 1,
       minWidth: 80,
       renderCell: params => (
-          <>
-          { params.value }
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            lineHeight: 1,
+          }}
+        >
+          <Typography variant="body2">{params.value}</Typography>
           {params.row.deleted && params.row.deletedAt && (
-            <Typography variant="caption" color="error">
+            <Typography variant="caption" color="error" sx={{ fontSize: '0.5em' }}>
               {`will be deleted on ${format(new Date(params.row.deletedAt), 'yyyy-MM-dd')}`}
             </Typography>
           )}
-          </>
+        </Box>
       ),
     },
     {
@@ -296,6 +303,7 @@ function ProjectManagement() {
             New Project
           </Button>
         </Box>
+        <PageBreadcrumbs items={[{ label: 'Project Management' }]} />
         <Paper>
           <DataGrid
             rows={projects}

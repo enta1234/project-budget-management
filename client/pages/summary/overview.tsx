@@ -6,7 +6,7 @@ import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import { PieChart, LineChart, BarChart } from '@mui/x-charts';
-import { Layout } from '../../components';
+import { Layout, PageBreadcrumbs } from '../../components';
 import { withAuth } from '../../context/AuthContext';
 import { fetchBudgetOverview } from '../../models/budgetModel';
 import api from '../../api';
@@ -91,6 +91,7 @@ function DashboardOverview() {
         <Typography variant="h5" gutterBottom>
           Dashboard Overview
         </Typography>
+        <PageBreadcrumbs items={[{ label: 'Dashboard Overview' }]} />
 
         <Paper sx={{ p: 2 }}>
           <Typography variant="h6" gutterBottom>

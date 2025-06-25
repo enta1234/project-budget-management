@@ -1,7 +1,7 @@
 // @ts-nocheck
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-import { Layout } from '../../components';
+import { Layout, PageBreadcrumbs } from '../../components';
 import { withAuth } from '../../context/AuthContext';
 
 function PlanManagementSetting() {
@@ -11,6 +11,7 @@ function PlanManagementSetting() {
         <Typography variant="h5" gutterBottom>
           Planing Setting
         </Typography>
+        <PageBreadcrumbs items={[{ label: 'Plan Management', href: '/plan-management' }, { label: 'Planing Setting' }]} />
         <Typography variant="body2">Content coming soon.</Typography>
       </Container>
     </Layout>

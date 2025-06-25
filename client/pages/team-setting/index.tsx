@@ -19,7 +19,7 @@ import {
   addYears,
   addMonths,
 } from 'date-fns';
-import { Layout, ResourceForm, Popup, useToast, ConfirmDialog } from '../../components';
+import { Layout, ResourceForm, Popup, useToast, ConfirmDialog, PageBreadcrumbs } from '../../components';
 import { withAuth, useAuth } from '../../context/AuthContext';
 import {
   fetchResources,
@@ -231,6 +231,7 @@ function TeamSetting() {
             </Button>
           </Box>
         </Box>
+        <PageBreadcrumbs items={[{ label: 'Resources' }]} />
         <Paper>
           <DataGrid
             rows={resources}
