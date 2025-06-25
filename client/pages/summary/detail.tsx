@@ -4,7 +4,7 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import { DataGrid } from '@mui/x-data-grid';
-import { Layout } from '../../components';
+import { Layout, PageBreadcrumbs } from '../../components';
 import { withAuth } from '../../context/AuthContext';
 import { fetchEvents } from '../../models/eventsModel';
 
@@ -32,6 +32,7 @@ function SummaryDetail() {
         <Typography variant="h5" gutterBottom>
           Summary Detail
         </Typography>
+        <PageBreadcrumbs items={[{ label: 'Summary Detail' }]} />
         <Paper>
           <DataGrid
             rows={events}

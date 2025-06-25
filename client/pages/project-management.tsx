@@ -25,7 +25,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Chip from '@mui/material/Chip';
 import api from '../api';
-import { Layout, Popup, ProjectForm, useToast } from '../components';
+import { Layout, Popup, ProjectForm, useToast, PageBreadcrumbs } from '../components';
 import { withAuth, useAuth } from '../context/AuthContext';
 
 const statusOptions = [
@@ -292,6 +292,7 @@ function ProjectManagement() {
             New Project
           </Button>
         </Box>
+        <PageBreadcrumbs items={[{ label: 'Project Management' }]} />
         <Paper>
           <DataGrid
             rows={projects}

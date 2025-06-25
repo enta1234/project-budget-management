@@ -11,7 +11,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { DataGrid } from '@mui/x-data-grid';
 import api from '../../api';
-import { Layout, Popup, TeamForm, useToast } from '../../components';
+import { Layout, Popup, TeamForm, useToast, PageBreadcrumbs } from '../../components';
 import {
   fetchTeams,
   createTeam,
@@ -137,6 +137,7 @@ function TeamPage() {
             New Team
           </Button>
         </Box>
+        <PageBreadcrumbs items={[{ label: 'Teams' }]} />
         <Paper>
           <DataGrid
             rows={teams}

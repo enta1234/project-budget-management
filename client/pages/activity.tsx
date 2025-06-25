@@ -4,7 +4,7 @@ import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import { DataGrid } from '@mui/x-data-grid';
-import { Layout } from '../components';
+import { Layout, PageBreadcrumbs } from '../components';
 import { withAuth } from '../context/AuthContext';
 import { fetchActivityLogs } from '../models/activityLogModel';
 
@@ -36,6 +36,7 @@ function ActivityPage() {
         <Typography variant="h5" gutterBottom>
           Activity Logs
         </Typography>
+        <PageBreadcrumbs items={[{ label: 'Activity Logs' }]} />
         <Paper>
           <DataGrid
             rows={logs}

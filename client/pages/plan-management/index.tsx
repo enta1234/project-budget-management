@@ -13,7 +13,7 @@ import TimelineSeparator from '@mui/lab/TimelineSeparator';
 import TimelineConnector from '@mui/lab/TimelineConnector';
 import TimelineContent from '@mui/lab/TimelineContent';
 import TimelineDot from '@mui/lab/TimelineDot';
-import { Layout, SimpleCalendar } from '../../components';
+import { Layout, SimpleCalendar, PageBreadcrumbs } from '../../components';
 import { withAuth } from '../../context/AuthContext';
 
 function PlanManagementOverview() {
@@ -37,6 +37,7 @@ function PlanManagementOverview() {
             }}
           >
             <Typography variant="h5">Plan Management Overview</Typography>
+            <PageBreadcrumbs items={[{ label: 'Plan Management' }]} />
             <ToggleButtonGroup
               value={view}
               exclusive
