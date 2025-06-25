@@ -35,6 +35,10 @@ export class Project extends Document {
 
   @Prop({ default: false })
   deleted: boolean;
+
+  @Prop()
+  deletedAt?: Date;
 }
 
 export const ProjectSchema = SchemaFactory.createForClass(Project);
+ProjectSchema.index({ deletedAt: 1 }, { expireAfterSeconds: 0 });
