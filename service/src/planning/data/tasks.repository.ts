@@ -19,6 +19,10 @@ export class CreateTaskInput {
   name!: string;
 
   @IsOptional()
+  @IsString()
+  type?: string;
+
+  @IsOptional()
   @IsBoolean()
   isFeature?: boolean;
 
@@ -63,6 +67,10 @@ export class UpdateTaskInput {
   name?: string;
 
   @IsOptional()
+  @IsString()
+  type?: string;
+
+  @IsOptional()
   @IsBoolean()
   isFeature?: boolean;
 
@@ -105,12 +113,19 @@ export class TasksRepository {
   }
 
   create(data: CreateTaskInput): Promise<Task> {
-    const task = new this.model(data);
+    const task = new this.model({
+      ...data,
+      ...(data.type ? { isFeature: data.type === 'feature' } : {}),
+    });
     return task.save();
   }
 
   update(id: string, data: UpdateTaskInput): Promise<Task | null> {
-    return this.model.findByIdAndUpdate(id, data, { new: true }).exec();
+    const payload = {
+      ...data,
+      ...(data.type ? { isFeature: data.type === 'feature' } : {}),
+    };
+    return this.model.findByIdAndUpdate(id, payload, { new: true }).exec();
   }
 
   remove(id: string): Promise<Task | null> {
