@@ -14,6 +14,7 @@ export interface CreateProjectInput {
   lead?: string;
   status?: string;
   members?: string[];
+  deleted?: boolean;
 }
 
 export interface UpdateProjectInput {
@@ -27,6 +28,7 @@ export interface UpdateProjectInput {
   lead?: string;
   status?: string;
   members?: string[];
+  deleted?: boolean;
 }
 
 @Injectable()
@@ -34,7 +36,11 @@ export class ProjectsRepository {
   constructor(@InjectModel(Project.name) private projectModel: Model<Project>) {}
 
   findAll(): Promise<Project[]> {
-    return this.projectModel.find().sort({ start: 1 }).populate('lead', 'name').exec();
+    return this.projectModel
+      .find()
+      .sort({ deleted: 1, start: 1 })
+      .populate('lead', 'name')
+      .exec();
   }
 
   findOne(id: string): Promise<Project | null> {
@@ -49,6 +55,18 @@ export class ProjectsRepository {
   update(id: string, data: UpdateProjectInput): Promise<Project | null> {
     return this.projectModel
       .findByIdAndUpdate(id, data, { new: true })
+      .exec();
+  }
+
+  remove(id: string): Promise<Project | null> {
+    return this.projectModel
+      .findByIdAndUpdate(id, { deleted: true }, { new: true })
+      .exec();
+  }
+
+  restore(id: string): Promise<Project | null> {
+    return this.projectModel
+      .findByIdAndUpdate(id, { deleted: false }, { new: true })
       .exec();
   }
 }

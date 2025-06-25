@@ -32,6 +32,9 @@ export class Project extends Document {
 
   @Prop({ type: [String], default: [] })
   members: string[];
+
+  @Prop({ default: false })
+  deleted: boolean;
 }
 
 export const ProjectSchema = SchemaFactory.createForClass(Project);

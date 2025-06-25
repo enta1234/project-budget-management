@@ -10,6 +10,7 @@ import Stack from '@mui/material/Stack';
 import IconButton from '@mui/material/IconButton';
 import DescriptionIcon from '@mui/icons-material/Description';
 import DeleteIcon from '@mui/icons-material/Delete';
+import RestoreIcon from '@mui/icons-material/Restore';
 import DownloadIcon from '@mui/icons-material/Download';
 import { DataGrid } from '@mui/x-data-grid';
 import {
@@ -129,6 +130,28 @@ function ProjectManagement() {
     }
   };
 
+  const handleDelete = async row => {
+    if (window.confirm('Delete this project?')) {
+      try {
+        await api.delete(`/api/v1/projects/${row._id}`);
+        showToast('Project deleted');
+        loadData();
+      } catch (e) {
+        showToast('Error deleting project', { severity: 'error' });
+      }
+    }
+  };
+
+  const handleRestore = async row => {
+    try {
+      await api.patch(`/api/v1/projects/${row._id}/restore`, {});
+      showToast('Project restored');
+      loadData();
+    } catch (e) {
+      showToast('Error restoring project', { severity: 'error' });
+    }
+  };
+
   function getServiceDuration(date: string | Date) {
     const start = new Date(date);
     const now = new Date();
@@ -225,15 +248,22 @@ function ProjectManagement() {
           <IconButton
             size="small"
             onClick={() => router.push(`/project/${params.row._id}`)}
+            disabled={params.row.deleted}
           >
             <DescriptionIcon fontSize="small" />
           </IconButton>
-          <IconButton size="small">
+          <IconButton size="small" disabled={params.row.deleted}>
             <DownloadIcon fontSize="small" />
           </IconButton>
-          <IconButton size="small">
-            <DeleteIcon fontSize="small" />
-          </IconButton>
+          {params.row.deleted ? (
+            <IconButton size="small" onClick={() => handleRestore(params.row)}>
+              <RestoreIcon fontSize="small" />
+            </IconButton>
+          ) : (
+            <IconButton size="small" onClick={() => handleDelete(params.row)}>
+              <DeleteIcon fontSize="small" />
+            </IconButton>
+          )}
         </Stack>
       ),
     },
@@ -253,6 +283,7 @@ function ProjectManagement() {
             rows={projects}
             columns={columns}
             getRowId={row => row._id}
+            getRowClassName={params => (params.row.deleted ? 'project-disabled' : '')}
             pageSize={25}
             rowsPerPageOptions={[25]}
             autoHeight
