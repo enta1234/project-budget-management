@@ -82,6 +82,12 @@ function PlanningSetting() {
           <Autocomplete
             options={projects}
             getOptionLabel={o => o.name}
+            isOptionEqualToValue={(o, v) => (o._id || o.id) === (v._id || v.id)}
+            renderOption={(props, option) => (
+              <li {...props} key={option._id || option.id}>
+                {option.name}
+              </li>
+            )}
             value={project}
             onChange={(_, v) => setProject(v)}
             renderInput={params => <TextField {...params} label="Project" />}
