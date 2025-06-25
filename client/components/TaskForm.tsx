@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -27,8 +27,24 @@ export default function TaskForm({ onSubmit, initial }) {
     setFeature(initial?.isFeature || false);
   }, [initial]);
 
+  const dateError = useMemo(
+    () =>
+      !!(
+        startDate &&
+        endDate &&
+        new Date(startDate).getTime() > new Date(endDate).getTime()
+      ),
+    [startDate, endDate],
+  );
+
+  const formValid = useMemo(
+    () => name.trim() !== '' && !dateError,
+    [name, dateError],
+  );
+
   const handleSubmit = e => {
     e.preventDefault();
+    if (!formValid) return;
     onSubmit &&
       onSubmit({
         name,
@@ -54,13 +70,35 @@ export default function TaskForm({ onSubmit, initial }) {
     <form onSubmit={handleSubmit}>
       <TextField label="Name" value={name} onChange={e => setName(e.target.value)} fullWidth required sx={{ mb: 2 }} />
       <TextField label="Detail" value={detail} onChange={e => setDetail(e.target.value)} fullWidth multiline sx={{ mb: 2 }} />
-      <DatePicker label="Start Date" value={startDate} onChange={setStartDate} sx={{ mb: 2 }} />
-      <DatePicker label="End Date" value={endDate} onChange={setEndDate} sx={{ mb: 2 }} />
+      <DatePicker
+        label="Start Date"
+        value={startDate}
+        onChange={setStartDate}
+        sx={{ mb: 2 }}
+        slotProps={{ textField: { error: dateError } }}
+      />
+      <DatePicker
+        label="End Date"
+        value={endDate}
+        onChange={setEndDate}
+        sx={{ mb: 2 }}
+        slotProps={{
+          textField: {
+            error: dateError,
+            helperText: dateError ? 'End date must be after start date' : undefined,
+          },
+        }}
+      />
       <TextField label="Owner" value={owner} onChange={e => setOwner(e.target.value)} fullWidth sx={{ mb: 2 }} />
       <TextField label="Manday" type="number" value={manday} onChange={e => setManday(e.target.value)} fullWidth sx={{ mb: 2 }} />
       <TextField label="Blocked By" value={blockedBy} onChange={e => setBlockedBy(e.target.value)} fullWidth sx={{ mb: 2 }} />
       <FormControlLabel control={<Checkbox checked={feature} onChange={e => setFeature(e.target.checked)} />} label="Feature" />
-      <Button type="submit" variant="contained" sx={{ display: 'block', mt: 2 }}>
+      <Button
+        type="submit"
+        variant="contained"
+        sx={{ display: 'block', mt: 2 }}
+        disabled={!formValid}
+      >
         {initial ? 'Update' : 'Create'}
       </Button>
     </form>
