@@ -263,9 +263,10 @@ function PlanningSetting() {
                   </Grid>
                 </Grid>
               </Paper>
-            </Box>
-          </Grid>
-        )}
+            </Grid>
+            {/* closing tag for outer Grid container */}
+            </Grid>
+          )}
         <Popup open={dialog === 'task'} onClose={() => setDialog('')} title="Add Task/Feature">
           <TaskForm onSubmit={handleCreateTask} />
         </Popup>
