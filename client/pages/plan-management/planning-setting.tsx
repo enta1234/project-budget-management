@@ -109,6 +109,15 @@ function PlanningSetting() {
   };
 
   const milestoneDates = milestones.map(m => new Date(m.date).toDateString());
+  const combinedTasks = [
+    ...tasks,
+    ...milestones.map(m => ({
+      ...m,
+      startDate: m.date,
+      endDate: m.date,
+      type: 'milestone',
+    })),
+  ];
 
   const taskStatus = t => {
     const now = new Date();
@@ -173,11 +182,18 @@ function PlanningSetting() {
             <Grid item xs={12} md={6}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                 <Typography variant="h6">Tasks</Typography>
-                <Button variant="contained" onClick={() => setDialog('task')}>Add</Button>
+                <Box>
+                  <Button variant="contained" onClick={() => setDialog('task')} sx={{ mr: 1 }}>
+                    Add Task
+                  </Button>
+                  <Button variant="contained" onClick={() => setDialog('milestone')}>
+                    Add Milestone
+                  </Button>
+                </Box>
               </Box>
               <Paper sx={{ p: 2 }}>
                 <DataGrid
-                  rows={tasks.map(t => ({ id: t._id || t.id, ...t }))}
+                  rows={combinedTasks.map(t => ({ id: t._id || t.id, ...t }))}
                   columns={[
                     { field: 'name', headerName: 'Name', flex: 1 },
                     { field: 'detail', headerName: 'Detail', flex: 1 },
@@ -194,27 +210,6 @@ function PlanningSetting() {
                     { field: 'duration', headerName: 'Duration', width: 100, type: 'number' },
                     { field: 'blockedBy', headerName: 'Blocked By', width: 120 },
                     { field: 'type', headerName: 'Type', width: 120 },
-                  ]}
-                  autoHeight
-                  hideFooter
-                />
-              </Paper>
-            </Grid>
-            <Grid item xs={12} md={6}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                <Typography variant="h6">Milestones</Typography>
-                <Button variant="contained" onClick={() => setDialog('milestone')}>Add Milestone</Button>
-              </Box>
-              <Paper sx={{ p: 2 }}>
-                <DataGrid
-                  rows={milestones.map(m => ({ id: m._id || m.id, ...m }))}
-                  columns={[
-                    { field: 'name', headerName: 'Name', flex: 1 },
-                    { field: 'detail', headerName: 'Detail', flex: 1 },
-                    { field: 'date', headerName: 'Date', valueFormatter: params => {
-                      const value = params?.value;
-                      return value ? new Date(value).toLocaleDateString() : '';
-                    }, width: 120 },
                   ]}
                   autoHeight
                   hideFooter
