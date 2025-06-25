@@ -142,6 +142,7 @@ export default function ProjectForm({
             label="Name"
             value={name}
             onChange={e => setName(e.target.value)}
+            sx={{ gridColumn: 'span 2' }}
             required
           />
           <TextField
