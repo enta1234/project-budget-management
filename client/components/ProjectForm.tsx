@@ -22,6 +22,7 @@ export default function ProjectForm({
   onSubmit,
   initial,
   submitText = 'Create',
+  open = true,
 }) {
   const [active, setActive] = useState(0);
   const [team, setTeam] = useState(null);
@@ -44,6 +45,12 @@ export default function ProjectForm({
     setManday(initial?.manday != null ? String(initial.manday) : '');
     setStatus(initial?.status || 'planing');
   }, [initial]);
+
+  useEffect(() => {
+    if (!open) {
+      setActive(0);
+    }
+  }, [open]);
 
   const handleNext = () => setActive(a => Math.min(a + 1, 2));
   const handleBack = () => setActive(a => Math.max(a - 1, 0));
