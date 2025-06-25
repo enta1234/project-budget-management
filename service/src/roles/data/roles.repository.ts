@@ -2,9 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Role } from './role.schema';
+import { IsString } from 'class-validator';
 
-export interface CreateRoleInput {
-  name: string;
+export class CreateRoleInput {
+  @IsString()
+  name!: string;
 }
 
 @Injectable()

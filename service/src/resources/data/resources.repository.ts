@@ -2,18 +2,41 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Resource } from './resource.schema';
+import { IsString, IsEmail, IsOptional, IsDate } from 'class-validator';
+import { Type } from 'class-transformer';
 
-export interface CreateResourceInput {
-  name: string;
-  email: string;
-  position: string;
+export class CreateResourceInput {
+  @IsString()
+  name!: string;
+
+  @IsEmail()
+  email!: string;
+
+  @IsString()
+  position!: string;
+
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
   startDate?: Date;
 }
 
-export interface UpdateResourceInput {
+export class UpdateResourceInput {
+  @IsOptional()
+  @IsString()
   name?: string;
+
+  @IsOptional()
+  @IsEmail()
   email?: string;
+
+  @IsOptional()
+  @IsString()
   position?: string;
+
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
   startDate?: Date;
 }
 

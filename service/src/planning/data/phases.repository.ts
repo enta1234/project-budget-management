@@ -2,15 +2,29 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Phase } from './phase.schema';
+import { IsString, IsOptional, IsNumber } from 'class-validator';
+import { Type } from 'class-transformer';
 
-export interface CreatePhaseInput {
-  project: Types.ObjectId;
-  name: string;
+export class CreatePhaseInput {
+  @Type(() => String)
+  @IsString()
+  project!: Types.ObjectId;
+
+  @IsString()
+  name!: string;
+
+  @IsOptional()
+  @IsNumber()
   order?: number;
 }
 
-export interface UpdatePhaseInput {
+export class UpdatePhaseInput {
+  @IsOptional()
+  @IsString()
   name?: string;
+
+  @IsOptional()
+  @IsNumber()
   order?: number;
 }
 

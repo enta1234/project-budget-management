@@ -6,6 +6,7 @@ import { LoggerService } from './logger/logger.service';
 import { ActivityLogsService } from './activity-logs/activity-logs.service';
 import { ActivityLogsInterceptor } from './activity-logs/activity-logs.interceptor';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { ValidationPipe, BadRequestException } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,6 +15,13 @@ async function bootstrap() {
   app.setGlobalPrefix('api/v1');
   const logger = app.get(LoggerService);
   const activityLogs = app.get(ActivityLogsService);
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      exceptionFactory: () => new BadRequestException('missing invalid'),
+    }),
+  );
   app.useGlobalInterceptors(
     new LoggingInterceptor(logger),
     new ActivityLogsInterceptor(activityLogs),

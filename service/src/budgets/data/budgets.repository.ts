@@ -2,16 +2,30 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Budget } from './budget.schema';
+import { IsString, IsNumber, IsOptional } from 'class-validator';
 
-export interface CreateBudgetInput {
-  role: string;
-  level: string;
-  rate: number;
+export class CreateBudgetInput {
+  @IsString()
+  role!: string;
+
+  @IsString()
+  level!: string;
+
+  @IsNumber()
+  rate!: number;
 }
 
-export interface UpdateBudgetInput {
+export class UpdateBudgetInput {
+  @IsOptional()
+  @IsString()
   role?: string;
+
+  @IsOptional()
+  @IsString()
   level?: string;
+
+  @IsOptional()
+  @IsNumber()
   rate?: number;
 }
 
