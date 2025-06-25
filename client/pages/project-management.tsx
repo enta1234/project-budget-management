@@ -153,13 +153,14 @@ function ProjectManagement() {
     {
       field: 'lead',
       headerName: 'Lead',
-      width: 120,
+      flex: 1,
       valueGetter: (_value, row) => row.lead?.name || '',
     },
     {
       field: 'status',
       headerName: 'Status',
-      width: 120,
+      flex: 1,
+      minWidth: 140,
       renderCell: params => (
         <StatusCell id={params.row._id} value={params.row.status || 'planing'} />
       ),
