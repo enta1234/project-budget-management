@@ -155,12 +155,13 @@ function ProjectManagement() {
       field: 'name',
       headerName: 'Project Name',
       flex: 1,
-      minWidth: 160,
+      minWidth: 80,
     },
     {
       field: 'lead',
       headerName: 'Project Lead',
       flex: 1,
+      minWidth: 80,
       valueGetter: (_value, row) => row.lead?.name || '',
     },
     {
@@ -175,7 +176,7 @@ function ProjectManagement() {
     {
       field: 'totalMember',
       headerName: 'Team Size',
-      width: 120,
+      width: 80,
       type: 'number',
       headerAlign: 'right',
       align: 'right',
@@ -184,7 +185,7 @@ function ProjectManagement() {
     {
       field: 'actualManday',
       headerName: 'Actual Mandays',
-      width: 160,
+      width: 80,
       type: 'number',
       headerAlign: 'right',
       align: 'right',
@@ -196,7 +197,7 @@ function ProjectManagement() {
     {
       field: 'manday',
       headerName: 'Estimated Mandays',
-      width: 150,
+      width: 80,
       type: 'number',
       headerAlign: 'right',
       align: 'right',
