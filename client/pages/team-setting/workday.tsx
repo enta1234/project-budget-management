@@ -13,7 +13,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { DataGrid } from '@mui/x-data-grid';
 import { format } from 'date-fns';
-import { Layout, Popup, WorkdayForm, useToast } from '../../components';
+import { Layout, Popup, WorkdayForm, useToast, ConfirmDialog } from '../../components';
 import { withAuth, useAuth } from '../../context/AuthContext';
 import {
   fetchWorkdays,
@@ -30,6 +30,7 @@ function WorkdayPage() {
   const [rows, setRows] = useState([]);
   const [open, setOpen] = useState(false);
   const [editRow, setEditRow] = useState(null);
+  const [deleteRow, setDeleteRow] = useState(null);
 
   async function loadData() {
     const data = await fetchWorkdays(year);
@@ -65,17 +66,20 @@ function WorkdayPage() {
     }
   };
 
-  const handleDelete = async row => {
+  const handleDelete = row => {
     if (row.readonly) return;
-    if (window.confirm('Delete this holiday?')) {
-      try {
-        await deleteWorkday(row.id);
-        showToast('Holiday deleted');
-        loadData();
-      } catch (e) {
-        showToast('Error deleting holiday', { severity: 'error' });
-      }
+    setDeleteRow(row);
+  };
+
+  const confirmDelete = async () => {
+    try {
+      await deleteWorkday(deleteRow.id);
+      showToast('Holiday deleted');
+      loadData();
+    } catch (e) {
+      showToast('Error deleting holiday', { severity: 'error' });
     }
+    setDeleteRow(null);
   };
 
   const years = [] as number[];
@@ -172,6 +176,13 @@ function WorkdayPage() {
         <Popup open={!!editRow} onClose={() => setEditRow(null)} title="Edit Holiday">
           {editRow && <WorkdayForm onSubmit={handleSave} initial={editRow} submitText="Save" />}
         </Popup>
+        <ConfirmDialog
+          open={!!deleteRow}
+          title="Confirm Delete"
+          content="Delete this holiday?"
+          onClose={() => setDeleteRow(null)}
+          onConfirm={confirmDelete}
+        />
       </Container>
     </Layout>
   );

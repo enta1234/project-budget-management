@@ -19,7 +19,7 @@ import {
   addYears,
   addMonths,
 } from 'date-fns';
-import { Layout, ResourceForm, Popup, useToast } from '../../components';
+import { Layout, ResourceForm, Popup, useToast, ConfirmDialog } from '../../components';
 import { withAuth, useAuth } from '../../context/AuthContext';
 import {
   fetchResources,
@@ -36,6 +36,7 @@ function TeamSetting() {
   const [resources, setResources] = useState([]);
   const [open, setOpen] = useState(false);
   const [editRow, setEditRow] = useState(null);
+  const [deleteRow, setDeleteRow] = useState(null);
 
   function getServiceDuration(date: string | Date) {
     const start = new Date(date);
@@ -102,16 +103,19 @@ function TeamSetting() {
     }
   };
 
-  const handleDelete = async row => {
-    if (window.confirm('Delete this resource?')) {
-      try {
-        await deleteResource(row.id);
-        showToast('Resource deleted');
-        loadData();
-      } catch (e) {
-        showToast('Error deleting resource', { severity: 'error' });
-      }
+  const handleDelete = row => {
+    setDeleteRow(row);
+  };
+
+  const confirmDelete = async () => {
+    try {
+      await deleteResource(deleteRow.id);
+      showToast('Resource deleted');
+      loadData();
+    } catch (e) {
+      showToast('Error deleting resource', { severity: 'error' });
     }
+    setDeleteRow(null);
   };
 
   const handleExport = async () => {
@@ -255,6 +259,13 @@ function TeamSetting() {
             />
           )}
         </Popup>
+        <ConfirmDialog
+          open={!!deleteRow}
+          title="Confirm Delete"
+          content="Delete this resource?"
+          onClose={() => setDeleteRow(null)}
+          onConfirm={confirmDelete}
+        />
       </Container>
     </Layout>
   );

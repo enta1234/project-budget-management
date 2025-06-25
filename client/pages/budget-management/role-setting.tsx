@@ -8,7 +8,7 @@ import TextField from '@mui/material/TextField';
 import Chip from '@mui/material/Chip';
 import Stack from '@mui/material/Stack';
 import Paper from '@mui/material/Paper';
-import { Layout, useToast } from '../../components';
+import { Layout, useToast, ConfirmDialog } from '../../components';
 import { withAuth, useAuth } from '../../context/AuthContext';
 import {
   fetchRoles,
@@ -23,6 +23,7 @@ function RoleSetting() {
   const [roles, setRoles] = useState([]);
   const [newRole, setNewRole] = useState('');
   const [levelInputs, setLevelInputs] = useState({});
+  const [removeData, setRemoveData] = useState(null);
 
   async function loadData() {
     const data = await fetchRoles();
@@ -57,15 +58,19 @@ function RoleSetting() {
     }
   };
 
-  const handleRemoveLevel = async (roleId, level) => {
-    if (!window.confirm('Remove this level?')) return;
+  const handleRemoveLevel = (roleId, level) => {
+    setRemoveData({ roleId, level });
+  };
+
+  const confirmRemove = async () => {
     try {
-      await removeLevel(roleId, level);
+      await removeLevel(removeData.roleId, removeData.level);
       showToast('Level removed');
       loadData();
     } catch (e) {
       showToast('Error removing level', { severity: 'error' });
     }
+    setRemoveData(null);
   };
 
   return (
@@ -129,6 +134,13 @@ function RoleSetting() {
             </Box>
           </Paper>
         ))}
+        <ConfirmDialog
+          open={!!removeData}
+          title="Confirm Delete"
+          content="Remove this level?"
+          onClose={() => setRemoveData(null)}
+          onConfirm={confirmRemove}
+        />
       </Container>
     </Layout>
   );

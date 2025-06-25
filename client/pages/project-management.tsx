@@ -25,7 +25,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Chip from '@mui/material/Chip';
 import api from '../api';
-import { Layout, Popup, ProjectForm, useToast } from '../components';
+import { Layout, Popup, ProjectForm, useToast, ConfirmDialog } from '../components';
 import { withAuth, useAuth } from '../context/AuthContext';
 
 const statusOptions = [
@@ -90,6 +90,7 @@ function ProjectManagement() {
   const [open, setOpen] = useState(false);
   const [teams, setTeams] = useState([]);
   const [budgets, setBudgets] = useState([]);
+  const [deleteRow, setDeleteRow] = useState(null);
 
   async function loadData() {
     const [pro, usr, tm, bg] = await Promise.all([
@@ -130,16 +131,19 @@ function ProjectManagement() {
     }
   };
 
-  const handleDelete = async row => {
-    if (window.confirm('Delete this project?')) {
-      try {
-        await api.delete(`/api/v1/projects/${row._id}`);
-        showToast('Project deleted');
-        loadData();
-      } catch (e) {
-        showToast('Error deleting project', { severity: 'error' });
-      }
+  const handleDelete = row => {
+    setDeleteRow(row);
+  };
+
+  const confirmDelete = async () => {
+    try {
+      await api.delete(`/api/v1/projects/${deleteRow._id}`);
+      showToast('Project deleted');
+      loadData();
+    } catch (e) {
+      showToast('Error deleting project', { severity: 'error' });
     }
+    setDeleteRow(null);
   };
 
   const handleRestore = async row => {
@@ -312,6 +316,13 @@ function ProjectManagement() {
             onSubmit={handleCreate}
           />
         </Popup>
+        <ConfirmDialog
+          open={!!deleteRow}
+          title="Confirm Delete"
+          content="Delete this project?"
+          onClose={() => setDeleteRow(null)}
+          onConfirm={confirmDelete}
+        />
       </Container>
     </Layout>
   );
