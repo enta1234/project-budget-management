@@ -143,7 +143,8 @@ export default function AgendaCalendar({ tasks = [], events = [], holidays = [],
         events={eventsAll}
         defaultView="month"
         views={["month", "week", "day"]}
-        style={{ height: 600 }}
+        popup
+        style={{ height: 720 }}
         eventPropGetter={eventPropGetter}
         dayPropGetter={dayPropGetter}
         components={{ event: Event }}
