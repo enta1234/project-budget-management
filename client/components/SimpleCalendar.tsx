@@ -75,9 +75,14 @@ export default function SimpleCalendar({ events = [], tasks = [], holidays = [],
         </Box>
       </Box>
       <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 1 }}>
-        {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map((d) => (
-          <Typography key={d} variant="subtitle2" align="center">
-            {d}
+        {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map((d, idx) => (
+          <Typography
+            key={d}
+            variant="subtitle2"
+            align="center"
+            sx={idx === 0 || idx === 6 ? { bgcolor: 'grey.200' } : undefined}
+          >
+            {idx === 0 || idx === 6 ? '' : d}
           </Typography>
         ))}
         {days.map((day) => {
@@ -88,6 +93,8 @@ export default function SimpleCalendar({ events = [], tasks = [], holidays = [],
           const dayHolidays = holidays.filter(h =>
             isSameDay(new Date(h.date), day)
           );
+          const nonWeekendHolidays = dayHolidays.filter(h => h.name !== 'Weekend');
+          const isWeekend = day.getDay() === 0 || day.getDay() === 6;
           const dayTasks = tasks.filter(t => {
             const start = t.startDate ? new Date(t.startDate) : null;
             const end = t.endDate ? new Date(t.endDate) : start;
@@ -100,7 +107,7 @@ export default function SimpleCalendar({ events = [], tasks = [], holidays = [],
               sx={{
                 border: '1px solid #ccc',
                 height: 80,
-                bgcolor: inMonth ? 'background.paper' : 'grey.100',
+                bgcolor: isWeekend ? 'grey.200' : inMonth ? 'background.paper' : 'grey.100',
                 p: 0.5,
                 fontSize: 12,
                 position: 'relative',
@@ -115,8 +122,11 @@ export default function SimpleCalendar({ events = [], tasks = [], holidays = [],
                   {ev.title}
                 </Box>
               ))}
-              {dayHolidays.map(h => (
-                <Box key={h.id || h._id} sx={{ mt: 0.5, bgcolor: 'error.main', color: 'white', px: 0.5, borderRadius: 1, fontSize: 10 }}>
+              {nonWeekendHolidays.map(h => (
+                <Box
+                  key={h.id || h._id}
+                  sx={{ mt: 0.5, bgcolor: 'error.main', color: 'white', px: 0.5, borderRadius: 1, fontSize: 10 }}
+                >
                   {`${h.name} (${format(new Date(h.date), 'MM-dd')})`}
                 </Box>
               ))}
