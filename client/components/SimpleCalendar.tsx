@@ -19,19 +19,31 @@ export default function SimpleCalendar({ events = [], tasks = [], onTaskClick }:
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const monthStart = startOfMonth(currentDate);
-  const calendarStart = startOfWeek(monthStart, { weekStartsOn: 0 });
+  const calendarStart = addDays(
+    startOfWeek(monthStart, { weekStartsOn: 0 }),
+    -7
+  );
 
   const days = [];
-  for (let i = 0; i < 42; i++) {
+  for (let i = 0; i < 49; i++) {
     days.push(addDays(calendarStart, i));
   }
 
   const statusColor = (status: string) =>
-    ({
-      done: 'success.main',
-      'in-progress': 'info.main',
-      'not-started': 'grey.400',
-    } as any)[status] || 'grey.400';
+    (
+      {
+        planing: 'grey.400',
+        'in progress': 'info.main',
+        break: 'warning.main',
+        production: 'primary.main',
+        'waiting payment': 'secondary.main',
+        paid: 'success.main',
+        cancelled: 'error.main',
+        done: 'success.main',
+        'in-progress': 'info.main',
+        'not-started': 'grey.400',
+      } as any
+    )[status] || 'grey.400';
 
   const taskStatus = (t: any) => {
     const now = new Date();
@@ -100,7 +112,7 @@ export default function SimpleCalendar({ events = [], tasks = [], onTaskClick }:
                   onClick={() => onTaskClick && onTaskClick(t)}
                   sx={{
                     mt: 0.5,
-                    bgcolor: statusColor(taskStatus(t)),
+                    bgcolor: statusColor(t.status || taskStatus(t)),
                     color: 'white',
                     px: 0.5,
                     borderRadius: 1,
