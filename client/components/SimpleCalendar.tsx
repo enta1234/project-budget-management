@@ -13,7 +13,8 @@ import {
   addMonths,
   isSameMonth,
   isSameDay,
-  format
+  format,
+  differenceInCalendarDays
 } from 'date-fns';
 
 export default function SimpleCalendar({ events = [], tasks = [], holidays = [], onTaskClick }: any) {
@@ -28,6 +29,10 @@ export default function SimpleCalendar({ events = [], tasks = [], holidays = [],
   const days = [];
   for (let i = 0; i < 49; i++) {
     days.push(addDays(calendarStart, i));
+  }
+  const weeks: Date[][] = [];
+  for (let i = 0; i < days.length; i += 7) {
+    weeks.push(days.slice(i, i + 7));
   }
 
   const statusColor = (status: string) =>
@@ -85,56 +90,68 @@ export default function SimpleCalendar({ events = [], tasks = [], holidays = [],
             {idx === 0 || idx === 6 ? '' : d}
           </Typography>
         ))}
-        {days.map((day) => {
-          const inMonth = isSameMonth(day, monthStart);
-          const dayEvents = events.filter((ev) =>
-            isSameDay(new Date(ev.date), day)
-          );
-          const dayHolidays = holidays.filter(h =>
-            isSameDay(new Date(h.date), day)
-          );
-          const nonWeekendHolidays = dayHolidays.filter(h => h.name !== 'Weekend');
-          const isWeekend = day.getDay() === 0 || day.getDay() === 6;
-          const dayTasks = tasks.filter(t => {
-            const start = t.startDate ? new Date(t.startDate) : null;
-            const end = t.endDate ? new Date(t.endDate) : start;
-            if (!start) return false;
-            return start <= day && end >= day;
-          });
-          return (
-            <Box
-              key={day.toString()}
-              sx={{
-                border: '1px solid #ccc',
-                height: 80,
-                bgcolor: isWeekend ? 'grey.200' : inMonth ? 'background.paper' : 'grey.100',
-                p: 0.5,
-                fontSize: 12,
-                position: 'relative',
-                overflow: 'hidden'
-              }}
-            >
-              <Typography variant="caption" sx={{ position: 'absolute', top: 2, right: 2 }}>
-                {format(day, 'd')}
-              </Typography>
-              {dayEvents.map(ev => (
-                <Box key={ev._id || ev.id} sx={{ mt: 3, bgcolor: 'secondary.main', color: 'white', px: 0.5, borderRadius: 1, mb: 0.5 }}>
-                  {ev.title}
-                </Box>
-              ))}
-              {nonWeekendHolidays.map(h => (
+      </Box>
+      {weeks.map((week, widx) => {
+        const weekStart = week[0];
+        const weekEnd = week[6];
+        const weekTasks = tasks.filter(t => {
+          const start = t.startDate ? new Date(t.startDate) : null;
+          const end = t.endDate ? new Date(t.endDate) : start;
+          if (!start) return false;
+          return start <= weekEnd && end >= weekStart;
+        });
+        return (
+          <Box key={widx} sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 1, mb: 1 }}>
+            {week.map(day => {
+              const inMonth = isSameMonth(day, monthStart);
+              const dayEvents = events.filter(ev => isSameDay(new Date(ev.date), day));
+              const dayHolidays = holidays.filter(h => isSameDay(new Date(h.date), day));
+              const nonWeekendHolidays = dayHolidays.filter(h => h.name !== 'Weekend');
+              const isWeekend = day.getDay() === 0 || day.getDay() === 6;
+              return (
                 <Box
-                  key={h.id || h._id}
-                  sx={{ mt: 0.5, bgcolor: 'error.main', color: 'white', px: 0.5, borderRadius: 1, fontSize: 10 }}
+                  key={day.toString()}
+                  sx={{
+                    border: '1px solid #ccc',
+                    height: 80,
+                    bgcolor: isWeekend ? 'grey.200' : inMonth ? 'background.paper' : 'grey.100',
+                    p: 0.5,
+                    fontSize: 12,
+                    position: 'relative',
+                    overflow: 'hidden'
+                  }}
                 >
-                  {`${h.name} (${format(new Date(h.date), 'MM-dd')})`}
+                  <Typography variant="caption" sx={{ position: 'absolute', top: 2, right: 2 }}>
+                    {format(day, 'd')}
+                  </Typography>
+                  {dayEvents.map(ev => (
+                    <Box key={ev._id || ev.id} sx={{ mt: 3, bgcolor: 'secondary.main', color: 'white', px: 0.5, borderRadius: 1, mb: 0.5 }}>
+                      {ev.title}
+                    </Box>
+                  ))}
+                  {nonWeekendHolidays.map(h => (
+                    <Box
+                      key={h.id || h._id}
+                      sx={{ mt: 0.5, bgcolor: 'error.main', color: 'white', px: 0.5, borderRadius: 1, fontSize: 10 }}
+                    >
+                      {`${h.name} (${format(new Date(h.date), 'MM-dd')})`}
+                    </Box>
+                  ))}
                 </Box>
-              ))}
-              {dayTasks.map(t => (
+              );
+            })}
+            {weekTasks.map(t => {
+              const start = t.startDate ? new Date(t.startDate) : null;
+              const end = t.endDate ? new Date(t.endDate) : start;
+              if (!start) return null;
+              const startIdx = Math.max(0, differenceInCalendarDays(start, weekStart));
+              const endIdx = Math.min(6, differenceInCalendarDays(end || start, weekStart));
+              return (
                 <Box
-                  key={t._id || t.id}
+                  key={`${t._id || t.id}-${widx}`}
                   onClick={() => onTaskClick && onTaskClick(t)}
                   sx={{
+                    gridColumn: `${startIdx + 1} / ${endIdx + 2}`,
                     mt: 0.5,
                     bgcolor: statusColor(t.status || taskStatus(t)),
                     color: 'white',
@@ -149,11 +166,11 @@ export default function SimpleCalendar({ events = [], tasks = [], holidays = [],
                 >
                   {t.name}
                 </Box>
-              ))}
-            </Box>
-          );
-        })}
-      </Box>
+              );
+            })}
+          </Box>
+        );
+      })}
     </Box>
   );
 }
