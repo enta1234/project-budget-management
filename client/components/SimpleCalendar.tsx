@@ -15,7 +15,7 @@ import {
   format
 } from 'date-fns';
 
-export default function SimpleCalendar({ events = [] }) {
+export default function SimpleCalendar({ events = [], tasks = [] }) {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const monthStart = startOfMonth(currentDate);
@@ -25,6 +25,23 @@ export default function SimpleCalendar({ events = [] }) {
   for (let i = 0; i < 42; i++) {
     days.push(addDays(calendarStart, i));
   }
+
+  const statusColor = (status: string) =>
+    ({
+      done: 'success.main',
+      'in-progress': 'info.main',
+      'not-started': 'grey.400',
+    } as any)[status] || 'grey.400';
+
+  const taskStatus = (t: any) => {
+    const now = new Date();
+    const start = t.startDate ? new Date(t.startDate) : null;
+    const end = t.endDate ? new Date(t.endDate) : start;
+    if (end && end < now) return 'done';
+    if (start && start > now) return 'not-started';
+    if (start && end && start <= now && end >= now) return 'in-progress';
+    return 'not-started';
+  };
 
   return (
     <Box>
@@ -47,9 +64,15 @@ export default function SimpleCalendar({ events = [] }) {
         ))}
         {days.map((day) => {
           const inMonth = isSameMonth(day, monthStart);
-          const hasEvent = events.some((ev) =>
+          const dayEvents = events.filter((ev) =>
             isSameDay(new Date(ev.date), day)
           );
+          const dayTasks = tasks.filter(t => {
+            const start = t.startDate ? new Date(t.startDate) : null;
+            const end = t.endDate ? new Date(t.endDate) : start;
+            if (!start) return false;
+            return start <= day && end >= day;
+          });
           return (
             <Box
               key={day.toString()}
@@ -59,17 +82,36 @@ export default function SimpleCalendar({ events = [] }) {
                 bgcolor: inMonth ? 'background.paper' : 'grey.100',
                 p: 0.5,
                 fontSize: 12,
-                position: 'relative'
+                position: 'relative',
+                overflow: 'hidden'
               }}
             >
               <Typography variant="caption" sx={{ position: 'absolute', top: 2, right: 2 }}>
                 {format(day, 'd')}
               </Typography>
-              {hasEvent && (
-                <Box sx={{ mt: 3, bgcolor: 'secondary.main', color: 'white', px: 0.5, borderRadius: 1 }}>
-                  {events.find((ev) => isSameDay(new Date(ev.date), day)).title}
+              {dayEvents.map(ev => (
+                <Box key={ev._id || ev.id} sx={{ mt: 3, bgcolor: 'secondary.main', color: 'white', px: 0.5, borderRadius: 1, mb: 0.5 }}>
+                  {ev.title}
                 </Box>
-              )}
+              ))}
+              {dayTasks.map(t => (
+                <Box
+                  key={t._id || t.id}
+                  sx={{
+                    mt: 0.5,
+                    bgcolor: statusColor(taskStatus(t)),
+                    color: 'white',
+                    px: 0.5,
+                    borderRadius: 1,
+                    fontSize: 10,
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis'
+                  }}
+                >
+                  {t.name}
+                </Box>
+              ))}
             </Box>
           );
         })}
