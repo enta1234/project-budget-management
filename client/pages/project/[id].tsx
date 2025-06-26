@@ -272,10 +272,12 @@ function ProjectDetail() {
                 name: project.name,
                 description: project.description,
                 start: project.start ? new Date(project.start) : null,
+                sprintStart: project.sprintStart ? new Date(project.sprintStart) : null,
                 status: project.status || 'planing',
                 lead: leadResource || null,
                 members,
-                manday: project.manday ?? ''
+                manday: project.manday ?? '',
+                sprintLength: project.sprintLength ? project.sprintLength / 7 : ''
               }}
               submitText="Save"
             />

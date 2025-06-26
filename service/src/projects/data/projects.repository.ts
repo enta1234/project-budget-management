@@ -20,6 +20,11 @@ export class CreateProjectInput {
   @IsDate()
   start!: Date;
 
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  sprintStart?: Date;
+
   @Type(() => Date)
   @IsDate()
   end!: Date;
@@ -74,6 +79,11 @@ export class UpdateProjectInput {
   @Type(() => Date)
   @IsDate()
   start?: Date;
+
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  sprintStart?: Date;
 
   @IsOptional()
   @Type(() => Date)

@@ -14,6 +14,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import MenuItem from '@mui/material/MenuItem';
 
 export default function ProjectForm({
   users = [],
@@ -35,19 +36,21 @@ export default function ProjectForm({
   const [manday, setManday] = useState(
     initial?.manday != null ? String(initial.manday) : ''
   );
+  const [sprintStart, setSprintStart] = useState(initial?.sprintStart || null);
   const [sprintLength, setSprintLength] = useState(
-    initial?.sprintLength != null ? String(initial.sprintLength) : ''
+    initial?.sprintLength != null ? String(initial.sprintLength / 7) : ''
   );
 
   useEffect(() => {
     setName(initial?.name || '');
     setDescription(initial?.description || '');
     setStart(initial?.start || null);
+    setSprintStart(initial?.sprintStart || null);
     setLead(initial?.lead || null);
     setMembers(initial?.members || []);
     setManday(initial?.manday != null ? String(initial.manday) : '');
     setSprintLength(
-      initial?.sprintLength != null ? String(initial.sprintLength) : ''
+      initial?.sprintLength != null ? String(initial.sprintLength / 7) : ''
     );
     setStatus(initial?.status || 'planing');
   }, [initial]);
@@ -56,6 +59,7 @@ export default function ProjectForm({
     if (!open) {
       setActive(0);
       setSprintLength('');
+      setSprintStart(null);
     }
   }, [open]);
 
@@ -70,10 +74,11 @@ export default function ProjectForm({
         name,
         description,
         start,
+        sprintStart,
         end: start,
         status,
         ...(manday ? { manday: Number(manday) } : {}),
-        ...(sprintLength ? { sprintLength: Number(sprintLength) } : {}),
+        ...(sprintLength ? { sprintLength: Number(sprintLength) * 7 } : {}),
         priority: 1,
         lead: lead?.id,
         members: members.map(m => m.id),
@@ -86,6 +91,7 @@ export default function ProjectForm({
     setMembers([]);
     setManday('');
     setSprintLength('');
+    setSprintStart(null);
     setStatus('planing');
     setActive(0);
     setTeam(null);
@@ -228,13 +234,27 @@ export default function ProjectForm({
       )}
 
       {active === 2 && (
-        <TextField
-          label="Sprint Length (days)"
-          type="number"
-          value={sprintLength}
-          onChange={e => setSprintLength(e.target.value)}
-          sx={{ gridColumn: 'span 2' }}
-        />
+        <>
+          <DatePicker
+            label="Sprint Start"
+            value={sprintStart}
+            onChange={setSprintStart}
+            slotProps={{ textField: { required: true } }}
+          />
+          <TextField
+            select
+            label="Sprint Duration (weeks)"
+            value={sprintLength}
+            onChange={e => setSprintLength(e.target.value)}
+            sx={{ gridColumn: 'span 2' }}
+          >
+            {[1, 2, 3, 4, 5, 6, 7, 8].map(w => (
+              <MenuItem key={w} value={String(w)}>
+                {w}
+              </MenuItem>
+            ))}
+          </TextField>
+        </>
       )}
 
       {active === 3 && (
@@ -257,7 +277,11 @@ export default function ProjectForm({
             <strong>Manday:</strong> {manday}
           </Typography>
           <Typography>
-            <strong>Sprint Length:</strong> {sprintLength}
+            <strong>Sprint Start:</strong>{' '}
+            {sprintStart ? new Date(sprintStart).toLocaleDateString() : ''}
+          </Typography>
+          <Typography>
+            <strong>Sprint Duration:</strong> {sprintLength} week(s)
           </Typography>
           <Typography>
             <strong>Status:</strong> {status}
