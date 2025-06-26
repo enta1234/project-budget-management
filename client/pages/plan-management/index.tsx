@@ -89,6 +89,8 @@ function PlanManagementOverview() {
                 owner: p.lead?.name || '',
                 status: p.status,
               }))}
+              events={events}
+              holidays={holidays}
               onEventDrop={(proj, start, end) => {
                 updateProject(proj._id || proj.id, {
                   start,
