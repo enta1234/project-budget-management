@@ -8,6 +8,7 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { fetchEvents } from '../../models/eventsModel';
 import { fetchProjects } from '../../models/projectsModel';
+import { fetchTasks } from '../../models/tasksModel';
 import Timeline from '@mui/lab/Timeline';
 import TimelineItem from '@mui/lab/TimelineItem';
 import TimelineSeparator from '@mui/lab/TimelineSeparator';
@@ -21,12 +22,18 @@ function PlanManagementOverview() {
   const [view, setView] = useState('calendar');
   const [events, setEvents] = useState([]);
   const [projects, setProjects] = useState([]);
+  const [tasks, setTasks] = useState([]);
 
   useEffect(() => {
     Promise.all([fetchEvents(), fetchProjects()])
-      .then(([ev, pro]) => {
+      .then(async ([ev, pro]) => {
         setEvents(ev);
-        setProjects(pro.filter(p => !p.deleted));
+        const list = pro.filter(p => !p.deleted);
+        setProjects(list);
+        const taskLists = await Promise.all(
+          list.map(p => fetchTasks(p._id || p.id))
+        );
+        setTasks(taskLists.flat());
       })
       .catch(console.error);
   }, []);
@@ -56,7 +63,7 @@ function PlanManagementOverview() {
             </ToggleButtonGroup>
           </Box>
           {view === 'calendar' ? (
-            <SimpleCalendar events={events} />
+            <SimpleCalendar events={events} tasks={tasks} />
           ) : (
             <Timeline>
               {projects.map((p, idx) => (
