@@ -22,6 +22,9 @@ export class Project extends Document {
   manday: number;
 
   @Prop()
+  sprintStart: Date;
+
+  @Prop()
   sprintLength: number;
 
   @Prop({ required: true })
