@@ -45,7 +45,7 @@ function PlanningSetting() {
   const [milestones, setMilestones] = useState([]);
   const [phases, setPhases] = useState([]);
   const [members, setMembers] = useState([]);
-  const [viewMode, setViewMode] = useState(ViewMode.Day);
+  const [viewMode, setViewMode] = useState(ViewMode.Week);
   const [dialog, setDialog] = useState('');
   const [editTask, setEditTask] = useState(null);
   const [sprints, setSprints] = useState([]);
