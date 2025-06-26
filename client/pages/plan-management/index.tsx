@@ -91,7 +91,12 @@ function PlanManagementOverview() {
               }))}
               events={events}
               holidays={holidays}
-              onTaskClick={proj => router.push(`/project/${proj._id || proj.id}`)}
+              onTaskClick={proj =>
+                router.push(
+                  `/plan-management/planning-setting?project=${
+                    proj._id || proj.id
+                  }`,
+                )}
               onEventDrop={(proj, start, end) => {
                 updateProject(proj._id || proj.id, {
                   start,
