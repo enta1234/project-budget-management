@@ -32,22 +32,56 @@ function stringToColor(name: string) {
   return `hsl(${h},70%,60%)`;
 }
 
-export default function AgendaCalendar({ tasks = [], onEventDrop }: any) {
-  const events = useMemo(
+export default function AgendaCalendar({ tasks = [], events = [], holidays = [], onEventDrop }: any) {
+  const taskEvents = useMemo(
     () =>
       tasks.map((t: any) => ({
         title: t.name,
         start: new Date(t.startDate),
         end: new Date(t.endDate || t.startDate),
         allDay: true,
-        resource: t,
+        resource: { type: 'task', ...t },
       })),
     [tasks],
   );
 
+  const calendarEvents = useMemo(
+    () =>
+      events.map((e: any) => ({
+        title: e.title,
+        start: new Date(e.date),
+        end: new Date(e.date),
+        allDay: true,
+        resource: { type: 'event', ...e },
+      })),
+    [events],
+  );
+
+  const holidayEvents = useMemo(
+    () =>
+      holidays
+        .filter((h: any) => h.name !== 'Weekend')
+        .map((h: any) => ({
+          title: h.name,
+          start: new Date(h.date),
+          end: new Date(h.date),
+          allDay: true,
+          resource: { type: 'holiday', ...h },
+        })),
+    [holidays],
+  );
+
+  const eventsAll = useMemo(
+    () => [...taskEvents, ...calendarEvents, ...holidayEvents],
+    [taskEvents, calendarEvents, holidayEvents],
+  );
+
   const Event = ({ event }: any) => {
-    const t = event.resource;
-    const owner = t.owner || '';
+    const res = event.resource || {};
+    if (res.type && res.type !== 'task') {
+      return <Box sx={{ fontSize: 12 }}>{event.title}</Box>;
+    }
+    const owner = res.owner || '';
     const initials = owner
       .split(' ')
       .map((s: string) => s[0])
@@ -66,26 +100,52 @@ export default function AgendaCalendar({ tasks = [], onEventDrop }: any) {
         </Box>
         <Box
           component="span"
-          sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: stringToColor(t.status || 'none') }}
+          sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: stringToColor(res.status || 'none') }}
         />
       </Box>
     );
   };
 
+  const statusColor = (status: string) =>
+    (
+      {
+        planing: '#9e9e9e',
+        'in progress': '#2196f3',
+        break: '#ff9800',
+        production: '#1976d2',
+        'waiting payment': '#9c27b0',
+        paid: '#4caf50',
+        cancelled: '#f44336',
+      } as any
+    )[status] || '#9e9e9e';
+
   const eventPropGetter = (event: any) => {
-    const color = stringToColor(event.resource.status || 'none');
-    return { style: { backgroundColor: color, borderRadius: 4, border: 'none' } };
+    const res = event.resource || {};
+    let backgroundColor = '#9e9e9e';
+    if (res.type === 'holiday') backgroundColor = '#d32f2f';
+    else if (res.type === 'event') backgroundColor = '#6a1b9a';
+    else backgroundColor = statusColor(res.status || '');
+    return { style: { backgroundColor, borderRadius: 4, border: 'none', color: '#fff' } };
+  };
+
+  const dayPropGetter = (date: Date) => {
+    const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+    if (isWeekend) {
+      return { style: { backgroundColor: '#f0f0f0' } };
+    }
+    return {};
   };
 
   return (
     <DndProvider backend={HTML5Backend}>
       <DnDCalendar
         localizer={localizer}
-        events={events}
+        events={eventsAll}
         defaultView="month"
         views={["month", "week", "day"]}
         style={{ height: 600 }}
         eventPropGetter={eventPropGetter}
+        dayPropGetter={dayPropGetter}
         components={{ event: Event }}
         onEventDrop={({ event, start, end }) => onEventDrop && onEventDrop(event.resource, start, end)}
         resizable
