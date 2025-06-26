@@ -32,7 +32,13 @@ function stringToColor(name: string) {
   return `hsl(${h},70%,60%)`;
 }
 
-export default function AgendaCalendar({ tasks = [], events = [], holidays = [], onEventDrop }: any) {
+export default function AgendaCalendar({
+  tasks = [],
+  events = [],
+  holidays = [],
+  onEventDrop,
+  onTaskClick,
+}: any) {
   const taskEvents = useMemo(
     () =>
       tasks.map((t: any) => ({
@@ -148,6 +154,9 @@ export default function AgendaCalendar({ tasks = [], events = [], holidays = [],
         eventPropGetter={eventPropGetter}
         dayPropGetter={dayPropGetter}
         components={{ event: Event }}
+        onSelectEvent={event =>
+          onTaskClick && event.resource?.type === 'task' && onTaskClick(event.resource)
+        }
         onEventDrop={({ event, start, end }) => onEventDrop && onEventDrop(event.resource, start, end)}
         resizable
         onEventResize={({ event, start, end }) => onEventDrop && onEventDrop(event.resource, start, end)}

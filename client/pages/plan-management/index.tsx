@@ -91,6 +91,7 @@ function PlanManagementOverview() {
               }))}
               events={events}
               holidays={holidays}
+              onTaskClick={proj => router.push(`/project/${proj._id || proj.id}`)}
               onEventDrop={(proj, start, end) => {
                 updateProject(proj._id || proj.id, {
                   start,
@@ -106,7 +107,10 @@ function PlanManagementOverview() {
                     <TimelineDot />
                     {idx < projects.length - 1 && <TimelineConnector />}
                   </TimelineSeparator>
-                  <TimelineContent>
+                  <TimelineContent
+                    onClick={() => router.push(`/project/${p._id || p.id}`)}
+                    sx={{ cursor: 'pointer' }}
+                  >
                     {p.name} ({new Date(p.start).toLocaleDateString()} - {new Date(p.end).toLocaleDateString()})
                   </TimelineContent>
                 </TimelineItem>
