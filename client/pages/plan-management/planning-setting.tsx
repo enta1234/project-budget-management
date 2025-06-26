@@ -287,9 +287,9 @@ function PlanningSetting() {
                       ))}
                     </TreeView>
                   </Grid>
-                  <Grid item xs={8} sx={{ overflowX: 'auto' }}>
+                  <Grid item xs={8} sx={{ maxHeight: 400, overflow: 'auto' }}>
                     {ganttTasks.length > 0 ? (
-                      <Box sx={{ minWidth: 600 }}>
+                      <Box sx={{ minWidth: 600, width: '100%' }}>
                         <Gantt
                           tasks={ganttTasks}
                           viewMode={viewMode}
