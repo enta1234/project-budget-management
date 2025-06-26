@@ -10,6 +10,7 @@ export { default as Sidebar } from './Sidebar';
 export { default as Layout } from './Layout';
 export { default as ResourceForm } from './ResourceForm';
 export { default as SimpleCalendar } from './SimpleCalendar';
+export { default as AgendaCalendar } from './AgendaCalendar';
 export { default as TeamForm } from './TeamForm';
 export { default as ProjectForm } from './ProjectForm';
 export { default as BudgetForm } from './BudgetForm';

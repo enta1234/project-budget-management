@@ -8,7 +8,7 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { fetchEvents } from '../../models/eventsModel';
-import { fetchProjects } from '../../models/projectsModel';
+import { fetchProjects, updateProject } from '../../models/projectsModel';
 import { fetchTasks } from '../../models/tasksModel';
 import { fetchWorkdays } from '../../models/workdayModel';
 import Timeline from '@mui/lab/Timeline';
@@ -17,7 +17,7 @@ import TimelineSeparator from '@mui/lab/TimelineSeparator';
 import TimelineConnector from '@mui/lab/TimelineConnector';
 import TimelineContent from '@mui/lab/TimelineContent';
 import TimelineDot from '@mui/lab/TimelineDot';
-import { Layout, SimpleCalendar, PageBreadcrumbs } from '../../components';
+import { Layout, AgendaCalendar, PageBreadcrumbs } from '../../components';
 import { withAuth } from '../../context/AuthContext';
 
 function PlanManagementOverview() {
@@ -80,20 +80,21 @@ function PlanManagementOverview() {
             </ToggleButtonGroup>
           </Box>
           {view === 'calendar' ? (
-            <SimpleCalendar
-              events={events}
-              holidays={holidays}
+            <AgendaCalendar
               tasks={projects.map(p => ({
                 ...p,
                 name: p.name,
                 startDate: p.start,
                 endDate: p.end,
+                owner: p.lead?.name || '',
+                status: p.status,
               }))}
-              onTaskClick={p =>
-                router.push(
-                  `/plan-management/planning-setting?project=${p._id || p.id}`,
-                )
-              }
+              onEventDrop={(proj, start, end) => {
+                updateProject(proj._id || proj.id, {
+                  start,
+                  end,
+                }).catch(console.error);
+              }}
             />
           ) : (
             <Timeline>
