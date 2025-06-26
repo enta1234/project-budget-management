@@ -9,6 +9,7 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { fetchEvents } from '../../models/eventsModel';
 import { fetchProjects } from '../../models/projectsModel';
+import { fetchWorkdays } from '../../models/workdayModel';
 import Timeline from '@mui/lab/Timeline';
 import TimelineItem from '@mui/lab/TimelineItem';
 import TimelineSeparator from '@mui/lab/TimelineSeparator';
@@ -22,14 +23,17 @@ function PlanManagementOverview() {
   const [view, setView] = useState('calendar');
   const [events, setEvents] = useState([]);
   const [projects, setProjects] = useState([]);
+  const [holidays, setHolidays] = useState([]);
   const router = useRouter();
 
   useEffect(() => {
-    Promise.all([fetchEvents(), fetchProjects()])
-      .then(([ev, pro]) => {
+    const year = new Date().getFullYear();
+    Promise.all([fetchEvents(), fetchProjects(), fetchWorkdays(year)])
+      .then(([ev, pro, hol]) => {
         setEvents(ev);
         const list = pro.filter(p => !p.deleted);
         setProjects(list);
+        setHolidays(hol);
       })
       .catch(console.error);
   }, []);
@@ -61,6 +65,7 @@ function PlanManagementOverview() {
           {view === 'calendar' ? (
             <SimpleCalendar
               events={events}
+              holidays={holidays}
               tasks={projects.map(p => ({
                 ...p,
                 name: p.name,
