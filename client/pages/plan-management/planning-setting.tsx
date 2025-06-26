@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
@@ -33,6 +34,7 @@ import {
 import 'gantt-task-react/dist/index.css';
 
 function PlanningSetting() {
+  const router = useRouter();
   const [projects, setProjects] = useState([]);
   const [project, setProject] = useState(null);
   const [tasks, setTasks] = useState([]);
@@ -44,11 +46,20 @@ function PlanningSetting() {
   const [editTask, setEditTask] = useState(null);
 
   useEffect(() => {
+    if (!router.isReady) return;
     api
       .get('/api/v1/projects')
-      .then(res => setProjects(res.data.filter(p => !p.deleted)))
+      .then(res => {
+        const list = res.data.filter(p => !p.deleted);
+        setProjects(list);
+        const pid = router.query.project;
+        if (pid) {
+          const p = list.find(pr => String(pr._id || pr.id) === pid);
+          if (p) setProject(p);
+        }
+      })
       .catch(console.error);
-  }, []);
+  }, [router.isReady, router.query.project]);
 
   useEffect(() => {
     if (!project) return;

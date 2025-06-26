@@ -15,7 +15,7 @@ import {
   format
 } from 'date-fns';
 
-export default function SimpleCalendar({ events = [], tasks = [] }) {
+export default function SimpleCalendar({ events = [], tasks = [], onTaskClick }: any) {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const monthStart = startOfMonth(currentDate);
@@ -97,6 +97,7 @@ export default function SimpleCalendar({ events = [], tasks = [] }) {
               {dayTasks.map(t => (
                 <Box
                   key={t._id || t.id}
+                  onClick={() => onTaskClick && onTaskClick(t)}
                   sx={{
                     mt: 0.5,
                     bgcolor: statusColor(taskStatus(t)),
@@ -106,7 +107,8 @@ export default function SimpleCalendar({ events = [], tasks = [] }) {
                     fontSize: 10,
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
-                    textOverflow: 'ellipsis'
+                    textOverflow: 'ellipsis',
+                    cursor: onTaskClick ? 'pointer' : 'default'
                   }}
                 >
                   {t.name}
