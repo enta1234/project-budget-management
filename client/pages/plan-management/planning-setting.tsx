@@ -11,7 +11,6 @@ import { Layout, PageBreadcrumbs, Popup } from '../../components';
 import { withAuth } from '../../context/AuthContext';
 import api from '../../api';
 import TaskForm from '../../components/TaskForm';
-import MilestoneForm from '../../components/MilestoneForm';
 import { DataGrid } from '@mui/x-data-grid';
 import Timeline from '@mui/lab/Timeline';
 import TimelineItem from '@mui/lab/TimelineItem';
@@ -91,13 +90,16 @@ function PlanningSetting() {
   };
 
   const handleCreateTask = async data => {
-    await api.post('/api/v1/planning/tasks', { ...data, project: project._id });
-    await refreshAll();
-    setDialog('');
-  };
-
-  const handleCreateMilestone = async data => {
-    await api.post('/api/v1/planning/milestones', { ...data, project: project._id });
+    if (data.type === 'milestone') {
+      await api.post('/api/v1/planning/milestones', {
+        name: data.name,
+        detail: data.detail,
+        date: data.startDate,
+        project: project._id,
+      });
+    } else {
+      await api.post('/api/v1/planning/tasks', { ...data, project: project._id });
+    }
     await refreshAll();
     setDialog('');
   };
@@ -118,7 +120,6 @@ function PlanningSetting() {
     await refreshAll();
   };
 
-  const milestoneDates = milestones.map(m => new Date(m.date).toDateString());
   const combinedTasks = [
     ...tasks,
     ...milestones.map(m => ({
@@ -195,9 +196,6 @@ function PlanningSetting() {
                 <Box>
                   <Button variant="contained" onClick={() => setDialog('task')} sx={{ mr: 1 }}>
                     Add Task
-                  </Button>
-                  <Button variant="contained" onClick={() => setDialog('milestone')}>
-                    Add Milestone
                   </Button>
                 </Box>
               </Box>
@@ -323,9 +321,6 @@ function PlanningSetting() {
               milestones={milestones}
             />
           )}
-        </Popup>
-        <Popup open={dialog === 'milestone'} onClose={() => setDialog('')} title="Add Milestone">
-          <MilestoneForm onSubmit={handleCreateMilestone} existingDates={milestoneDates} />
         </Popup>
       </Container>
     </Layout>
