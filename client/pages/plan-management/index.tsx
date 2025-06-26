@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import ToggleButton from '@mui/material/ToggleButton';
@@ -8,7 +9,6 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { fetchEvents } from '../../models/eventsModel';
 import { fetchProjects } from '../../models/projectsModel';
-import { fetchTasks } from '../../models/tasksModel';
 import Timeline from '@mui/lab/Timeline';
 import TimelineItem from '@mui/lab/TimelineItem';
 import TimelineSeparator from '@mui/lab/TimelineSeparator';
@@ -22,18 +22,14 @@ function PlanManagementOverview() {
   const [view, setView] = useState('calendar');
   const [events, setEvents] = useState([]);
   const [projects, setProjects] = useState([]);
-  const [tasks, setTasks] = useState([]);
+  const router = useRouter();
 
   useEffect(() => {
     Promise.all([fetchEvents(), fetchProjects()])
-      .then(async ([ev, pro]) => {
+      .then(([ev, pro]) => {
         setEvents(ev);
         const list = pro.filter(p => !p.deleted);
         setProjects(list);
-        const taskLists = await Promise.all(
-          list.map(p => fetchTasks(p._id || p.id))
-        );
-        setTasks(taskLists.flat());
       })
       .catch(console.error);
   }, []);
@@ -63,7 +59,20 @@ function PlanManagementOverview() {
             </ToggleButtonGroup>
           </Box>
           {view === 'calendar' ? (
-            <SimpleCalendar events={events} tasks={tasks} />
+            <SimpleCalendar
+              events={events}
+              tasks={projects.map(p => ({
+                ...p,
+                name: p.name,
+                startDate: p.start,
+                endDate: p.end,
+              }))}
+              onTaskClick={p =>
+                router.push(
+                  `/plan-management/planning-setting?project=${p._id || p.id}`,
+                )
+              }
+            />
           ) : (
             <Timeline>
               {projects.map((p, idx) => (
