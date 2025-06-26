@@ -9,6 +9,7 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { fetchEvents } from '../../models/eventsModel';
 import { fetchProjects } from '../../models/projectsModel';
+import { fetchTasks } from '../../models/tasksModel';
 import { fetchWorkdays } from '../../models/workdayModel';
 import Timeline from '@mui/lab/Timeline';
 import TimelineItem from '@mui/lab/TimelineItem';
@@ -29,10 +30,26 @@ function PlanManagementOverview() {
   useEffect(() => {
     const year = new Date().getFullYear();
     Promise.all([fetchEvents(), fetchProjects(), fetchWorkdays(year)])
-      .then(([ev, pro, hol]) => {
+      .then(async ([ev, pro, hol]) => {
         setEvents(ev);
         const list = pro.filter(p => !p.deleted);
-        setProjects(list);
+        const withTasks = await Promise.all(
+          list.map(async p => {
+            try {
+              const tasks = await fetchTasks(p._id || p.id);
+              const projectEnd = p.end ? new Date(p.end) : null;
+              const maxEnd = tasks.reduce((acc, t) => {
+                const end = t.endDate || t.startDate;
+                return end && new Date(end) > acc ? new Date(end) : acc;
+              }, projectEnd || new Date(0));
+              const finalEnd = projectEnd && maxEnd > projectEnd ? maxEnd : projectEnd || maxEnd;
+              return { ...p, end: finalEnd };
+            } catch {
+              return p;
+            }
+          }),
+        );
+        setProjects(withTasks);
         setHolidays(hol);
       })
       .catch(console.error);
