@@ -21,4 +21,3 @@ export { default as ConfirmDialog } from './ConfirmDialog';
 export { default as PageBreadcrumbs } from './PageBreadcrumbs';
 export { default as PhaseForm } from './PhaseForm';
 export { default as TaskForm } from './TaskForm';
-export { default as MilestoneForm } from './MilestoneForm';

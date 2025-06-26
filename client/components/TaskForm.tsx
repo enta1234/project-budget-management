@@ -67,18 +67,28 @@ export default function TaskForm({ onSubmit, initial, members = [], tasks = [], 
   const handleSubmit = e => {
     e.preventDefault();
     if (!formValid) return;
-    onSubmit &&
-      onSubmit({
-        name,
-        detail,
-        startDate,
-        endDate,
-        owner,
-        manday: manday ? Number(manday) : undefined,
-        duration: duration ? Number(duration) : undefined,
-        blockedBy: blocked ? blocked.id : undefined,
-        type: taskType,
-      });
+    if (taskType === 'milestone') {
+      onSubmit &&
+        onSubmit({
+          name,
+          detail,
+          date: startDate,
+          type: taskType,
+        });
+    } else {
+      onSubmit &&
+        onSubmit({
+          name,
+          detail,
+          startDate,
+          endDate,
+          owner,
+          manday: manday ? Number(manday) : undefined,
+          duration: duration ? Number(duration) : undefined,
+          blockedBy: blocked ? blocked.id : undefined,
+          type: taskType,
+        });
+    }
     setName('');
     setDetail('');
     setStartDate(null);
@@ -94,44 +104,55 @@ export default function TaskForm({ onSubmit, initial, members = [], tasks = [], 
     <form onSubmit={handleSubmit}>
       <TextField label="Name" value={name} onChange={e => setName(e.target.value)} fullWidth required sx={{ mb: 2 }} />
       <TextField label="Detail" value={detail} onChange={e => setDetail(e.target.value)} fullWidth multiline sx={{ mb: 2 }} />
-      <DatePicker
-        label="Start Date"
-        value={startDate}
-        onChange={setStartDate}
-        sx={{ mb: 2 }}
-        slotProps={{ textField: { error: dateError } }}
-      />
-      <DatePicker
-        label="End Date"
-        value={endDate}
-        onChange={setEndDate}
-        sx={{ mb: 2 }}
-        slotProps={{
-          textField: {
-            error: dateError,
-            helperText: dateError ? 'End date must be after start date' : undefined,
-          },
-        }}
-      />
-      <TextField label="Duration (days)" type="number" value={duration} onChange={e => setDuration(e.target.value)} fullWidth sx={{ mb: 2 }} />
-      <Autocomplete
-        options={members}
-        getOptionLabel={o => o.name}
-        value={members.find(m => m.id === owner) || null}
-        onChange={(_, v) => setOwner(v ? v.id : '')}
-        renderInput={params => <TextField {...params} label="Owner" />}
-        sx={{ mb: 2 }}
-      />
-      <TextField label="Manday" type="number" value={manday} onChange={e => setManday(e.target.value)} fullWidth sx={{ mb: 2 }} />
-      <Autocomplete
-        options={[...tasks.map(t => ({ id: t._id || t.id, label: t.name, date: t.endDate })),
-                  ...milestones.map(m => ({ id: m._id || m.id, label: m.name, date: m.date }))]}
-        getOptionLabel={o => o.label}
-        value={blocked}
-        onChange={(_, v) => setBlocked(v)}
-        renderInput={params => <TextField {...params} label="Blocked By" />}
-        sx={{ mb: 2 }}
-      />
+      {taskType === 'milestone' ? (
+        <DatePicker
+          label="Date"
+          value={startDate}
+          onChange={setStartDate}
+          sx={{ mb: 2 }}
+        />
+      ) : (
+        <>
+          <DatePicker
+            label="Start Date"
+            value={startDate}
+            onChange={setStartDate}
+            sx={{ mb: 2 }}
+            slotProps={{ textField: { error: dateError } }}
+          />
+          <DatePicker
+            label="End Date"
+            value={endDate}
+            onChange={setEndDate}
+            sx={{ mb: 2 }}
+            slotProps={{
+              textField: {
+                error: dateError,
+                helperText: dateError ? 'End date must be after start date' : undefined,
+              },
+            }}
+          />
+          <TextField label="Duration (days)" type="number" value={duration} onChange={e => setDuration(e.target.value)} fullWidth sx={{ mb: 2 }} />
+          <Autocomplete
+            options={members}
+            getOptionLabel={o => o.name}
+            value={members.find(m => m.id === owner) || null}
+            onChange={(_, v) => setOwner(v ? v.id : '')}
+            renderInput={params => <TextField {...params} label="Owner" />}
+            sx={{ mb: 2 }}
+          />
+          <TextField label="Manday" type="number" value={manday} onChange={e => setManday(e.target.value)} fullWidth sx={{ mb: 2 }} />
+          <Autocomplete
+            options={[...tasks.map(t => ({ id: t._id || t.id, label: t.name, date: t.endDate })),
+                      ...milestones.map(m => ({ id: m._id || m.id, label: m.name, date: m.date }))]}
+            getOptionLabel={o => o.label}
+            value={blocked}
+            onChange={(_, v) => setBlocked(v)}
+            renderInput={params => <TextField {...params} label="Blocked By" />}
+            sx={{ mb: 2 }}
+          />
+        </>
+      )}
       <ToggleButtonGroup
         value={taskType}
         exclusive
