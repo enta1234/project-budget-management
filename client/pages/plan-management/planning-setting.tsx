@@ -26,6 +26,10 @@ import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import Chip from '@mui/material/Chip';
+import { addDays } from 'date-fns';
 import {
   Gantt,
   ViewMode,
@@ -44,6 +48,27 @@ function PlanningSetting() {
   const [viewMode, setViewMode] = useState(ViewMode.Day);
   const [dialog, setDialog] = useState('');
   const [editTask, setEditTask] = useState(null);
+  const [sprints, setSprints] = useState([]);
+
+  const statusOptions = [
+    'planing',
+    'in progress',
+    'break',
+    'production',
+    'waiting payment',
+    'paid',
+    'cancelled',
+  ];
+
+  const statusColors: Record<string, any> = {
+    planing: 'default',
+    'in progress': 'info',
+    break: 'warning',
+    production: 'primary',
+    'waiting payment': 'secondary',
+    paid: 'success',
+    cancelled: 'error',
+  };
 
   useEffect(() => {
     if (!router.isReady) return;
@@ -78,6 +103,29 @@ function PlanningSetting() {
       const leadId = proj.data.lead?._id;
       const list = res.data.filter(u => memIds.includes(u.id) || u.id === leadId);
       setMembers(list);
+      // calculate sprints
+      if (proj.data.start && proj.data.sprintLength) {
+        const start = new Date(proj.data.start);
+        const end = proj.data.end ? new Date(proj.data.end) : new Date();
+        const len = Number(proj.data.sprintLength);
+        const arr = [] as any[];
+        let s = new Date(start);
+        let e = addDays(start, len - 1);
+        let num = 1;
+        while (s <= end) {
+          arr.push({
+            number: num,
+            start: new Date(s),
+            end: e > end ? new Date(end) : new Date(e),
+          });
+          num += 1;
+          s = addDays(s, len);
+          e = addDays(s, len - 1);
+        }
+        setSprints(arr);
+      } else {
+        setSprints([]);
+      }
     });
   }, [project]);
 
@@ -129,6 +177,19 @@ function PlanningSetting() {
       endDate: task.end,
     });
     await refreshAll();
+  };
+
+  const handleStatusChange = async (e: any) => {
+    if (!project) return;
+    const newStatus = e.target.value;
+    setProject({ ...project, status: newStatus });
+    try {
+      await api.patch(`/api/v1/projects/${project._id || project.id}`, {
+        status: newStatus,
+      });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const combinedTasks = [
@@ -199,6 +260,72 @@ function PlanningSetting() {
             renderInput={params => <TextField {...params} label="Project" />}
           />
         </Paper>
+        {project && (
+          <Paper sx={{ p: 2, mb: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              {project.name}
+            </Typography>
+            <Box sx={{ display: 'grid', rowGap: 1 }}>
+              <Typography>
+                <strong>Description:</strong> {project.description}
+              </Typography>
+              <Typography>
+                <strong>Start:</strong>{' '}
+                {project.start ? new Date(project.start).toLocaleDateString() : ''}
+              </Typography>
+              <Typography>
+                <strong>End:</strong>{' '}
+                {project.end ? new Date(project.end).toLocaleDateString() : ''}
+              </Typography>
+              <Typography>
+                <strong>Sprint Length:</strong> {project.sprintLength || '-'}
+              </Typography>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Typography sx={{ mr: 1 }}>
+                  <strong>Status:</strong>
+                </Typography>
+                <Select
+                  value={project.status || 'planing'}
+                  onChange={handleStatusChange}
+                  size="small"
+                  renderValue={s => (
+                    <Chip
+                      label={s}
+                      color={statusColors[s as string] || 'default'}
+                      size="small"
+                    />
+                  )}
+                >
+                  {statusOptions.map(s => (
+                    <MenuItem key={s} value={s}>
+                      <Chip label={s} color={statusColors[s] || 'default'} size="small" />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </Box>
+            </Box>
+          </Paper>
+        )}
+        {project && sprints.length > 0 && (
+          <Paper sx={{ p: 2, mb: 2 }}>
+            <Typography variant="h6" gutterBottom>
+              Sprints
+            </Typography>
+            <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
+              {sprints.map(s => (
+                <Box key={s.number} sx={{ flex: 1, position: 'relative', mx: 0.5 }}>
+                  <Box sx={{ borderBottom: '2px solid', borderColor: 'primary.main', height: 10 }} />
+                  <Typography variant="caption" sx={{ position: 'absolute', top: -16, left: '50%', transform: 'translateX(-50%)' }}>
+                    Sprint {s.number}
+                  </Typography>
+                  <Typography variant="caption" sx={{ fontSize: 10, display: 'block', textAlign: 'center', mt: 0.5 }}>
+                    {new Date(s.start).toLocaleDateString()} - {new Date(s.end).toLocaleDateString()}
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
+          </Paper>
+        )}
         {project && (
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
