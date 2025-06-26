@@ -5,6 +5,7 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import ArrowBackIosNew from '@mui/icons-material/ArrowBackIosNew';
 import ArrowForwardIos from '@mui/icons-material/ArrowForwardIos';
+import Button from '@mui/material/Button';
 import {
   startOfMonth,
   startOfWeek,
@@ -15,7 +16,7 @@ import {
   format
 } from 'date-fns';
 
-export default function SimpleCalendar({ events = [], tasks = [], onTaskClick }: any) {
+export default function SimpleCalendar({ events = [], tasks = [], holidays = [], onTaskClick }: any) {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const monthStart = startOfMonth(currentDate);
@@ -57,16 +58,21 @@ export default function SimpleCalendar({ events = [], tasks = [], onTaskClick }:
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1, alignItems: 'center' }}>
         <IconButton size="small" onClick={() => setCurrentDate(addMonths(currentDate, -1))}>
           <ArrowBackIosNew fontSize="small" />
         </IconButton>
         <Typography variant="h6">
           {format(monthStart, 'MMMM yyyy')}
         </Typography>
-        <IconButton size="small" onClick={() => setCurrentDate(addMonths(currentDate, 1))}>
-          <ArrowForwardIos fontSize="small" />
-        </IconButton>
+        <Box>
+          <Button size="small" onClick={() => setCurrentDate(new Date())} sx={{ mr: 1 }}>
+            Today
+          </Button>
+          <IconButton size="small" onClick={() => setCurrentDate(addMonths(currentDate, 1))}>
+            <ArrowForwardIos fontSize="small" />
+          </IconButton>
+        </Box>
       </Box>
       <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 1 }}>
         {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map((d) => (
@@ -78,6 +84,9 @@ export default function SimpleCalendar({ events = [], tasks = [], onTaskClick }:
           const inMonth = isSameMonth(day, monthStart);
           const dayEvents = events.filter((ev) =>
             isSameDay(new Date(ev.date), day)
+          );
+          const dayHolidays = holidays.filter(h =>
+            isSameDay(new Date(h.date), day)
           );
           const dayTasks = tasks.filter(t => {
             const start = t.startDate ? new Date(t.startDate) : null;
@@ -104,6 +113,11 @@ export default function SimpleCalendar({ events = [], tasks = [], onTaskClick }:
               {dayEvents.map(ev => (
                 <Box key={ev._id || ev.id} sx={{ mt: 3, bgcolor: 'secondary.main', color: 'white', px: 0.5, borderRadius: 1, mb: 0.5 }}>
                   {ev.title}
+                </Box>
+              ))}
+              {dayHolidays.map(h => (
+                <Box key={h.id || h._id} sx={{ mt: 0.5, bgcolor: 'error.main', color: 'white', px: 0.5, borderRadius: 1, fontSize: 10 }}>
+                  {`${h.name} (${format(new Date(h.date), 'MM-dd')})`}
                 </Box>
               ))}
               {dayTasks.map(t => (
