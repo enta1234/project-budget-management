@@ -201,9 +201,10 @@ function PlanningSetting() {
                   </Button>
                 </Box>
               </Box>
-              <Paper sx={{ p: 2 }}>
-                <DataGrid
-                  rows={combinedTasks.map(t => ({ id: t._id || t.id, ...t }))}
+              <Paper sx={{ p: 2, overflowX: 'auto' }}>
+                <Box sx={{ minWidth: 800 }}>
+                  <DataGrid
+                    rows={combinedTasks.map(t => ({ id: t._id || t.id, ...t }))}
                   columns={[
                     { field: 'name', headerName: 'Name', flex: 1 },
                     { field: 'detail', headerName: 'Detail', flex: 1 },
@@ -235,9 +236,10 @@ function PlanningSetting() {
                         ) : null,
                     },
                   ]}
-                  autoHeight
-                  hideFooter
-                />
+                    autoHeight
+                    hideFooter
+                  />
+                </Box>
               </Paper>
             </Grid>
             <Grid item xs={12}>
@@ -254,7 +256,7 @@ function PlanningSetting() {
                   <ToggleButton value={ViewMode.Month}>Month</ToggleButton>
                 </ToggleButtonGroup>
               </Box>
-              <Paper sx={{ p: 2 }}>
+              <Paper sx={{ p: 2, overflowX: 'auto' }}>
                 <Grid container spacing={2}>
                   <Grid item xs={4} sx={{ maxHeight: 400, overflow: 'auto' }}>
                     <TreeView>
