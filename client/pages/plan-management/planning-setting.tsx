@@ -75,7 +75,15 @@ function PlanningSetting() {
     api
       .get('/api/v1/projects')
       .then(res => {
-        const list = res.data.filter(p => !p.deleted);
+        const list = res.data
+          .filter(p => !p.deleted)
+          .map((p: any) => {
+            if (typeof p.onClick !== 'undefined') {
+              const { onClick, ...rest } = p;
+              return rest;
+            }
+            return p;
+          });
         setProjects(list);
         const pid = router.query.project;
         if (pid) {
