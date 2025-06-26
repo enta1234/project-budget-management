@@ -150,7 +150,7 @@ export default function AgendaCalendar({
         defaultView="month"
         views={["month", "week", "day"]}
         popup
-        style={{ height: 720 }}
+        style={{ height: 760 }}
         eventPropGetter={eventPropGetter}
         dayPropGetter={dayPropGetter}
         components={{ event: Event }}
