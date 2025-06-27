@@ -8,7 +8,15 @@ import Grid from '@mui/material/Grid';
 import { PieChart, LineChart, BarChart } from '@mui/x-charts';
 import ReactECharts from 'echarts-for-react';
 import { differenceInDays, addDays } from 'date-fns';
-import { Layout, PageBreadcrumbs, RoleCard } from '../../components';
+import {
+  Layout,
+  PageBreadcrumbs,
+  RoleCard,
+  MetricCard,
+} from '../../components';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
+import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
+import PersonOffIcon from '@mui/icons-material/PersonOff';
 import { withAuth } from '../../context/AuthContext';
 import { fetchBudgetOverview } from '../../models/budgetModel';
 import api from '../../api';
@@ -21,6 +29,9 @@ function DashboardOverview() {
   const [dailyManday, setDailyManday] = useState([]);
   const [dailyCost, setDailyCost] = useState([]);
   const [utilData, setUtilData] = useState([]);
+
+  const totalProjects = projects.length;
+  const totalResources = resources.length;
 
   async function loadData() {
     const [ov, res, pro] = await Promise.all([
@@ -220,6 +231,30 @@ function DashboardOverview() {
           Dashboard Overview
         </Typography>
         <PageBreadcrumbs items={[{ label: 'Dashboard Overview' }]} />
+
+        <Grid container spacing={2} sx={{ mb: 2 }}>
+          <Grid xs={12} md={4}>
+            <MetricCard
+              label="Projects"
+              value={totalProjects}
+              icon={<WorkOutlineIcon />}
+            />
+          </Grid>
+          <Grid xs={12} md={4}>
+            <MetricCard
+              label="Resources"
+              value={totalResources}
+              icon={<PeopleAltIcon />}
+            />
+          </Grid>
+          <Grid xs={12} md={4}>
+            <MetricCard
+              label="Unassigned"
+              value={unassigned}
+              icon={<PersonOffIcon />}
+            />
+          </Grid>
+        </Grid>
 
         <Paper sx={{ p: 2 }}>
           <Typography variant="h6" gutterBottom>
