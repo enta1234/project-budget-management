@@ -141,7 +141,7 @@ function DashboardDetail() {
       headerName: 'Cost',
       width: 120,
       type: 'number',
-      valueFormatter: params => params.value.toLocaleString(),
+      valueFormatter: params => params.value?.toLocaleString() || '',
     },
     {
       field: 'utilization',
