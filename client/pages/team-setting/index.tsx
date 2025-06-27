@@ -11,14 +11,8 @@ import IconButton from '@mui/material/IconButton';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DownloadIcon from '@mui/icons-material/Download';
-import {
-  format,
-  differenceInYears,
-  differenceInMonths,
-  differenceInDays,
-  addYears,
-  addMonths,
-} from 'date-fns';
+import { format } from 'date-fns';
+import { getServiceDuration, getServiceExp } from '../../utils/date';
 import { Layout, ResourceForm, Popup, useToast, ConfirmDialog, PageBreadcrumbs } from '../../components';
 import { withAuth, useAuth } from '../../context/AuthContext';
 import {
@@ -38,24 +32,7 @@ function TeamSetting() {
   const [editRow, setEditRow] = useState(null);
   const [deleteRow, setDeleteRow] = useState(null);
 
-  function getServiceDuration(date: string | Date) {
-    const start = new Date(date);
-    const now = new Date();
-    const years = differenceInYears(now, start);
-    const afterYears = addYears(start, years);
-    const months = differenceInMonths(now, afterYears);
-    const afterMonths = addMonths(afterYears, months);
-    const days = differenceInDays(now, afterMonths);
-    return `${years}y ${months}m ${days}d`;
-  }
 
-  function getServiceExp(date: string | Date) {
-    const years = differenceInYears(new Date(), new Date(date));
-    if (years <= 2) return 'junior';
-    if (years <= 4) return 'intermediate';
-    if (years <= 6) return 'senior';
-    return 'advance';
-  }
 
   async function loadData() {
     const [res, pos] = await Promise.all([

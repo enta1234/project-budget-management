@@ -13,14 +13,8 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import RestoreIcon from '@mui/icons-material/Restore';
 import DownloadIcon from '@mui/icons-material/Download';
 import { DataGrid } from '@mui/x-data-grid';
-import {
-  differenceInDays,
-  format,
-  differenceInYears,
-  differenceInMonths,
-  addYears,
-  addMonths,
-} from 'date-fns';
+import { differenceInDays, format } from 'date-fns';
+import { getServiceDuration } from '../utils/date';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Chip from '@mui/material/Chip';
@@ -156,16 +150,7 @@ function ProjectManagement() {
     }
   };
 
-  function getServiceDuration(date: string | Date) {
-    const start = new Date(date);
-    const now = new Date();
-    const years = differenceInYears(now, start);
-    const afterYears = addYears(start, years);
-    const months = differenceInMonths(now, afterYears);
-    const afterMonths = addMonths(afterYears, months);
-    const days = differenceInDays(now, afterMonths);
-    return `${years}y ${months}m ${days}d`;
-  }
+
 
   const columns = [
     {
