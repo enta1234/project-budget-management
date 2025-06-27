@@ -8,7 +8,7 @@ import Grid from '@mui/material/Grid';
 import { PieChart, LineChart, BarChart } from '@mui/x-charts';
 import ReactECharts from 'echarts-for-react';
 import { differenceInDays, addDays } from 'date-fns';
-import { Layout, PageBreadcrumbs } from '../../components';
+import { Layout, PageBreadcrumbs, RoleCard } from '../../components';
 import { withAuth } from '../../context/AuthContext';
 import { fetchBudgetOverview } from '../../models/budgetModel';
 import api from '../../api';
@@ -143,8 +143,65 @@ function DashboardOverview() {
     };
   });
 
-  const totalResources = resources.length;
-  const totalManday = projects.reduce((s, p) => s + (p.manday || 0), 0);
+  const positionMap: Record<string, { role: string; level: string; rate: number; count: number }> = {};
+  overview.forEach(o => {
+    const slug = `${o.role} ${o.level}`.toLowerCase().replace(/\s+/g, '_');
+    positionMap[slug] = { role: o.role, level: o.level, rate: o.rate, count: o.count };
+  });
+
+  const rolesSummary: Record<string, any> = {};
+  Object.values(positionMap).forEach(p => {
+    if (!rolesSummary[p.role]) {
+      rolesSummary[p.role] = {
+        role: p.role,
+        headcount: 0,
+        manday: 0,
+        available: 0,
+        rateSum: 0,
+        levels: {},
+      };
+    }
+    rolesSummary[p.role].headcount += p.count;
+    rolesSummary[p.role].rateSum += p.rate * p.count;
+    rolesSummary[p.role].levels[p.level] = {
+      headcount: p.count,
+      manday: 0,
+      available: 0,
+      avgRate: p.rate,
+    };
+  });
+
+  const today = new Date();
+  resources.forEach(r => {
+    const pos = positionMap[r.position];
+    if (!pos) return;
+    const days = differenceInDays(today, new Date(r.startDate || today)) + 1;
+    const roleData = rolesSummary[pos.role];
+    const levelData = roleData.levels[pos.level];
+    roleData.manday += days;
+    roleData.available += 220;
+    levelData.manday += days;
+    levelData.available = (levelData.available || 0) + 220;
+  });
+
+  const roleCards = Object.values(rolesSummary).map(r => ({
+    role: r.role,
+    headcount: r.headcount,
+    manday: r.manday,
+    avgRate: r.headcount ? Math.round(r.rateSum / r.headcount) : 0,
+    utilization: r.available ? Math.round((r.manday / r.available) * 100) : 0,
+    levels: Object.keys(r.levels).map(lvl => {
+      const lv = r.levels[lvl];
+      return {
+        level: lvl,
+        headcount: lv.headcount,
+        manday: lv.manday,
+        avgRate: lv.avgRate,
+        utilization: lv.available ? Math.round((lv.manday / lv.available) * 100) : 0,
+      };
+    }),
+  }));
+
 
   const barData = Object.keys(roleCounts).map(role => ({
     role,
@@ -155,19 +212,6 @@ function DashboardOverview() {
   Object.keys(roleRates).forEach(r => {
     roleRateAvg[r] = Math.round(roleRates[r].sum / roleRates[r].cnt);
   });
-
-  const cards = [
-    { label: 'Total Resources', value: totalResources },
-    { label: 'Total Manday', value: totalManday },
-    ...Object.keys(roleCounts).map(role => ({
-      label: `${role} Resources`,
-      value: roleCounts[role],
-    })),
-    ...Object.keys(roleRateAvg).map(role => ({
-      label: `${role} Rate`,
-      value: roleRateAvg[role],
-    })),
-  ];
 
   return (
     <Layout>
@@ -183,15 +227,12 @@ function DashboardOverview() {
           </Typography>
           <Grid container spacing={2}>
             <Grid xs={12} container spacing={2}>
-              {cards.map(card => (
-                <Grid key={card.label} xs={6} md={2}>
-                  <Paper sx={{ p: 2, textAlign: 'center' }}>
-                    <Typography variant="body1">{card.label}</Typography>
-                    <Typography variant="h6">{card.value}</Typography>
-                  </Paper>
+              {roleCards.map(card => (
+                <Grid key={card.role} xs={12} md={6}>
+                  <RoleCard data={card} />
                 </Grid>
               ))}
-              <Grid xs={6} md={2}>
+              <Grid xs={12} md={6}>
                 <Paper sx={{ p: 2, textAlign: 'center' }}>
                   <Typography variant="body1">Unassigned</Typography>
                   <Typography variant="h6">{unassigned}</Typography>
