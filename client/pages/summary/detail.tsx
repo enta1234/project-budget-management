@@ -12,6 +12,13 @@ import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { DataGrid } from '@mui/x-data-grid';
+import { PieChart, BarChart } from '@mui/x-charts';
+import IconButton from '@mui/material/IconButton';
+import Dialog from '@mui/material/Dialog';
+import AppBar from '@mui/material/AppBar';
+import Toolbar from '@mui/material/Toolbar';
+import CloseIcon from '@mui/icons-material/Close';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import { differenceInDays } from 'date-fns';
 import { Layout, PageBreadcrumbs } from '../../components';
 import { withAuth } from '../../context/AuthContext';
@@ -33,6 +40,7 @@ function DashboardDetail() {
   const [mandayGroup, setMandayGroup] = useState('project');
   const [costGroup, setCostGroup] = useState('project');
   const [activityGroup, setActivityGroup] = useState('project');
+  const [activityFullscreen, setActivityFullscreen] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -132,6 +140,18 @@ function DashboardDetail() {
     return { total, byRole, avgRate, resourceRows };
   }, [filteredResources, rateMap]);
 
+  const mandayChartData = [
+    { label: 'Estimated', value: mandaySummary.est },
+    { label: 'Actual', value: mandaySummary.act },
+    { label: 'Diff', value: mandaySummary.diff },
+  ];
+
+  const costChartData = Object.keys(costData.byRole).map(role => ({
+    id: role,
+    value: costData.byRole[role],
+    label: role,
+  }));
+
   const activityColumns = [
     { field: 'name', headerName: 'Resource', flex: 1 },
     { field: 'manday', headerName: 'Manday Used', width: 130, type: 'number' },
@@ -220,7 +240,13 @@ function DashboardDetail() {
               <Box sx={{ mt: 1 }}>
                 <Typography variant="body2">Estimated: {mandaySummary.est}</Typography>
                 <Typography variant="body2">Actual: {mandaySummary.act}</Typography>
-                <Typography variant="body2">Diff: {mandaySummary.diff}</Typography>
+                <Typography variant="body2" gutterBottom>Diff: {mandaySummary.diff}</Typography>
+                <BarChart
+                  height={150}
+                  dataset={mandayChartData}
+                  xAxis={[{ scaleType: 'band', dataKey: 'label' }]}
+                  series={[{ dataKey: 'value', label: 'Manday' }]}
+                />
               </Box>
             </Paper>
           </Grid>
@@ -250,12 +276,13 @@ function DashboardDetail() {
                     {role} Avg Rate: {costData.avgRate[role].toLocaleString()}
                   </Typography>
                 ))}
+                <PieChart height={150} series={[{ data: costChartData }]} />
               </Box>
             </Paper>
           </Grid>
           <Grid item xs={12} md={4}>
             <Paper sx={{ p: 2 }}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography variant="h6">Resource Activity</Typography>
                 <FormControl size="small" sx={{ width: 100 }}>
                   <InputLabel id="activity-group-label">Group By</InputLabel>
@@ -269,6 +296,9 @@ function DashboardDetail() {
                     <MenuItem value="team">Team</MenuItem>
                   </Select>
                 </FormControl>
+                <IconButton size="small" onClick={() => setActivityFullscreen(true)}>
+                  <FullscreenIcon fontSize="inherit" />
+                </IconButton>
               </Box>
               <Box sx={{ height: 300, mt: 1 }}>
                 <DataGrid
@@ -283,6 +313,29 @@ function DashboardDetail() {
             </Paper>
           </Grid>
         </Grid>
+
+        <Dialog fullScreen open={activityFullscreen} onClose={() => setActivityFullscreen(false)}>
+          <AppBar sx={{ position: 'relative' }}>
+            <Toolbar variant="dense">
+              <IconButton edge="start" color="inherit" onClick={() => setActivityFullscreen(false)} aria-label="close">
+                <CloseIcon />
+              </IconButton>
+              <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">
+                Resource Activity
+              </Typography>
+            </Toolbar>
+          </AppBar>
+          <Box sx={{ p: 2, flexGrow: 1 }}>
+            <DataGrid
+              rows={costData.resourceRows}
+              columns={activityColumns}
+              pageSize={5}
+              rowsPerPageOptions={[5]}
+              getRowId={row => row.id}
+              sx={{ width: '100%', height: '100%' }}
+            />
+          </Box>
+        </Dialog>
       </Container>
     </Layout>
   );
