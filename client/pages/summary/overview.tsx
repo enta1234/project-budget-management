@@ -6,6 +6,8 @@ import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import { PieChart, LineChart, BarChart } from '@mui/x-charts';
+import ReactECharts from 'echarts-for-react';
+import { differenceInDays, addDays } from 'date-fns';
 import { Layout, PageBreadcrumbs } from '../../components';
 import { withAuth } from '../../context/AuthContext';
 import { fetchBudgetOverview } from '../../models/budgetModel';
@@ -16,6 +18,9 @@ function DashboardOverview() {
   const [resources, setResources] = useState([]);
   const [projects, setProjects] = useState([]);
   const [unassigned, setUnassigned] = useState(0);
+  const [dailyManday, setDailyManday] = useState([]);
+  const [dailyCost, setDailyCost] = useState([]);
+  const [utilData, setUtilData] = useState([]);
 
   async function loadData() {
     const [ov, res, pro] = await Promise.all([
@@ -33,6 +38,85 @@ function DashboardOverview() {
       if (Array.isArray(p.members)) p.members.forEach(id => assigned.add(id));
     });
     setUnassigned(res.data.filter(r => !assigned.has(r.id)).length);
+
+    // ---------- Manday Tracking per Day ----------
+    if (pro.data.length > 0) {
+      const start = new Date(
+        Math.min(...pro.data.map(p => new Date(p.start).getTime())),
+      );
+      const end = new Date(
+        Math.max(...pro.data.map(p => new Date(p.end).getTime())),
+      );
+      const days = differenceInDays(end, start) + 1;
+      const daily: any[] = [];
+      for (let i = 0; i < days; i++) {
+        const d = addDays(start, i);
+        const dateStr = d.toISOString().split('T')[0];
+        let est = 0;
+        let act = 0;
+        pro.data.forEach(p => {
+          const ps = new Date(p.start);
+          const pe = new Date(p.end);
+          if (d >= ps && d <= pe) {
+            const dur = differenceInDays(pe, ps) + 1;
+            est += (p.manday || 0) / dur;
+            act += p.resources || 0;
+          }
+        });
+        daily.push({ date: dateStr, estimate: Number(est.toFixed(2)), actual: act });
+      }
+      setDailyManday(daily);
+    } else {
+      setDailyManday([]);
+    }
+
+    // ---------- Daily Cost Summary ----------
+    if (res.data.length > 0 && ov.length > 0) {
+      const rateMap: Record<string, number> = {};
+      const roleMap: Record<string, string> = {};
+      ov.forEach(o => {
+        const slug = `${o.role} ${o.level}`.toLowerCase().replace(/\s+/g, '_');
+        rateMap[slug] = o.rate;
+        roleMap[slug] = o.role;
+      });
+
+      const start = new Date(
+        Math.min(...res.data.map(r => new Date(r.startDate || Date.now()).getTime())),
+      );
+      const end = new Date();
+      const days = Math.min(30, differenceInDays(end, start) + 1);
+      const cost: any[] = [];
+      for (let i = 0; i < days; i++) {
+        const d = addDays(end, -i);
+        const dateStr = d.toISOString().split('T')[0];
+        const byRole: Record<string, number> = {};
+        res.data.forEach(r => {
+          const rs = new Date(r.startDate || Date.now());
+          if (d >= rs) {
+            const role = roleMap[r.position] || 'Other';
+            byRole[role] = (byRole[role] || 0) + (rateMap[r.position] || 0);
+          }
+        });
+        cost.unshift({ date: dateStr, ...byRole });
+      }
+      setDailyCost(cost);
+    } else {
+      setDailyCost([]);
+    }
+
+    // ---------- Resource Utilization ----------
+    if (res.data.length > 0) {
+      const today = new Date();
+      const util = res.data.map(r => {
+        const days = differenceInDays(today, new Date(r.startDate || today)) + 1;
+        const manday = days;
+        const workload = Math.min(100, Math.round((manday / 220) * 100));
+        return { name: r.name, manday, workload };
+      });
+      setUtilData(util);
+    } else {
+      setUtilData([]);
+    }
   }
 
   useEffect(() => {
@@ -153,6 +237,84 @@ function DashboardOverview() {
             </Grid>
           </Grid>
         </Paper>
+
+        <Grid container spacing={2} sx={{ mt: 2 }}>
+          <Grid xs={12} md={6}>
+            <Paper sx={{ p: 2 }}>
+              <Typography variant="h6" gutterBottom>
+                Manday Tracking & Cost Summary
+              </Typography>
+              <Box sx={{ height: 250 }}>
+                <ReactECharts
+                  style={{ height: '100%' }}
+                  option={{
+                    tooltip: { trigger: 'axis' },
+                    legend: { data: ['Estimate', 'Actual', 'Diff'] },
+                    xAxis: { type: 'category', data: dailyManday.map(d => d.date) },
+                    yAxis: { type: 'value' },
+                    series: [
+                      { name: 'Estimate', type: 'line', data: dailyManday.map(d => d.estimate) },
+                      { name: 'Actual', type: 'line', data: dailyManday.map(d => d.actual) },
+                      { name: 'Diff', type: 'line', areaStyle: {}, data: dailyManday.map(d => d.actual - d.estimate) },
+                    ],
+                  }}
+                />
+              </Box>
+              <Box sx={{ height: 250, mt: 3 }}>
+                <ReactECharts
+                  style={{ height: '100%' }}
+                  option={{
+                    tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+                    legend: {},
+                    xAxis: { type: 'category', data: dailyCost.map(d => d.date) },
+                    yAxis: { type: 'value' },
+                    series: (function() {
+                      const roles = Object.keys(dailyCost[0] || {}).filter(k => k !== 'date');
+                      return roles.map(role => ({
+                        name: role,
+                        type: 'bar',
+                        stack: 'total',
+                        data: dailyCost.map(d => d[role] || 0),
+                      }));
+                    })(),
+                  }}
+                />
+              </Box>
+            </Paper>
+          </Grid>
+          <Grid xs={12} md={6}>
+            <Paper sx={{ p: 2, height: '100%' }}>
+              <Typography variant="h6" gutterBottom>
+                Resource Utilization
+              </Typography>
+              <ReactECharts
+                style={{ height: 500 }}
+                option={{
+                  tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+                  grid: { left: 80, right: 20, bottom: 20, top: 20 },
+                  xAxis: { type: 'value' },
+                  yAxis: {
+                    type: 'category',
+                    data: utilData.map(u => u.name),
+                    inverse: true,
+                  },
+                  series: [
+                    {
+                      type: 'bar',
+                      data: utilData.map(u => u.manday),
+                      label: {
+                        show: true,
+                        position: 'right',
+                        formatter: (_: any, idx: number) => `${utilData[idx].workload}%`,
+                      },
+                    },
+                  ],
+                }}
+              />
+            </Paper>
+          </Grid>
+        </Grid>
+
       </Container>
     </Layout>
   );
