@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
-import { Layout, PageBreadcrumbs, Popup } from '../../components';
+import { Layout, PageBreadcrumbs, Popup, ConfirmDialog, useToast } from '../../components';
 import { withAuth } from '../../context/AuthContext';
 import api from '../../api';
 import TaskForm from '../../components/TaskForm';
@@ -25,7 +25,9 @@ import Grid from '@mui/material/Grid';
 import ToggleButton from '@mui/material/ToggleButton';
 import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import IconButton from '@mui/material/IconButton';
+import Stack from '@mui/material/Stack';
 import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Chip from '@mui/material/Chip';
@@ -40,6 +42,7 @@ import 'gantt-task-react/dist/index.css';
 
 function PlanningSetting() {
   const router = useRouter();
+  const { showToast } = useToast();
   const [projects, setProjects] = useState([]);
   const [project, setProject] = useState(null);
   const [tasks, setTasks] = useState([]);
@@ -49,6 +52,7 @@ function PlanningSetting() {
   const [viewMode, setViewMode] = useState(ViewMode.Week);
   const [dialog, setDialog] = useState('');
   const [editTask, setEditTask] = useState(null);
+  const [deleteRow, setDeleteRow] = useState(null);
   const [sprints, setSprints] = useState([]);
   const columnWidth = 60;
 
@@ -172,6 +176,26 @@ function PlanningSetting() {
     await api.patch(`/api/v1/planning/tasks/${editTask._id || editTask.id}`, data);
     await refreshAll();
     setEditTask(null);
+  };
+
+  const handleDelete = row => {
+    setDeleteRow(row);
+  };
+
+  const confirmDelete = async () => {
+    try {
+      if (deleteRow.type === 'milestone') {
+        await api.delete(`/api/v1/planning/milestones/${deleteRow._id || deleteRow.id}`);
+      } else {
+        await api.delete(`/api/v1/planning/tasks/${deleteRow._id || deleteRow.id}`);
+      }
+      showToast('Item deleted');
+      await refreshAll();
+    } catch (e) {
+      console.error(e);
+      showToast('Error deleting item', { severity: 'error' });
+    }
+    setDeleteRow(null);
   };
 
   const handleDateChange = async (task: GanttTask) => {
@@ -321,7 +345,7 @@ function PlanningSetting() {
                   </Button>
                 </Box>
               </Box>
-              <Paper sx={{ p: 2, overflowX: 'auto' }}>
+              <Paper sx={{ p: 2, overflowX: 'auto', mb: 2 }}>
                 <Box sx={{ minWidth: 800 }}>
                   <DataGrid
                     rows={combinedTasks.map(t => ({ id: t._id || t.id, ...t }))}
@@ -344,16 +368,23 @@ function PlanningSetting() {
                     {
                       field: 'actions',
                       headerName: 'Action',
-                      width: 80,
-                      renderCell: params =>
-                        params.row.type !== 'milestone' ? (
-                          <IconButton
-                            size="small"
-                            onClick={() => setEditTask(params.row)}
-                          >
-                            <EditIcon fontSize="small" />
+                      width: 110,
+                      sortable: false,
+                      renderCell: params => (
+                        <Stack direction="row" spacing={1}>
+                          {params.row.type !== 'milestone' && (
+                            <IconButton
+                              size="small"
+                              onClick={() => setEditTask(params.row)}
+                            >
+                              <EditIcon fontSize="small" />
+                            </IconButton>
+                          )}
+                          <IconButton size="small" onClick={() => handleDelete(params.row)}>
+                            <DeleteIcon fontSize="small" />
                           </IconButton>
-                        ) : null,
+                        </Stack>
+                      ),
                     },
                   ]}
                     autoHeight
@@ -530,6 +561,13 @@ function PlanningSetting() {
             />
           )}
         </Popup>
+        <ConfirmDialog
+          open={!!deleteRow}
+          title="Confirm Delete"
+          content="Delete this item?"
+          onClose={() => setDeleteRow(null)}
+          onConfirm={confirmDelete}
+        />
       </Container>
     </Layout>
   );
