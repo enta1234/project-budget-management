@@ -29,7 +29,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Chip from '@mui/material/Chip';
-import { addDays } from 'date-fns';
+import { addDays, differenceInCalendarDays } from 'date-fns';
 import {
   Gantt,
   ViewMode,
@@ -49,6 +49,7 @@ function PlanningSetting() {
   const [dialog, setDialog] = useState('');
   const [editTask, setEditTask] = useState(null);
   const [sprints, setSprints] = useState([]);
+  const columnWidth = 60;
 
   const statusOptions = [
     'planing',
@@ -314,26 +315,6 @@ function PlanningSetting() {
             </Box>
           </Paper>
         )}
-        {project && sprints.length > 0 && (
-          <Paper sx={{ p: 2, mb: 2 }}>
-            <Typography variant="h6" gutterBottom>
-              Sprints
-            </Typography>
-            <Box sx={{ display: 'flex', alignItems: 'flex-end' }}>
-              {sprints.map(s => (
-                <Box key={s.number} sx={{ flex: 1, position: 'relative', mx: 0.5 }}>
-                  <Box sx={{ borderBottom: '2px solid', borderColor: 'primary.main', height: 10 }} />
-                  <Typography variant="caption" sx={{ position: 'absolute', top: -16, left: '50%', transform: 'translateX(-50%)' }}>
-                    Sprint {s.number}
-                  </Typography>
-                  <Typography variant="caption" sx={{ fontSize: 10, display: 'block', textAlign: 'center', mt: 0.5 }}>
-                    {new Date(s.start).toLocaleDateString()} - {new Date(s.end).toLocaleDateString()}
-                  </Typography>
-                </Box>
-              ))}
-            </Box>
-          </Paper>
-        )}
         {project && (
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
@@ -435,12 +416,40 @@ function PlanningSetting() {
                   </Grid>
                   <Grid item xs={8} sx={{ maxHeight: 400, overflow: 'auto' }}>
                     {ganttTasks.length > 0 ? (
-                      <Box sx={{ minWidth: 600, width: '100%' }}>
-                        <Gantt
-                          tasks={ganttTasks}
-                          viewMode={viewMode}
-                          onDateChange={handleDateChange}
-                        />
+                      <Box sx={{ minWidth: 600, width: '100%', position: 'relative' }}>
+                        {project &&
+                          sprints.map((s, idx) => {
+                            const unit = viewMode === ViewMode.Week ? 7 : viewMode === ViewMode.Month ? 30 : 1;
+                            const dayWidth = columnWidth / unit;
+                            const left = differenceInCalendarDays(new Date(s.start), new Date(project.start)) * dayWidth;
+                            const width = (differenceInCalendarDays(new Date(s.end), new Date(s.start)) + 1) * dayWidth;
+                            return (
+                              <Box
+                                key={s.number}
+                                sx={{
+                                  position: 'absolute',
+                                  top: 0,
+                                  left,
+                                  width,
+                                  bottom: 0,
+                                  backgroundColor: idx % 2 ? 'rgba(100,100,100,0.05)' : 'rgba(100,100,100,0.1)',
+                                  zIndex: 1,
+                                }}
+                              >
+                                <Typography variant="caption" sx={{ position: 'absolute', top: 0, left: 2 }}>
+                                  {`Sprint ${s.number}`}
+                                </Typography>
+                              </Box>
+                            );
+                          })}
+                        <Box sx={{ position: 'relative', zIndex: 2 }}>
+                          <Gantt
+                            tasks={ganttTasks}
+                            viewMode={viewMode}
+                            onDateChange={handleDateChange}
+                            columnWidth={columnWidth}
+                          />
+                        </Box>
                       </Box>
                     ) : (
                       <Typography variant="body2" align="center">
