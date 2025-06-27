@@ -305,7 +305,8 @@ function DashboardOverview() {
                       label: {
                         show: true,
                         position: 'right',
-                        formatter: (_: any, idx: number) => `${utilData[idx].workload}%`,
+                        formatter: (params: any) =>
+                          `${utilData[params.dataIndex]?.workload ?? 0}%`,
                       },
                     },
                   ],
