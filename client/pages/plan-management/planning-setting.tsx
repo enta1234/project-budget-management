@@ -349,18 +349,36 @@ function PlanningSetting() {
                 <Box sx={{ minWidth: 800 }}>
                   <DataGrid
                     rows={combinedTasks.map(t => ({ id: t._id || t.id, ...t }))}
-                  columns={[
-                    { field: 'name', headerName: 'Name', flex: 1 },
-                    { field: 'detail', headerName: 'Detail', flex: 1 },
-                    { field: 'startDate', headerName: 'Start', valueFormatter: params => {
-                      const value = params?.value;
-                      return value ? new Date(value).toLocaleDateString() : '';
-                    }, width: 120 },
-                    { field: 'endDate', headerName: 'End', valueFormatter: params => {
-                      const value = params?.value;
-                      return value ? new Date(value).toLocaleDateString() : '';
-                    }, width: 120 },
-                    { field: 'owner', headerName: 'Owner', width: 120 },
+                    columns={[
+                      { field: 'name', headerName: 'Name', flex: 1 },
+                      { field: 'detail', headerName: 'Detail', flex: 1 },
+                      {
+                        field: 'startDate',
+                        headerName: 'Start Date',
+                        valueFormatter: params => {
+                          const value = params?.value;
+                          return value ? new Date(value).toLocaleDateString() : '';
+                        },
+                        width: 140,
+                      },
+                      {
+                        field: 'endDate',
+                        headerName: 'End Date',
+                        valueFormatter: params => {
+                          const value = params?.value;
+                          return value ? new Date(value).toLocaleDateString() : '';
+                        },
+                        width: 140,
+                      },
+                      {
+                        field: 'owner',
+                        headerName: 'Owner',
+                        width: 160,
+                        valueGetter: (_value, row) => {
+                          const mem = members.find(m => m.id === row.owner);
+                          return mem ? mem.name : row.owner || '';
+                        },
+                      },
                     {
                       field: 'manday',
                       headerName: 'Manday',
@@ -383,7 +401,16 @@ function PlanningSetting() {
                       },
                     },
                     { field: 'duration', headerName: 'Duration', width: 100, type: 'number' },
-                    { field: 'blockedBy', headerName: 'Blocked By', width: 120 },
+                    {
+                      field: 'blockedBy',
+                      headerName: 'Blocked By',
+                      width: 160,
+                      valueGetter: (_value, row) => {
+                        const allItems = [...tasks, ...milestones];
+                        const target = allItems.find(i => String(i._id || i.id) === String(row.blockedBy));
+                        return target ? target.name : '';
+                      },
+                    },
                     { field: 'type', headerName: 'Type', width: 120 },
                     {
                       field: 'actions',
