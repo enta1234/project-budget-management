@@ -224,6 +224,11 @@ function DashboardOverview() {
     roleRateAvg[r] = Math.round(roleRates[r].sum / roleRates[r].cnt);
   });
 
+  const mandayBarData = Object.keys(rolesSummary).map(role => ({
+    role,
+    manday: rolesSummary[role].manday,
+  }));
+
   return (
     <Layout>
       <Container maxWidth={false} sx={{ mt: 4 }}>
@@ -307,6 +312,19 @@ function DashboardOverview() {
                     dataset={costData}
                     xAxis={[{ dataKey: 'month', scaleType: 'band' }]}
                     series={[{ dataKey: 'cost', label: 'Cost' }]}
+                  />
+                </Paper>
+              </Grid>
+              <Grid xs={12} md={12}>
+                <Paper sx={{ p: 2 }}>
+                  <Typography variant="h6" gutterBottom>
+                    Mandays by Role
+                  </Typography>
+                  <BarChart
+                    height={200}
+                    dataset={mandayBarData}
+                    xAxis={[{ dataKey: 'role', scaleType: 'band' }]}
+                    series={[{ dataKey: 'manday', label: 'Mandays' }]}
                   />
                 </Paper>
               </Grid>
