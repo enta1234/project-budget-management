@@ -29,6 +29,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Chip from '@mui/material/Chip';
+import { sanitizeList } from '../../utils/sanitize';
 import { addDays, differenceInCalendarDays } from 'date-fns';
 import {
   Gantt,
@@ -71,29 +72,14 @@ function PlanningSetting() {
     cancelled: 'error',
   };
 
-  const cleanList = (items: any[]) =>
-    items.map(it => {
-      if (typeof it.onClick !== 'undefined') {
-        const { onClick, ...rest } = it;
-        return rest;
-      }
-      return it;
-    });
+  const cleanList = (items: any[]) => sanitizeList(items);
 
   useEffect(() => {
     if (!router.isReady) return;
     api
       .get('/api/v1/projects')
       .then(res => {
-        const list = res.data
-          .filter(p => !p.deleted)
-          .map((p: any) => {
-            if (typeof p.onClick !== 'undefined') {
-              const { onClick, ...rest } = p;
-              return rest;
-            }
-            return p;
-          });
+        const list = sanitizeList(res.data.filter(p => !p.deleted));
         setProjects(list);
         const pid = router.query.project;
         if (pid) {

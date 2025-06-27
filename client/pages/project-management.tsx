@@ -25,6 +25,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import Chip from '@mui/material/Chip';
 import api from '../api';
+import { sanitizeList } from '../utils/sanitize';
 import { Layout, Popup, ProjectForm, useToast, ConfirmDialog, PageBreadcrumbs, PageLoading } from '../components';
 import { withAuth, useAuth } from '../context/AuthContext';
 
@@ -102,14 +103,7 @@ function ProjectManagement() {
         api.get('/api/v1/teams'),
         api.get('/api/v1/budgets/overview'),
       ]);
-      const cleaned = pro.data.map((p: any) => {
-        if (typeof p.onClick !== 'undefined') {
-          const { onClick, ...rest } = p;
-          return rest;
-        }
-        return p;
-      });
-      setProjects(cleaned);
+      setProjects(sanitizeList(pro.data));
       setUsers(usr.data);
       setTeams(tm.data);
       setBudgets(bg.data);
