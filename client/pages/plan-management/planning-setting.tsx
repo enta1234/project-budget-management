@@ -71,6 +71,15 @@ function PlanningSetting() {
     cancelled: 'error',
   };
 
+  const cleanList = (items: any[]) =>
+    items.map(it => {
+      if (typeof it.onClick !== 'undefined') {
+        const { onClick, ...rest } = it;
+        return rest;
+      }
+      return it;
+    });
+
   useEffect(() => {
     if (!router.isReady) return;
     api
@@ -106,8 +115,8 @@ function PlanningSetting() {
       api.get('/api/v1/resources'),
     ]).then(([ph, t, m, proj, res]) => {
       setPhases(ph.data);
-      setTasks(t.data);
-      setMilestones(m.data);
+      setTasks(cleanList(t.data));
+      setMilestones(cleanList(m.data));
       const memIds = proj.data.members || [];
       const leadId = proj.data.lead?._id;
       const list = res.data.filter(u => memIds.includes(u.id) || u.id === leadId);
@@ -149,8 +158,8 @@ function PlanningSetting() {
       api.get('/api/v1/resources'),
     ]);
     setPhases(p.data);
-    setTasks(t.data);
-    setMilestones(m.data);
+    setTasks(cleanList(t.data));
+    setMilestones(cleanList(m.data));
     const memIds = proj.data.members || [];
     const leadId = proj.data.lead?._id;
     const list = res.data.filter(u => memIds.includes(u.id) || u.id === leadId);
