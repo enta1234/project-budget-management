@@ -589,6 +589,8 @@ function PlanningSetting() {
                             viewMode={viewMode}
                             onDateChange={handleDateChange}
                             columnWidth={columnWidth}
+                            viewDate={new Date()}
+                            preStepsCount={0}
                           />
                         </Box>
                       </Box>
