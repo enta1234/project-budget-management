@@ -37,13 +37,19 @@ export default function Topbar({ onMenuClick }) {
       }}
     >
       <Toolbar variant="dense">
-        <IconButton color="inherit" edge="start" sx={{ mr: 1 }} onClick={onMenuClick}>
+        <IconButton
+          color="inherit"
+          edge="start"
+          aria-label="open sidebar"
+          sx={{ mr: 1 }}
+          onClick={onMenuClick}
+        >
           <MenuIcon />
         </IconButton>
         <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 500 }}>
           Budget Manager
         </Typography>
-        <IconButton color="inherit" onClick={handleMenu}>
+        <IconButton color="inherit" aria-label="account options" onClick={handleMenu}>
           <AccountCircle />
         </IconButton>
         <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
