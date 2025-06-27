@@ -22,3 +22,7 @@ export { default as ConfirmDialog } from './ConfirmDialog';
 export { default as PageBreadcrumbs } from './PageBreadcrumbs';
 export { default as PhaseForm } from './PhaseForm';
 export { default as TaskForm } from './TaskForm';
+
+export { default as RoleCard } from './RoleCard';
+
+export { default as RoleCard } from "./RoleCard";
