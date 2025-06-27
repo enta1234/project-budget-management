@@ -50,7 +50,10 @@ function DashboardDetail() {
       fetchBudgets(),
     ])
       .then(([p, t, r, b]) => {
-        setProjects(p);
+        const activeProjects = Array.isArray(p)
+          ? p.filter(pr => !pr.deleted)
+          : [];
+        setProjects(activeProjects);
         setTeams(t);
         setResources(r);
         setBudgets(b);
