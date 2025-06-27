@@ -361,7 +361,27 @@ function PlanningSetting() {
                       return value ? new Date(value).toLocaleDateString() : '';
                     }, width: 120 },
                     { field: 'owner', headerName: 'Owner', width: 120 },
-                    { field: 'manday', headerName: 'Manday', width: 100, type: 'number' },
+                    {
+                      field: 'manday',
+                      headerName: 'Manday',
+                      width: 100,
+                      type: 'number',
+                    },
+                    {
+                      field: 'actualManday',
+                      headerName: 'Actual Manday',
+                      width: 120,
+                      type: 'number',
+                      valueGetter: (_value, row) => {
+                        if (!row.startDate) return '';
+                        const start = new Date(row.startDate);
+                        const end = row.endDate ? new Date(row.endDate) : new Date();
+                        const today = new Date();
+                        const until = end < today ? end : today;
+                        const diff = differenceInCalendarDays(until, start) + 1;
+                        return diff > 0 ? diff : 0;
+                      },
+                    },
                     { field: 'duration', headerName: 'Duration', width: 100, type: 'number' },
                     { field: 'blockedBy', headerName: 'Blocked By', width: 120 },
                     { field: 'type', headerName: 'Type', width: 120 },
