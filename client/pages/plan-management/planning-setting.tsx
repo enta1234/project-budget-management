@@ -253,10 +253,15 @@ function PlanningSetting() {
   const statusColor = status =>
     ({ 'not-started': 'grey', 'in-progress': '#2196f3', late: 'red' }[status] || 'grey');
 
+  const safeDate = (value: any) => {
+    const d = value ? new Date(value) : undefined;
+    return d && !isNaN(d.getTime()) ? d : new Date();
+  };
+
   const ganttTasks: GanttTask[] = [
     ...tasks.map(t => ({
-      start: t.startDate ? new Date(t.startDate) : new Date(),
-      end: t.endDate ? new Date(t.endDate) : new Date(),
+      start: safeDate(t.startDate),
+      end: safeDate(t.endDate),
       name: t.name,
       id: t._id || t.id,
       type: 'task',
@@ -265,8 +270,8 @@ function PlanningSetting() {
       styles: { backgroundColor: statusColor(taskStatus(t)) },
     })),
     ...milestones.map(m => ({
-      start: new Date(m.date),
-      end: new Date(m.date),
+      start: safeDate(m.date),
+      end: safeDate(m.date),
       name: m.name,
       id: m._id || m.id,
       type: 'milestone',
