@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Task } from './task.schema';
+import { BaseRepository } from './base.repository';
 import { IsString, IsOptional, IsBoolean, IsNumber } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -105,19 +106,21 @@ export class UpdateTaskInput {
 }
 
 @Injectable()
-export class TasksRepository {
-  constructor(@InjectModel(Task.name) private model: Model<Task>) {}
+export class TasksRepository extends BaseRepository<Task> {
+  constructor(@InjectModel(Task.name) model: Model<Task>) {
+    super(model);
+  }
 
   findByProject(project: string): Promise<Task[]> {
     return this.model.find({ project }).sort({ createdAt: 1 }).exec();
   }
 
   create(data: CreateTaskInput): Promise<Task> {
-    const task = new this.model({
+    const payload = {
       ...data,
       ...(data.type ? { isFeature: data.type === 'feature' } : {}),
-    });
-    return task.save();
+    };
+    return super.create(payload);
   }
 
   update(id: string, data: UpdateTaskInput): Promise<Task | null> {
@@ -125,10 +128,10 @@ export class TasksRepository {
       ...data,
       ...(data.type ? { isFeature: data.type === 'feature' } : {}),
     };
-    return this.model.findByIdAndUpdate(id, payload, { new: true }).exec();
+    return super.update(id, payload);
   }
 
   remove(id: string): Promise<Task | null> {
-    return this.model.findByIdAndDelete(id).exec();
+    return super.remove(id);
   }
 }

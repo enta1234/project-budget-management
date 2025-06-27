@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Milestone } from './milestone.schema';
+import { BaseRepository } from './base.repository';
 import { IsString, IsOptional, IsDate } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -38,23 +39,24 @@ export class UpdateMilestoneInput {
 }
 
 @Injectable()
-export class MilestonesRepository {
-  constructor(@InjectModel(Milestone.name) private model: Model<Milestone>) {}
+export class MilestonesRepository extends BaseRepository<Milestone> {
+  constructor(@InjectModel(Milestone.name) model: Model<Milestone>) {
+    super(model);
+  }
 
   findByProject(project: string): Promise<Milestone[]> {
     return this.model.find({ project }).sort({ date: 1 }).exec();
   }
 
   create(data: CreateMilestoneInput): Promise<Milestone> {
-    const mile = new this.model(data);
-    return mile.save();
+    return super.create(data);
   }
 
   update(id: string, data: UpdateMilestoneInput): Promise<Milestone | null> {
-    return this.model.findByIdAndUpdate(id, data, { new: true }).exec();
+    return super.update(id, data);
   }
 
   remove(id: string): Promise<Milestone | null> {
-    return this.model.findByIdAndDelete(id).exec();
+    return super.remove(id);
   }
 }

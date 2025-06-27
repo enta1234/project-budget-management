@@ -11,6 +11,17 @@ import TextField from '@mui/material/TextField';
 import { Layout, PageBreadcrumbs, Popup, ConfirmDialog, useToast } from '../../components';
 import { withAuth } from '../../context/AuthContext';
 import api from '../../api';
+import {
+  fetchPhases,
+  fetchTasks,
+  fetchMilestones,
+  createTask,
+  updateTask,
+  deleteTask,
+  createMilestone,
+  updateMilestone,
+  deleteMilestone,
+} from '../../models/planningModel';
 import TaskForm from '../../components/TaskForm';
 import { DataGrid } from '@mui/x-data-grid';
 import Timeline from '@mui/lab/Timeline';
@@ -98,15 +109,15 @@ function PlanningSetting() {
     if (!project) return;
     const pid = project._id || project.id;
     Promise.all([
-      api.get('/api/v1/planning/phases', { params: { project: pid } }),
-      api.get('/api/v1/planning/tasks', { params: { project: pid } }),
-      api.get('/api/v1/planning/milestones', { params: { project: pid } }),
+      fetchPhases(pid),
+      fetchTasks(pid),
+      fetchMilestones(pid),
       api.get(`/api/v1/projects/${pid}`),
       api.get('/api/v1/resources'),
     ]).then(([ph, t, m, proj, res]) => {
-      setPhases(ph.data);
-      setTasks(cleanList(t.data));
-      setMilestones(cleanList(m.data));
+      setPhases(ph);
+      setTasks(cleanList(t));
+      setMilestones(cleanList(m));
       const memIds = proj.data.members || [];
       const leadId = proj.data.lead?._id;
       const list = res.data.filter(u => memIds.includes(u.id) || u.id === leadId);
@@ -141,15 +152,15 @@ function PlanningSetting() {
     if (!project) return;
     const pid = project._id || project.id;
     const [p, t, m, proj, res] = await Promise.all([
-      api.get('/api/v1/planning/phases', { params: { project: pid } }),
-      api.get('/api/v1/planning/tasks', { params: { project: pid } }),
-      api.get('/api/v1/planning/milestones', { params: { project: pid } }),
+      fetchPhases(pid),
+      fetchTasks(pid),
+      fetchMilestones(pid),
       api.get(`/api/v1/projects/${pid}`),
       api.get('/api/v1/resources'),
     ]);
-    setPhases(p.data);
-    setTasks(cleanList(t.data));
-    setMilestones(cleanList(m.data));
+    setPhases(p);
+    setTasks(cleanList(t));
+    setMilestones(cleanList(m));
     const memIds = proj.data.members || [];
     const leadId = proj.data.lead?._id;
     const list = res.data.filter(u => memIds.includes(u.id) || u.id === leadId);
@@ -158,14 +169,13 @@ function PlanningSetting() {
 
   const handleCreateTask = async data => {
     if (data.type === 'milestone') {
-      await api.post('/api/v1/planning/milestones', {
+      await createMilestone(project._id, {
         name: data.name,
         detail: data.detail,
         date: data.startDate,
-        project: project._id,
       });
     } else {
-      await api.post('/api/v1/planning/tasks', { ...data, project: project._id });
+      await createTask(project._id, data);
     }
     await refreshAll();
     setDialog('');
@@ -173,7 +183,7 @@ function PlanningSetting() {
 
   const handleUpdateTask = async data => {
     if (!editTask) return;
-    await api.patch(`/api/v1/planning/tasks/${editTask._id || editTask.id}`, data);
+    await updateTask(editTask._id || editTask.id, data);
     await refreshAll();
     setEditTask(null);
   };
@@ -185,9 +195,9 @@ function PlanningSetting() {
   const confirmDelete = async () => {
     try {
       if (deleteRow.type === 'milestone') {
-        await api.delete(`/api/v1/planning/milestones/${deleteRow._id || deleteRow.id}`);
+        await deleteMilestone(deleteRow._id || deleteRow.id);
       } else {
-        await api.delete(`/api/v1/planning/tasks/${deleteRow._id || deleteRow.id}`);
+        await deleteTask(deleteRow._id || deleteRow.id);
       }
       showToast('Item deleted');
       await refreshAll();
@@ -200,7 +210,7 @@ function PlanningSetting() {
 
   const handleDateChange = async (task: GanttTask) => {
     if (task.type !== 'task') return;
-    await api.patch(`/api/v1/planning/tasks/${task.id}`, {
+    await updateTask(task.id, {
       startDate: task.start,
       endDate: task.end,
     });
