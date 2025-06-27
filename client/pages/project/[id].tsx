@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
@@ -26,6 +26,7 @@ function ProjectDetail() {
   const [users, setUsers] = useState([]);
   const [teams, setTeams] = useState([]);
   const [budgets, setBudgets] = useState([]);
+  const [positions, setPositions] = useState([]);
   const [holidays, setHolidays] = useState<Record<string, boolean>>({});
   const [open, setOpen] = useState(false);
 
@@ -36,11 +37,13 @@ function ProjectDetail() {
         api.get('/api/v1/resources'),
         api.get('/api/v1/teams'),
         api.get('/api/v1/budgets/overview'),
-      ]).then(([p, u, t, b]) => {
+        api.get('/api/v1/positions'),
+      ]).then(([p, u, t, b, pos]) => {
         setProject(p.data);
         setUsers(u.data);
         setTeams(t.data);
         setBudgets(b.data);
+        setPositions(pos.data);
       });
     }
   }, [id]);
@@ -69,10 +72,34 @@ function ProjectDetail() {
   const uniqueMembers = memberList.filter(
     (m, idx) => memberList.findIndex(u => u.id === m.id) === idx,
   );
-  const memberRows = uniqueMembers.map(m => ({
-    ...m,
-    isLead: m.id === project?.lead?._id,
-  }));
+
+  const posMap = useMemo(() => {
+    const map: Record<string, { role: string; level: string }> = {};
+    positions.forEach(p => {
+      const [r, l] = p.label.split(' - ');
+      map[p.value] = { role: r, level: l };
+    });
+    return map;
+  }, [positions]);
+
+  const levelOrder: Record<string, number> = {
+    senior: 0,
+    intermediate: 1,
+    junior: 2,
+  };
+
+  const memberRows = uniqueMembers
+    .map(m => ({
+      ...m,
+      isLead: m.id === project?.lead?._id,
+      role: posMap[m.position]?.role || '',
+      level: posMap[m.position]?.level || '',
+    }))
+    .sort((a, b) => {
+      const aOrd = levelOrder[a.level?.toLowerCase()] ?? 99;
+      const bOrd = levelOrder[b.level?.toLowerCase()] ?? 99;
+      return aOrd - bOrd;
+    });
   const resourceCount = uniqueMembers.length;
   const rateMap = budgets.reduce((m, b) => {
     m[b.id] = b.rate;
@@ -127,7 +154,8 @@ function ProjectDetail() {
       ),
     },
     { field: 'email', headerName: 'Email', flex: 1 },
-    { field: 'position', headerName: 'Position', flex: 1 },
+    { field: 'role', headerName: 'Role', flex: 1 },
+    { field: 'level', headerName: 'Level', width: 120 },
   ];
 
   const currencyFormatter = new Intl.NumberFormat('th-TH', {
