@@ -428,10 +428,23 @@ function PlanningSetting() {
                       <Box sx={{ minWidth: 600, width: '100%', position: 'relative' }}>
                         {project &&
                           sprints.map((s, idx) => {
-                            const unit = viewMode === ViewMode.Week ? 7 : viewMode === ViewMode.Month ? 30 : 1;
+                            const unit =
+                              viewMode === ViewMode.Week
+                                ? 7
+                                : viewMode === ViewMode.Month
+                                ? 30
+                                : 1;
                             const dayWidth = columnWidth / unit;
-                            const left = differenceInCalendarDays(new Date(s.start), new Date(project.start)) * dayWidth;
-                            const width = (differenceInCalendarDays(new Date(s.end), new Date(s.start)) + 1) * dayWidth;
+                            const left =
+                              differenceInCalendarDays(
+                                new Date(s.start),
+                                new Date(project.start)
+                              ) * dayWidth;
+                            const width =
+                              (differenceInCalendarDays(
+                                new Date(s.end),
+                                new Date(s.start)
+                              ) + 1) * dayWidth;
                             return (
                               <Box
                                 key={s.number}
@@ -443,14 +456,59 @@ function PlanningSetting() {
                                   bottom: 0,
                                   backgroundColor: idx % 2 ? 'rgba(100,100,100,0.05)' : 'rgba(100,100,100,0.1)',
                                   zIndex: 1,
+                                  pointerEvents: 'none',
                                 }}
-                              >
-                                <Typography variant="caption" sx={{ position: 'absolute', top: 0, left: 2 }}>
-                                  {`Sprint ${s.number}`}
-                                </Typography>
-                              </Box>
+                              />
                             );
                           })}
+                        {project && (
+                          <Box
+                            sx={{
+                              position: 'sticky',
+                              top: 0,
+                              left: 0,
+                              width: '100%',
+                              height: 20,
+                              zIndex: 3,
+                              pointerEvents: 'none',
+                            }}
+                          >
+                            {sprints.map(s => {
+                              const unit =
+                                viewMode === ViewMode.Week
+                                  ? 7
+                                  : viewMode === ViewMode.Month
+                                  ? 30
+                                  : 1;
+                              const dayWidth = columnWidth / unit;
+                              const left =
+                                differenceInCalendarDays(
+                                  new Date(s.start),
+                                  new Date(project.start)
+                                ) * dayWidth;
+                              const width =
+                                (differenceInCalendarDays(
+                                  new Date(s.end),
+                                  new Date(s.start)
+                                ) + 1) * dayWidth;
+                              return (
+                                <Typography
+                                  key={`lbl-${s.number}`}
+                                  variant="caption"
+                                  sx={{
+                                    position: 'absolute',
+                                    left,
+                                    width,
+                                    textAlign: 'center',
+                                    bgcolor: 'rgba(255,255,255,0.7)',
+                                  }}
+                                >
+                                  {`Sprint ${s.number}`}
+                                </Typography>
+                              );
+                            })}
+                          </Box>
+                        )}
                         <Box sx={{ position: 'relative', zIndex: 2 }}>
                           <Gantt
                             tasks={ganttTasks}
