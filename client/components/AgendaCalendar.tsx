@@ -142,9 +142,11 @@ export default function AgendaCalendar({
     return {};
   };
 
+  const CalendarComponent: any = onEventDrop ? DnDCalendar : Calendar;
+
   return (
     <DndProvider backend={HTML5Backend}>
-      <DnDCalendar
+      <CalendarComponent
         localizer={localizer}
         events={eventsAll}
         defaultView="month"
@@ -157,9 +159,15 @@ export default function AgendaCalendar({
         onSelectEvent={event =>
           onTaskClick && event.resource?.type === 'task' && onTaskClick(event.resource)
         }
-        onEventDrop={({ event, start, end }) => onEventDrop && onEventDrop(event.resource, start, end)}
-        resizable
-        onEventResize={({ event, start, end }) => onEventDrop && onEventDrop(event.resource, start, end)}
+        {...(onEventDrop
+          ? {
+              onEventDrop: ({ event, start, end }: any) =>
+                onEventDrop && onEventDrop(event.resource, start, end),
+              onEventResize: ({ event, start, end }: any) =>
+                onEventDrop && onEventDrop(event.resource, start, end),
+              resizable: true,
+            }
+          : {})}
       />
     </DndProvider>
   );

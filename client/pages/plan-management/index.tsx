@@ -97,12 +97,6 @@ function PlanManagementOverview() {
                     proj._id || proj.id
                   }`,
                 )}
-              onEventDrop={(proj, start, end) => {
-                updateProject(proj._id || proj.id, {
-                  start,
-                  end,
-                }).catch(console.error);
-              }}
             />
           ) : (
             <Timeline>
