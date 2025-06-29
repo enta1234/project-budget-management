@@ -37,12 +37,12 @@ export default function RoleCard({ data }: { data: RoleInfo }) {
             {data.role}
           </Typography>
           <Grid container spacing={1} alignItems="center">
-            <Grid item xs={6}>
+            <Grid size={6}>
               <Typography variant="body2">👤 {data.headcount}</Typography>
               <Typography variant="body2">📅 {data.manday}</Typography>
               <Typography variant="body2">💰 {data.avgRate}</Typography>
             </Grid>
-            <Grid item xs={6}>
+            <Grid size={6}>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <Typography variant="body2" sx={{ mr: 1 }}>
                   ⚙
@@ -63,13 +63,13 @@ export default function RoleCard({ data }: { data: RoleInfo }) {
       <AccordionDetails>
         <Grid container spacing={1}>
           {data.levels.map(level => (
-            <Grid key={level.level} item xs={12}>
+            <Grid key={level.level} size={12}>
               <Paper variant="outlined" sx={{ p: 1 }}>
                 <Grid container>
-                  <Grid item xs={3}>
+                  <Grid size={3}>
                     <Typography variant="body2">{level.level}</Typography>
                   </Grid>
-                  <Grid item xs={9}>
+                  <Grid size={9}>
                     <Typography variant="caption" component="div">
                       👤 {level.headcount} | 📅 {level.manday} | 💰 {level.avgRate} | ⚙ {level.utilization}%
                     </Typography>

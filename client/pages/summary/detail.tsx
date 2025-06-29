@@ -187,7 +187,7 @@ function DashboardDetail() {
             Criteria Filters
           </Typography>
           <Grid container spacing={2}>
-            <Grid item xs={12} md={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Autocomplete
                 multiple
                 options={projects}
@@ -197,7 +197,7 @@ function DashboardDetail() {
                 renderInput={params => <TextField {...params} label="Project" />}
               />
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Autocomplete
                 multiple
                 options={teams}
@@ -207,7 +207,7 @@ function DashboardDetail() {
                 renderInput={params => <TextField {...params} label="Team" />}
               />
             </Grid>
-            <Grid item xs={12} md={4}>
+            <Grid size={{ xs: 12, md: 4 }}>
               <Autocomplete
                 multiple
                 options={resources}
@@ -223,7 +223,7 @@ function DashboardDetail() {
         </Paper>
 
         <Grid container spacing={2}>
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Paper sx={{ p: 2 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography variant="h6">Manday Summary</Typography>
@@ -253,7 +253,7 @@ function DashboardDetail() {
               </Box>
             </Paper>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Paper sx={{ p: 2 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography variant="h6">Cost Breakdown</Typography>
@@ -283,7 +283,7 @@ function DashboardDetail() {
               </Box>
             </Paper>
           </Grid>
-          <Grid item xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <Paper sx={{ p: 2 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography variant="h6">Resource Activity</Typography>
