@@ -238,21 +238,21 @@ function DashboardOverview() {
         <PageBreadcrumbs items={[{ label: 'Dashboard Overview' }]} />
 
         <Grid container spacing={2} sx={{ mb: 2 }}>
-          <Grid xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <MetricCard
               label="Projects"
               value={totalProjects}
               icon={<WorkOutlineIcon />}
             />
           </Grid>
-          <Grid xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <MetricCard
               label="Resources"
               value={totalResources}
               icon={<PeopleAltIcon />}
             />
           </Grid>
-          <Grid xs={12} md={4}>
+          <Grid size={{ xs: 12, md: 4 }}>
             <MetricCard
               label="Unassigned"
               value={unassigned}
@@ -266,13 +266,13 @@ function DashboardOverview() {
             Resources
           </Typography>
           <Grid container spacing={2}>
-            <Grid xs={12} container spacing={2}>
+            <Grid size={12} container spacing={2}>
               {roleCards.map(card => (
-                <Grid key={card.role} xs={12} md={6}>
+                <Grid key={card.role} size={{ xs: 12, md: 6 }}>
                   <RoleCard data={card} />
                 </Grid>
               ))}
-              <Grid xs={12} md={6}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Paper sx={{ p: 2, textAlign: 'center' }}>
                   <Typography variant="body1">Unassigned</Typography>
                   <Typography variant="h6">{unassigned}</Typography>
@@ -280,8 +280,8 @@ function DashboardOverview() {
               </Grid>
             </Grid>
 
-            <Grid xs={12} container spacing={2} sx={{ mt: 1 }}>
-              <Grid xs={12} md={4}>
+            <Grid size={12} container spacing={2} sx={{ mt: 1 }}>
+              <Grid size={{ xs: 12, md: 4 }}>
                 <Paper sx={{ p: 2 }}>
                   <Typography variant="h6" gutterBottom>
                     Resource Distribution
@@ -289,7 +289,7 @@ function DashboardOverview() {
                   <PieChart height={200} series={[{ data: pieData }]} />
                 </Paper>
               </Grid>
-              <Grid xs={12} md={4}>
+              <Grid size={{ xs: 12, md: 4 }}>
                 <Paper sx={{ p: 2 }}>
                   <Typography variant="h6" gutterBottom>
                     Resources by Role
@@ -302,7 +302,7 @@ function DashboardOverview() {
                   />
                 </Paper>
               </Grid>
-              <Grid xs={12} md={4}>
+              <Grid size={{ xs: 12, md: 4 }}>
                 <Paper sx={{ p: 2 }}>
                   <Typography variant="h6" gutterBottom>
                     Monthly Cost Target (10% Reduction)
@@ -315,7 +315,7 @@ function DashboardOverview() {
                   />
                 </Paper>
               </Grid>
-              <Grid xs={12} md={12}>
+              <Grid size={{ xs: 12, md: 12 }}>
                 <Paper sx={{ p: 2 }}>
                   <Typography variant="h6" gutterBottom>
                     Mandays by Role
@@ -333,7 +333,7 @@ function DashboardOverview() {
         </Paper>
 
         <Grid container spacing={2} sx={{ mt: 2 }}>
-          <Grid xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Paper sx={{ p: 2 }}>
               <Typography variant="h6" gutterBottom>
                 Manday Tracking & Cost Summary
@@ -376,7 +376,7 @@ function DashboardOverview() {
               </Box>
             </Paper>
           </Grid>
-          <Grid xs={12} md={6}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <Paper sx={{ p: 2, height: '100%' }}>
               <Typography variant="h6" gutterBottom>
                 Resource Utilization

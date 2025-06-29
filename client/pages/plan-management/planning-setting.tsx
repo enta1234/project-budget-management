@@ -351,7 +351,7 @@ function PlanningSetting() {
         )}
         {project && (
           <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
+            <Grid size={{ xs: 12, md: 6 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                 <Typography variant="h6">Tasks</Typography>
                 <Box>
@@ -455,7 +455,7 @@ function PlanningSetting() {
                 </Box>
               </Paper>
             </Grid>
-            <Grid item xs={12}>
+            <Grid size={12}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                 <Typography variant="h6">Schedule</Typography>
                 <ToggleButtonGroup
@@ -471,7 +471,7 @@ function PlanningSetting() {
               </Box>
               <Paper sx={{ p: 2, overflowX: 'auto' }}>
                 <Grid container spacing={2}>
-                  <Grid item xs={4} sx={{ maxHeight: 400, overflow: 'auto' }}>
+                  <Grid size={4} sx={{ maxHeight: 400, overflow: 'auto' }}>
                     <TreeView>
                       {phases.map(ph => (
                         <TreeItem nodeId={String(ph._id || ph.id)} label={ph.name} key={ph._id || ph.id}>
@@ -502,7 +502,7 @@ function PlanningSetting() {
                       ))}
                     </TreeView>
                   </Grid>
-                  <Grid item xs={8} sx={{ maxHeight: 400, overflow: 'auto' }}>
+                  <Grid size={8} sx={{ maxHeight: 400, overflow: 'auto' }}>
                     {ganttTasks.length > 0 ? (
                       <Box sx={{ minWidth: 600, width: '100%', position: 'relative' }}>
                         {project &&
