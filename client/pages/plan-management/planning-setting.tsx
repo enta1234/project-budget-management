@@ -228,7 +228,7 @@ function PlanningSetting() {
     if (!value) return null;
     try {
       const d = value instanceof Date ? value : new Date(value);
-      return d?.getTime() ? null : d;
+      return isNaN(d.getTime()) ? null : d;
     } catch {
       return null;
     }
