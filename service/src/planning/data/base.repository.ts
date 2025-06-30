@@ -19,4 +19,8 @@ export abstract class BaseRepository<T extends Document> {
   remove(id: string): Promise<T | null> {
     return this.model.findByIdAndDelete(id).exec();
   }
+
+  findById(id: string): Promise<T | null> {
+    return this.model.findById(id).exec();
+  }
 }

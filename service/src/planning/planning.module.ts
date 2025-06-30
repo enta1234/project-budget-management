@@ -6,15 +6,12 @@ import { Phase, PhaseSchema } from './data/phase.schema';
 import { PhasesRepository } from './data/phases.repository';
 import { Task, TaskSchema } from './data/task.schema';
 import { TasksRepository } from './data/tasks.repository';
-import { Milestone, MilestoneSchema } from './data/milestone.schema';
-import { MilestonesRepository } from './data/milestones.repository';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: Phase.name, schema: PhaseSchema },
       { name: Task.name, schema: TaskSchema },
-      { name: Milestone.name, schema: MilestoneSchema },
     ]),
   ],
   controllers: [PlanningController],
@@ -22,7 +19,6 @@ import { MilestonesRepository } from './data/milestones.repository';
     PlanningService,
     PhasesRepository,
     TasksRepository,
-    MilestonesRepository,
   ],
 })
 export class PlanningModule {}
