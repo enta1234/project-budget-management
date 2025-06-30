@@ -255,21 +255,26 @@ function PlanningSetting() {
 
   const safeDate = (value: any) => {
     if (!value) return new Date();
+    if (value instanceof Date) {
+      return isNaN(value.getTime()) ? new Date() : value;
+    }
     const d = new Date(value);
     return isNaN(d.getTime()) ? new Date() : d;
   };
 
   const ganttTasks: GanttTask[] = [
-    ...tasks.map(t => ({
-      start: safeDate(t.startDate),
-      end: safeDate(t.endDate),
-      name: t.name,
-      id: t._id || t.id,
-      type: 'task',
-      progress: 0,
-      dependencies: t.blockedBy ? [String(t.blockedBy)] : [],
-      styles: { backgroundColor: statusColor(taskStatus(t)) },
-    })),
+    ...tasks
+      .filter(t => t.startDate)
+      .map(t => ({
+        start: safeDate(t.startDate),
+        end: safeDate(t.endDate || t.startDate),
+        name: t.name,
+        id: t._id || t.id,
+        type: 'task',
+        progress: 0,
+        dependencies: t.blockedBy ? [String(t.blockedBy)] : [],
+        styles: { backgroundColor: statusColor(taskStatus(t)) },
+      })),
     ...milestones.map(m => ({
       start: safeDate(m.date),
       end: safeDate(m.date),
