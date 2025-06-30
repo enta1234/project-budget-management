@@ -358,8 +358,8 @@ function PlanningSetting() {
           </Paper>
         )}
         {project && (
-          <Grid container spacing={2}>
-            <Grid size={{ xs: 12, md: 6 }}>
+          <Grid container>
+            <Grid size={{ xs: 12 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                 <Typography variant="h6">Tasks</Typography>
                 <Box>
@@ -368,13 +368,13 @@ function PlanningSetting() {
                   </Button>
                 </Box>
               </Box>
-              <Paper sx={{ p: 2, overflowX: 'auto', mb: 2 }}>
-                <Box sx={{ minWidth: 800 }}>
+              <Paper sx={{ p: 2, minWidth: '100%', overflowX: 'auto', mb: 2 }}>
+                <Box sx={{ minWidth: '100%' }}>
                   <DataGrid
                     rows={combinedTasks.map(t => ({ id: t._id || t.id, ...t }))}
                     columns={[
-                      { field: 'name', headerName: 'Name', flex: 1 },
-                      { field: 'detail', headerName: 'Detail', flex: 1 },
+                      { field: 'name', headerName: 'Name', flex: 1, minWidth: 160 },
+                      // { field: 'detail', headerName: 'Detail', flex: 1, minWidth: 200 },
                       {
                         field: 'startDate',
                         headerName: 'Start Date',
