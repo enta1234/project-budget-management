@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { RolesService } from '../roles/roles.service';
 
-@Injectable()
 export interface PositionOption {
   value: string;
   label: string;
 }
 
+@Injectable()
 export class PositionsService {
   constructor(private readonly rolesService: RolesService) {}
 

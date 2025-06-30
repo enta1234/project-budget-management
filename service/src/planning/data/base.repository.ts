@@ -1,6 +1,6 @@
-import { Model } from 'mongoose';
+import { Model, Document } from 'mongoose';
 
-export abstract class BaseRepository<T> {
+export abstract class BaseRepository<T extends Document> {
   constructor(protected readonly model: Model<T>) {}
 
   findByProject(project: string): Promise<T[]> {

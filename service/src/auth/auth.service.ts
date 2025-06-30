@@ -5,6 +5,7 @@ import { UsersRepository } from '../users/data/users.repository';
 import { User } from '../users/data/user.schema';
 import { randomBytes } from 'crypto';
 import Redis from 'ioredis';
+import { TokenPayload } from '../interfaces/token-payload.interface';
 
 @Injectable()
 export class AuthService {
@@ -24,10 +25,6 @@ export class AuthService {
 
   signToken(userId: string): string {
     return jwt.sign({ sub: userId }, this.SECRET, { expiresIn: '30m' });
-  }
-
-  interface TokenPayload {
-    sub: string;
   }
 
   verifyToken(token: string): TokenPayload | null {
