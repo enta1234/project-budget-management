@@ -253,36 +253,44 @@ function PlanningSetting() {
   const statusColor = status =>
     ({ 'not-started': 'grey', 'in-progress': '#2196f3', late: 'red' }[status] || 'grey');
 
-  const safeDate = (value: any) => {
-    if (!value) return new Date();
-    if (value instanceof Date) {
-      return isNaN(value.getTime()) ? new Date() : value;
-    }
-    const d = new Date(value);
-    return isNaN(d.getTime()) ? new Date() : d;
+  const parseValidDate = (value: any): Date | null => {
+    if (!value) return null;
+    const d = value instanceof Date ? value : new Date(value);
+    return isNaN(d.getTime()) ? null : d;
   };
 
   const ganttTasks: GanttTask[] = [
     ...tasks
-      .filter(t => t.startDate)
-      .map(t => ({
-        start: safeDate(t.startDate),
-        end: safeDate(t.endDate || t.startDate),
-        name: t.name,
-        id: t._id || t.id,
-        type: 'task',
-        progress: 0,
-        dependencies: t.blockedBy ? [String(t.blockedBy)] : [],
-        styles: { backgroundColor: statusColor(taskStatus(t)) },
-      })),
-    ...milestones.map(m => ({
-      start: safeDate(m.date),
-      end: safeDate(m.date),
-      name: m.name,
-      id: m._id || m.id,
-      type: 'milestone',
-      progress: 0,
-    })),
+      .map(t => {
+        const start = parseValidDate(t.startDate);
+        if (!start) return null;
+        const end = parseValidDate(t.endDate) || start;
+        return {
+          start,
+          end,
+          name: t.name,
+          id: t._id || t.id,
+          type: 'task',
+          progress: 0,
+          dependencies: t.blockedBy ? [String(t.blockedBy)] : [],
+          styles: { backgroundColor: statusColor(taskStatus(t)) },
+        } as GanttTask;
+      })
+      .filter(Boolean),
+    ...milestones
+      .map(m => {
+        const date = parseValidDate(m.date);
+        if (!date) return null;
+        return {
+          start: date,
+          end: date,
+          name: m.name,
+          id: m._id || m.id,
+          type: 'milestone',
+          progress: 0,
+        } as GanttTask;
+      })
+      .filter(Boolean),
   ];
 
   return (
