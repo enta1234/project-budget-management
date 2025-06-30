@@ -210,6 +210,19 @@ function ProjectDetail() {
           <Button variant="outlined" onClick={() => setOpen(true)}>
             Edit
           </Button>
+          <Button
+            variant="contained"
+            sx={{ ml: 1 }}
+            onClick={() =>
+              router.push(
+                `/plan-management/planning-setting?project=${
+                  project._id || project.id
+                }`,
+              )
+            }
+          >
+            Manage Task
+          </Button>
         </Box>
         <PageBreadcrumbs
           items={[
