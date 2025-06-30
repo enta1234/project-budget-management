@@ -255,41 +255,35 @@ function PlanningSetting() {
 
   const parseValidDate = (value: any): Date | null => {
     if (!value) return null;
-    const d = value instanceof Date ? value : new Date(value);
-    return isNaN(d.getTime()) ? null : d;
+    try {
+      const d = value instanceof Date ? value : new Date(value);
+      return isNaN(d.getTime()) ? null : d;
+    } catch {
+      return null;
+    }
+  };
+
+  const toGanttTask = (t: any): GanttTask | null => {
+    const start = parseValidDate(t.startDate);
+    if (!start) return null;
+    const end = parseValidDate(t.endDate) || start;
+    if (!end) return null;
+    return {
+      start,
+      end,
+      name: t.name ?? '',
+      id: t._id || t.id,
+      type: t.type === 'milestone' ? 'milestone' : 'task',
+      progress: 0,
+      dependencies: t.blockedBy ? [String(t.blockedBy)] : [],
+      styles: { backgroundColor: statusColor(taskStatus(t)) },
+    } as GanttTask;
   };
 
   const ganttTasks: GanttTask[] = [
-    ...tasks
-      .map(t => {
-        const start = parseValidDate(t.startDate);
-        if (!start) return null;
-        const end = parseValidDate(t.endDate) || start;
-        return {
-          start,
-          end,
-          name: t.name,
-          id: t._id || t.id,
-          type: 'task',
-          progress: 0,
-          dependencies: t.blockedBy ? [String(t.blockedBy)] : [],
-          styles: { backgroundColor: statusColor(taskStatus(t)) },
-        } as GanttTask;
-      })
-      .filter(Boolean),
+    ...tasks.map(toGanttTask).filter(Boolean),
     ...milestones
-      .map(m => {
-        const date = parseValidDate(m.date);
-        if (!date) return null;
-        return {
-          start: date,
-          end: date,
-          name: m.name,
-          id: m._id || m.id,
-          type: 'milestone',
-          progress: 0,
-        } as GanttTask;
-      })
+      .map(m => toGanttTask({ ...m, startDate: m.date, endDate: m.date, type: 'milestone' }))
       .filter(Boolean),
   ];
 
