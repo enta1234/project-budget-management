@@ -4,7 +4,7 @@ type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
 @Injectable()
 export class LoggerService {
-  private output(level: LogLevel, log: any) {
+  private output(level: LogLevel, log: Record<string, unknown>) {
     const msg = JSON.stringify(log);
     switch (level) {
       case 'debug':
@@ -22,19 +22,23 @@ export class LoggerService {
     }
   }
 
-  private log(log_type: 'info' | 'app' | 'service', level: LogLevel, data: any) {
+  private log(
+    log_type: 'info' | 'app' | 'service',
+    level: LogLevel,
+    data: Record<string, unknown>,
+  ) {
     this.output(level, { log_type, level, ...data });
   }
 
-  logInfo(level: LogLevel, data: any) {
+  logInfo(level: LogLevel, data: Record<string, unknown>) {
     this.log('info', level, data);
   }
 
-  logApp(level: LogLevel, data: any) {
+  logApp(level: LogLevel, data: Record<string, unknown>) {
     this.log('app', level, data);
   }
 
-  logService(level: LogLevel, data: any) {
+  logService(level: LogLevel, data: Record<string, unknown>) {
     this.log('service', level, data);
   }
 }

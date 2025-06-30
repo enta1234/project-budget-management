@@ -2,12 +2,17 @@ import { Injectable } from '@nestjs/common';
 import { RolesService } from '../roles/roles.service';
 
 @Injectable()
+export interface PositionOption {
+  value: string;
+  label: string;
+}
+
 export class PositionsService {
   constructor(private readonly rolesService: RolesService) {}
 
-  async getPositions() {
+  async getPositions(): Promise<PositionOption[]> {
     const roles = await this.rolesService.getRoles();
-    const pos = [] as any[];
+    const pos: PositionOption[] = [];
     roles.forEach(r => {
       r.levels.forEach(l => {
         const slug = `${r.name} ${l}`

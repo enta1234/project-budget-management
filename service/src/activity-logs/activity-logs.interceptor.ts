@@ -8,7 +8,7 @@ import { getActivityDescription } from './activity.constants';
 export class ActivityLogsInterceptor implements NestInterceptor {
   constructor(private readonly logsService: ActivityLogsService) {}
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     const req = context.switchToHttp().getRequest();
     const res = context.switchToHttp().getResponse();
     const { method, originalUrl: url, body } = req;

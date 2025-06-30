@@ -1,5 +1,9 @@
 import { Body, Controller, Get, Post, Req, UseGuards, UnauthorizedException } from '@nestjs/common';
 import { Request } from 'express';
+
+interface AuthRequest extends Request {
+  userId: string;
+}
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { UsersService } from './users.service';
 
@@ -9,8 +13,8 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  async profile(@Req() req: Request) {
-    const profile = await this.usersService.getProfile((req as any).userId);
+  async profile(@Req() req: AuthRequest) {
+    const profile = await this.usersService.getProfile(req.userId);
     if (!profile) throw new UnauthorizedException();
     return profile;
   }

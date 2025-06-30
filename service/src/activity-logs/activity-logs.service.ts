@@ -12,7 +12,7 @@ export class ActivityLogsService {
   create(data: {
     method: string;
     url: string;
-    body: any;
+    body: Record<string, unknown>;
     statusCode: number;
     processTime: number;
     name?: string;

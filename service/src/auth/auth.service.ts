@@ -26,9 +26,13 @@ export class AuthService {
     return jwt.sign({ sub: userId }, this.SECRET, { expiresIn: '30m' });
   }
 
-  verifyToken(token: string): { sub: string } | null {
+  interface TokenPayload {
+    sub: string;
+  }
+
+  verifyToken(token: string): TokenPayload | null {
     try {
-      return jwt.verify(token, this.SECRET) as any;
+      return jwt.verify(token, this.SECRET) as TokenPayload;
     } catch {
       return null;
     }

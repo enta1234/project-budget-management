@@ -7,12 +7,12 @@ export abstract class BaseRepository<T> {
     return this.model.find({ project }).exec();
   }
 
-  create(data: any): Promise<T> {
+  create(data: Partial<T>): Promise<T> {
     const doc = new this.model(data);
     return doc.save();
   }
 
-  update(id: string, data: any): Promise<T | null> {
+  update(id: string, data: Partial<T>): Promise<T | null> {
     return this.model.findByIdAndUpdate(id, data, { new: true }).exec();
   }
 

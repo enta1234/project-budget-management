@@ -10,7 +10,7 @@ export class ActivityLog extends Document {
   url: string;
 
   @Prop({ type: Object })
-  body: any;
+  body: Record<string, unknown>;
 
   @Prop({ required: true })
   statusCode: number;

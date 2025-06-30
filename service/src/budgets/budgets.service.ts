@@ -71,7 +71,12 @@ export class BudgetsService {
       idMap[slug] = b._id.toString();
     });
 
-    const positions: any[] = [];
+    interface PositionInfo {
+      slug: string;
+      role: string;
+      level: string;
+    }
+    const positions: PositionInfo[] = [];
     roles.forEach(role => {
       role.levels.forEach((level: string) => {
         const slug = `${role.name} ${level}`.toLowerCase().replace(/\s+/g, '_');
