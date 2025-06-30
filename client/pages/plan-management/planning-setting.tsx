@@ -257,7 +257,7 @@ function PlanningSetting() {
     if (!value) return null;
     try {
       const d = value instanceof Date ? value : new Date(value);
-      return isNaN(d.getTime()) ? null : d;
+      return d?.getTime() ? null : d;
     } catch {
       return null;
     }
@@ -282,9 +282,9 @@ function PlanningSetting() {
 
   const ganttTasks: GanttTask[] = [
     ...tasks.map(toGanttTask).filter(Boolean),
-    ...milestones
-      .map(m => toGanttTask({ ...m, startDate: m.date, endDate: m.date, type: 'milestone' }))
-      .filter(Boolean),
+    // ...milestones
+    //   .map(m => toGanttTask({ ...m, startDate: m.date, endDate: m.date, type: 'milestone' }))
+    //   .filter(Boolean),
   ];
 
   return (
