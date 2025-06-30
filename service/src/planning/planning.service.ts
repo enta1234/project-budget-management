@@ -44,10 +44,16 @@ export class PlanningService {
   }
 
   createTask(data: CreateTaskInput) {
+    if (data.startDate && data.endDate && data.startDate > data.endDate) {
+      throw new BadRequestException('End date must be after start date');
+    }
     return this.tasks.create(data);
   }
 
   updateTask(id: string, data: UpdateTaskInput) {
+    if (data.startDate && data.endDate && data.startDate > data.endDate) {
+      throw new BadRequestException('End date must be after start date');
+    }
     return this.tasks.update(id, data);
   }
 
