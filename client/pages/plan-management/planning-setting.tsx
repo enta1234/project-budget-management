@@ -254,8 +254,9 @@ function PlanningSetting() {
     ({ 'not-started': 'grey', 'in-progress': '#2196f3', late: 'red' }[status] || 'grey');
 
   const safeDate = (value: any) => {
-    const d = value ? new Date(value) : undefined;
-    return d && !isNaN(d.getTime()) ? d : new Date();
+    if (!value) return new Date();
+    const d = new Date(value);
+    return isNaN(d.getTime()) ? new Date() : d;
   };
 
   const ganttTasks: GanttTask[] = [
