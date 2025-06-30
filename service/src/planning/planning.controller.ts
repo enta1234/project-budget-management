@@ -2,7 +2,6 @@ import { Body, Controller, Get, Post, Patch, Delete, Param, Query } from '@nestj
 import { PlanningService } from './planning.service';
 import { CreatePhaseInput, UpdatePhaseInput } from './data/phases.repository';
 import { CreateTaskInput, UpdateTaskInput } from './data/tasks.repository';
-import { CreateMilestoneInput, UpdateMilestoneInput } from './data/milestones.repository';
 
 @Controller('planning')
 export class PlanningController {
@@ -48,23 +47,4 @@ export class PlanningController {
     return this.service.removeTask(id);
   }
 
-  @Get('milestones')
-  getMilestones(@Query('project') project: string) {
-    return this.service.getMilestones(project);
-  }
-
-  @Post('milestones')
-  createMilestone(@Body() body: CreateMilestoneInput) {
-    return this.service.createMilestone(body);
-  }
-
-  @Patch('milestones/:id')
-  updateMilestone(@Param('id') id: string, @Body() body: UpdateMilestoneInput) {
-    return this.service.updateMilestone(id, body);
-  }
-
-  @Delete('milestones/:id')
-  removeMilestone(@Param('id') id: string) {
-    return this.service.removeMilestone(id);
-  }
 }
