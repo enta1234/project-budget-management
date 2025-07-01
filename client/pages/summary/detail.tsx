@@ -26,12 +26,14 @@ import { fetchProjects } from '../../models/projectsModel';
 import { fetchTeams } from '../../models/teamModel';
 import { fetchResources } from '../../models/resourceModel';
 import { fetchBudgets } from '../../models/budgetModel';
+import { fetchSettings } from '../../models/settingsModel';
 
 function DashboardDetail() {
   const [projects, setProjects] = useState([]);
   const [teams, setTeams] = useState([]);
   const [resources, setResources] = useState([]);
   const [budgets, setBudgets] = useState([]);
+  const [costMultiplier, setCostMultiplier] = useState(1);
 
   const [projectFilter, setProjectFilter] = useState([]);
   const [teamFilter, setTeamFilter] = useState([]);
@@ -48,8 +50,9 @@ function DashboardDetail() {
       fetchTeams(),
       fetchResources(),
       fetchBudgets(),
+      fetchSettings(),
     ])
-      .then(([p, t, r, b]) => {
+      .then(([p, t, r, b, s]) => {
         const activeProjects = Array.isArray(p)
           ? p.filter(pr => !pr.deleted)
           : [];
@@ -57,6 +60,9 @@ function DashboardDetail() {
         setTeams(t);
         setResources(r);
         setBudgets(b);
+        if (s?.costMultiplier != null) {
+          setCostMultiplier(Number(s.costMultiplier));
+        }
       })
       .catch(console.error);
   }, []);
@@ -118,7 +124,7 @@ function DashboardDetail() {
     filteredResources.forEach(r => {
       const days = differenceInDays(today, new Date(r.startDate || today)) + 1;
       const rate = rateMap[r.position] || 0;
-      const cost = days * rate;
+      const cost = days * rate * costMultiplier;
       total += cost;
       const role = r.position.split('_')[0];
       byRole[role] = (byRole[role] || 0) + cost;
@@ -141,7 +147,7 @@ function DashboardDetail() {
       avgRate[role] = roleRes.length ? sumRate / roleRes.length : 0;
     });
     return { total, byRole, avgRate, resourceRows };
-  }, [filteredResources, rateMap]);
+  }, [filteredResources, rateMap, costMultiplier]);
 
   const mandayChartData = [
     { label: 'Estimated', value: mandaySummary.est },

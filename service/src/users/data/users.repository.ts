@@ -23,4 +23,10 @@ export class UsersRepository {
     const user = new this.userModel({ username, passwordHash });
     return user.save();
   }
+
+  updatePassword(id: string, passwordHash: string): Promise<User | null> {
+    return this.userModel
+      .findByIdAndUpdate(id, { passwordHash }, { new: true })
+      .exec();
+  }
 }

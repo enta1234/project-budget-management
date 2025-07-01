@@ -17,6 +17,7 @@ import { Layout, Popup, ProjectForm, useToast, PageLoading } from '../../compone
 import { withAuth } from '../../context/AuthContext';
 import { differenceInDays, addDays, format, isAfter } from 'date-fns';
 import { fetchWorkdays } from '../../models/workdayModel';
+import { fetchSettings } from '../../models/settingsModel';
 
 function ProjectDetail() {
   const router = useRouter();
@@ -29,6 +30,7 @@ function ProjectDetail() {
   const [positions, setPositions] = useState([]);
   const [holidays, setHolidays] = useState<Record<string, boolean>>({});
   const [open, setOpen] = useState(false);
+  const [multiplier, setMultiplier] = useState(1);
 
   useEffect(() => {
     if (id) {
@@ -44,6 +46,13 @@ function ProjectDetail() {
         setTeams(t.data);
         setBudgets(b.data);
         setPositions(pos.data);
+        fetchSettings()
+          .then(s => {
+            if (s?.costMultiplier != null) {
+              setMultiplier(Number(s.costMultiplier));
+            }
+          })
+          .catch(() => {});
       });
     }
   }, [id]);
@@ -105,10 +114,9 @@ function ProjectDetail() {
     m[b.id] = b.rate;
     return m;
   }, {} as Record<string, number>);
-  const dailyCost = uniqueMembers.reduce(
-    (s, r) => s + (rateMap[r.position] || 0),
-    0,
-  );
+  const dailyCost =
+    uniqueMembers.reduce((s, r) => s + (rateMap[r.position] || 0), 0) *
+    multiplier;
   const workStart = project?.start ? new Date(project.start) : null;
   const workEnd = project?.end ? new Date(project.end) : new Date();
   const lastDay = workEnd && isAfter(workEnd, new Date()) ? new Date() : workEnd;

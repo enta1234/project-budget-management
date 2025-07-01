@@ -20,6 +20,7 @@ import PersonOffIcon from '@mui/icons-material/PersonOff';
 import { withAuth } from '../../context/AuthContext';
 import { fetchBudgetOverview } from '../../models/budgetModel';
 import api from '../../api';
+import { fetchSettings } from '../../models/settingsModel';
 
 interface LevelSummary {
   headcount: number;
@@ -45,19 +46,24 @@ function DashboardOverview() {
   const [dailyManday, setDailyManday] = useState([]);
   const [dailyCost, setDailyCost] = useState([]);
   const [utilData, setUtilData] = useState([]);
+  const [costMultiplier, setCostMultiplier] = useState(1);
 
   const totalProjects = projects.length;
   const totalResources = resources.length;
 
   async function loadData() {
-    const [ov, res, pro] = await Promise.all([
+    const [ov, res, pro, set] = await Promise.all([
       fetchBudgetOverview(),
       api.get('/api/v1/resources'),
       api.get('/api/v1/projects'),
+      fetchSettings(),
     ]);
     setOverview(ov);
     setResources(res.data);
     setProjects(pro.data);
+    if (set?.costMultiplier != null) {
+      setCostMultiplier(Number(set.costMultiplier));
+    }
 
     const assigned = new Set();
     pro.data.forEach(p => {
@@ -121,7 +127,8 @@ function DashboardOverview() {
           const rs = new Date(r.startDate || Date.now());
           if (d >= rs) {
             const role = roleMap[r.position] || 'Other';
-            byRole[role] = (byRole[role] || 0) + (rateMap[r.position] || 0);
+            byRole[role] =
+              (byRole[role] || 0) + (rateMap[r.position] || 0) * costMultiplier;
           }
         });
         cost.unshift({ date: dateStr, ...byRole });
@@ -150,7 +157,10 @@ function DashboardOverview() {
     loadData();
   }, []);
 
-  const totalCost = overview.reduce((sum, o) => sum + o.count * o.rate, 0);
+  const totalCost = overview.reduce(
+    (sum, o) => sum + o.count * o.rate * costMultiplier,
+    0,
+  );
   const costData = Array.from({ length: 6 }, (_, i) => ({
     month: `M${i + 1}`,
     cost: Math.round(totalCost * Math.pow(0.9, i)),
