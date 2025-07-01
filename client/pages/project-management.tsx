@@ -33,7 +33,7 @@ const statusOptions = [
   'cancelled',
 ];
 
-const statusColors: Record<string, any> = {
+const statusColors: Record<string, string> = {
   planing: 'default',
   'in progress': 'info',
   break: 'warning',

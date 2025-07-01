@@ -73,7 +73,7 @@ function PlanningSetting() {
     'cancelled',
   ];
 
-  const statusColors: Record<string, any> = {
+  const statusColors: Record<string, string> = {
     planing: 'default',
     'in progress': 'info',
     break: 'warning',
@@ -83,7 +83,8 @@ function PlanningSetting() {
     cancelled: 'error',
   };
 
-  const cleanList = (items: any[]) => sanitizeList(items);
+  const cleanList = <T extends Record<string, unknown>>(items: T[]) =>
+    sanitizeList(items);
 
   useEffect(() => {
     if (!router.isReady) return;
