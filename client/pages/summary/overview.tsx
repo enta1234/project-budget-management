@@ -291,12 +291,6 @@ function DashboardOverview() {
                   <RoleCard data={card} />
                 </Grid>
               ))}
-              <Grid size={{ xs: 12, md: 6 }}>
-                <Paper sx={{ p: 2, textAlign: 'center' }}>
-                  <Typography variant="body1">Unassigned</Typography>
-                  <Typography variant="h6">{unassigned}</Typography>
-                </Paper>
-              </Grid>
             </Grid>
 
             <Grid size={12} container spacing={2} sx={{ mt: 1 }}>
