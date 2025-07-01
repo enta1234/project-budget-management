@@ -52,18 +52,18 @@ function ActivityPage() {
   }, [logs, methodFilter, search]);
 
   const columns = [
+    {
+      field: 'timestamp',
+      headerName: 'Time',
+      width: 220,
+      valueGetter: (_v, row) =>
+        row?.timestamp ? new Date(row.timestamp).toLocaleString() : '',
+    },
     { field: 'name', headerName: 'Activity', width: 180 },
     { field: 'detail', headerName: 'Detail', flex: 1 },
     { field: 'method', headerName: 'Method', width: 100 },
     { field: 'url', headerName: 'URL', flex: 1 },
-    { field: 'statusCode', headerName: 'Status', width: 100 },
-    {
-      field: 'timestamp',
-      headerName: 'Time',
-      width: 180,
-      valueGetter: (_v, row) =>
-        row?.timestamp ? new Date(row.timestamp).toLocaleString() : '',
-    },
+    { field: 'statusCode', headerName: 'Status', width: 100 }
   ];
 
   return (
