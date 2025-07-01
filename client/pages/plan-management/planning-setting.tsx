@@ -352,14 +352,12 @@ function PlanningSetting() {
                   <DataGrid
                     rows={combinedTasks.map(t => ({ id: t._id || t.id, ...t }))}
                     columns={[
-                      { field: 'name', headerName: 'Name', flex: 1, minWidth: 160 },
-                      // { field: 'detail', headerName: 'Detail', flex: 1, minWidth: 200 },
+                      { field: 'name', headerName: 'Name', flex: 1, width: 100 },
                       {
                         field: 'startDate',
                         headerName: 'Start Date',
                         valueFormatter: params => {
-                          const value = params?.value || params.row.date;
-                          return value ? new Date(value).toLocaleDateString() : '';
+                          return params ? new Date(params).toLocaleDateString() : '-';
                         },
                         width: 140,
                       },
@@ -367,8 +365,7 @@ function PlanningSetting() {
                         field: 'endDate',
                         headerName: 'End Date',
                         valueFormatter: params => {
-                          const value = params?.value;
-                          return value ? new Date(value).toLocaleDateString() : '';
+                          return params ? new Date(params).toLocaleDateString() : '-';
                         },
                         width: 140,
                       },
@@ -378,7 +375,7 @@ function PlanningSetting() {
                         width: 160,
                         valueGetter: (_value, row) => {
                           const mem = members.find(m => m.id === row.owner);
-                          return mem ? mem.name : row.owner || '';
+                          return mem ? mem.name : row.owner || '-';
                         },
                       },
                     {
@@ -386,6 +383,9 @@ function PlanningSetting() {
                       headerName: 'Manday',
                       width: 100,
                       type: 'number',
+                      valueGetter: (value) => {
+                        return value ?? '-';
+                      },
                     },
                     {
                       field: 'actualManday',
