@@ -9,7 +9,7 @@ class MockTasksRepo {
 
 describe('PlanningService tasks', () => {
   it('should not allow endDate before startDate', async () => {
-    const service = new PlanningService({} as any, new MockTasksRepo() as any, {} as any);
+    const service = new PlanningService({} as any, new MockTasksRepo() as any);
     try {
       await service.createTask({
         project: 'p1' as any,
