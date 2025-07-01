@@ -38,5 +38,32 @@ export function getActivityDescription(
 ): { name?: string; detail?: string } {
   const key = `${method} ${url}`;
   const entry = ACTIVITY_DESCRIPTIONS.find(d => d.pattern.test(key));
-  return entry ? { name: entry.name, detail: entry.detail } : {};
+  if (entry) {
+    return { name: entry.name, detail: entry.detail };
+  }
+
+  const base = url.split('?')[0];
+  const match = base.match(/^\/api\/v1\/([^/]+)/);
+  if (!match) return {};
+
+  const resource = match[1].replace(/s$/, '');
+  let action = '';
+
+  switch (method) {
+    case 'POST':
+      action = 'Create';
+      break;
+    case 'PATCH':
+    case 'PUT':
+      action = 'Update';
+      break;
+    case 'DELETE':
+      action = 'Delete';
+      break;
+    default:
+      return {};
+  }
+
+  const name = `${action} ${resource}`;
+  return { name, detail: name };
 }

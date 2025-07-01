@@ -37,16 +37,51 @@ export class PlanningService {
     return this.tasks.findByProject(project);
   }
 
-  createTask(data: CreateTaskInput) {
+  async createTask(data: CreateTaskInput) {
     if (data.startDate && data.endDate && data.startDate > data.endDate) {
       throw new BadRequestException('End date must be after start date');
+    }
+    if (data.type === 'milestone' && data.startDate) {
+      const list = await this.tasks.findByProject(String(data.project));
+      const target = new Date(data.startDate).toISOString().split('T')[0];
+      if (
+        list.some(
+          t =>
+            t.type === 'milestone' &&
+            t.startDate &&
+            new Date(t.startDate).toISOString().split('T')[0] === target,
+        )
+      ) {
+        throw new BadRequestException('Milestone date overlaps existing one');
+      }
+      return this.tasks.create(data);
     }
     return this.tasks.create(data);
   }
 
-  updateTask(id: string, data: UpdateTaskInput) {
+  async updateTask(id: string, data: UpdateTaskInput) {
     if (data.startDate && data.endDate && data.startDate > data.endDate) {
       throw new BadRequestException('End date must be after start date');
+    }
+    if (data.type === 'milestone' && data.startDate) {
+      const existing = await this.tasks.findById(id);
+      const project = existing?.project ? String(existing.project) : undefined;
+      if (project) {
+        const list = await this.tasks.findByProject(project);
+        const target = new Date(data.startDate!).toISOString().split('T')[0];
+        if (
+          list.some(
+            t =>
+              t.type === 'milestone' &&
+              String(t._id) !== id &&
+              t.startDate &&
+              new Date(t.startDate).toISOString().split('T')[0] === target,
+          )
+        ) {
+          throw new BadRequestException('Milestone date overlaps existing one');
+        }
+      }
+      return this.tasks.update(id, data);
     }
     return this.tasks.update(id, data);
   }
