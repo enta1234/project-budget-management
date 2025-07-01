@@ -15,6 +15,7 @@ import TableRow from '@mui/material/TableRow';
 import TableCell from '@mui/material/TableCell';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import MenuItem from '@mui/material/MenuItem';
+import { fetchSettings } from '../models/settingsModel';
 
 export default function ProjectForm({
   users = [],
@@ -33,6 +34,7 @@ export default function ProjectForm({
   const [status, setStatus] = useState(initial?.status || 'planing');
   const [lead, setLead] = useState(initial?.lead || null);
   const [members, setMembers] = useState(initial?.members || []);
+  const [multiplier, setMultiplier] = useState(1);
   const [manday, setManday] = useState(
     initial?.manday != null ? String(initial.manday) : ''
   );
@@ -62,6 +64,16 @@ export default function ProjectForm({
       setSprintStart(null);
     }
   }, [open]);
+
+  useEffect(() => {
+    fetchSettings()
+      .then(data => {
+        if (data?.costMultiplier != null) {
+          setMultiplier(Number(data.costMultiplier));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const handleNext = () => setActive(a => Math.min(a + 1, 3));
   const handleBack = () => setActive(a => Math.max(a - 1, 0));
@@ -127,12 +139,12 @@ export default function ProjectForm({
     });
     const rows = Object.entries(counts).map(([pos, count]) => {
       const rate = rateMap[pos] || 0;
-      const cost = count * rate * 0.83; // apply 17% reduction
+      const cost = count * rate * multiplier;
       return { pos, count, rate, cost };
     });
     const total = rows.reduce((s, r) => s + r.cost, 0);
     return { rows, total };
-  }, [lead, members, rateMap]);
+  }, [lead, members, rateMap, multiplier]);
 
   const currencyFormatter = useMemo(
     () => new Intl.NumberFormat('th-TH', { style: 'currency', currency: 'THB' }),

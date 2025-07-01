@@ -72,6 +72,14 @@ export default function Topbar({ onMenuClick }) {
           <MenuItem
             onClick={() => {
               handleClose();
+              router.push('/settings');
+            }}
+          >
+            Settings
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              handleClose();
               logout();
             }}
           >
