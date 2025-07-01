@@ -11,7 +11,7 @@ import { addDays } from 'date-fns';
 export default function TaskForm({ onSubmit, initial, members = [], tasks = [] }) {
   const [name, setName] = useState(initial?.name || '');
   const [detail, setDetail] = useState(initial?.detail || '');
-  const [startDate, setStartDate] = useState(initial?.startDate || null);
+  const [startDate, setStartDate] = useState(initial?.startDate || initial?.date || null);
   const [endDate, setEndDate] = useState(initial?.endDate || null);
   const [owner, setOwner] = useState(initial?.owner || '');
   const [manday, setManday] = useState(initial?.manday != null ? String(initial.manday) : '');
@@ -24,7 +24,7 @@ export default function TaskForm({ onSubmit, initial, members = [], tasks = [] }
   useEffect(() => {
     setName(initial?.name || '');
     setDetail(initial?.detail || '');
-    setStartDate(initial?.startDate || null);
+    setStartDate(initial?.startDate || initial?.date || null);
     setEndDate(initial?.endDate || null);
     setOwner(initial?.owner || '');
     setManday(initial?.manday != null ? String(initial.manday) : '');
@@ -72,7 +72,7 @@ export default function TaskForm({ onSubmit, initial, members = [], tasks = [] }
         onSubmit({
           name,
           detail,
-          date: startDate,
+          startDate,
           type: taskType,
         });
     } else {

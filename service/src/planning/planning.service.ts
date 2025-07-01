@@ -37,16 +37,38 @@ export class PlanningService {
     return this.tasks.findByProject(project);
   }
 
-  createTask(data: CreateTaskInput) {
+  async createTask(data: CreateTaskInput) {
     if (data.startDate && data.endDate && data.startDate > data.endDate) {
       throw new BadRequestException('End date must be after start date');
+    }
+    if (data.type === 'milestone' && data.startDate) {
+      const existing = await this.tasks.findByProject(String(data.project));
+      const clash = existing.find(
+        t => t.type === 'milestone' && t.startDate && new Date(t.startDate).getTime() === new Date(data.startDate as Date).getTime(),
+      );
+      if (clash) {
+        throw new BadRequestException('milestone date overlaps');
+      }
     }
     return this.tasks.create(data);
   }
 
-  updateTask(id: string, data: UpdateTaskInput) {
+  async updateTask(id: string, data: UpdateTaskInput) {
     if (data.startDate && data.endDate && data.startDate > data.endDate) {
       throw new BadRequestException('End date must be after start date');
+    }
+    if (data.type === 'milestone' && data.startDate) {
+      const current = await this.tasks.findById(id);
+      const projectId = current?.project.toString();
+      if (projectId) {
+        const existing = await this.tasks.findByProject(projectId);
+        const clash = existing.find(
+          t => String(t._id) !== id && t.type === 'milestone' && t.startDate && new Date(t.startDate).getTime() === new Date(data.startDate as Date).getTime(),
+        );
+        if (clash) {
+          throw new BadRequestException('milestone date overlaps');
+        }
+      }
     }
     return this.tasks.update(id, data);
   }
