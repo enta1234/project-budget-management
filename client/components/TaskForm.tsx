@@ -8,7 +8,7 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { addDays } from 'date-fns';
 
-export default function TaskForm({ onSubmit, initial, members = [], tasks = [], milestones = [] }) {
+export default function TaskForm({ onSubmit, initial, members = [], tasks = [] }) {
   const [name, setName] = useState(initial?.name || '');
   const [detail, setDetail] = useState(initial?.detail || '');
   const [startDate, setStartDate] = useState(initial?.startDate || null);
@@ -143,8 +143,7 @@ export default function TaskForm({ onSubmit, initial, members = [], tasks = [], 
           />
           <TextField label="Manday" type="number" value={manday} onChange={e => setManday(e.target.value)} fullWidth sx={{ mb: 2 }} />
           <Autocomplete
-            options={[...tasks.map(t => ({ id: t._id || t.id, label: t.name, date: t.endDate })),
-                      ...milestones.map(m => ({ id: m._id || m.id, label: m.name, date: m.date }))]}
+            options={tasks.map(t => ({ id: t._id || t.id, label: t.name, date: t.endDate }))}
             getOptionLabel={o => o.label}
             value={blocked}
             onChange={(_, v) => setBlocked(v)}

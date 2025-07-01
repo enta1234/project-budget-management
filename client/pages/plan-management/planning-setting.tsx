@@ -14,13 +14,9 @@ import api from '../../api';
 import {
   fetchPhases,
   fetchTasks,
-  fetchMilestones,
   createTask,
   updateTask,
   deleteTask,
-  createMilestone,
-  updateMilestone,
-  deleteMilestone,
 } from '../../models/planningModel';
 import TaskForm from '../../components/TaskForm';
 import { DataGrid } from '@mui/x-data-grid';
@@ -57,7 +53,6 @@ function PlanningSetting() {
   const [projects, setProjects] = useState([]);
   const [project, setProject] = useState(null);
   const [tasks, setTasks] = useState([]);
-  const [milestones, setMilestones] = useState([]);
   const [phases, setPhases] = useState([]);
   const [members, setMembers] = useState([]);
   const [viewMode, setViewMode] = useState(ViewMode.Week);
@@ -111,13 +106,11 @@ function PlanningSetting() {
     Promise.all([
       fetchPhases(pid),
       fetchTasks(pid),
-      fetchMilestones(pid),
       api.get(`/api/v1/projects/${pid}`),
       api.get('/api/v1/resources'),
-    ]).then(([ph, t, m, proj, res]) => {
+    ]).then(([ph, t, proj, res]) => {
       setPhases(ph);
       setTasks(cleanList(t));
-      setMilestones(cleanList(m));
       const memIds = proj.data.members || [];
       const leadId = proj.data.lead?._id;
       const list = res.data.filter(u => memIds.includes(u.id) || u.id === leadId);
@@ -151,16 +144,14 @@ function PlanningSetting() {
   const refreshAll = async () => {
     if (!project) return;
     const pid = project._id || project.id;
-    const [p, t, m, proj, res] = await Promise.all([
+    const [p, t, proj, res] = await Promise.all([
       fetchPhases(pid),
       fetchTasks(pid),
-      fetchMilestones(pid),
       api.get(`/api/v1/projects/${pid}`),
       api.get('/api/v1/resources'),
     ]);
     setPhases(p);
     setTasks(cleanList(t));
-    setMilestones(cleanList(m));
     const memIds = proj.data.members || [];
     const leadId = proj.data.lead?._id;
     const list = res.data.filter(u => memIds.includes(u.id) || u.id === leadId);
@@ -168,15 +159,7 @@ function PlanningSetting() {
   };
 
   const handleCreateTask = async data => {
-    if (data.type === 'milestone') {
-      await createMilestone(project._id, {
-        name: data.name,
-        detail: data.detail,
-        date: data.startDate,
-      });
-    } else {
-      await createTask(project._id, data);
-    }
+    await createTask(project._id, data);
     await refreshAll();
     setDialog('');
   };
@@ -194,11 +177,7 @@ function PlanningSetting() {
 
   const confirmDelete = async () => {
     try {
-      if (deleteRow.type === 'milestone') {
-        await deleteMilestone(deleteRow._id || deleteRow.id);
-      } else {
-        await deleteTask(deleteRow._id || deleteRow.id);
-      }
+      await deleteTask(deleteRow._id || deleteRow.id);
       showToast('Item deleted');
       await refreshAll();
     } catch (e) {
@@ -230,15 +209,7 @@ function PlanningSetting() {
     }
   };
 
-  const combinedTasks = [
-    ...tasks,
-    ...milestones.map(m => ({
-      ...m,
-      startDate: m.date,
-      endDate: m.date,
-      type: 'milestone',
-    })),
-  ];
+  const combinedTasks = tasks;
 
   const taskStatus = t => {
     const now = new Date();
@@ -280,12 +251,7 @@ function PlanningSetting() {
     } as GanttTask;
   };
 
-  const ganttTasks: GanttTask[] = [
-    ...tasks.map(toGanttTask).filter(Boolean),
-    // ...milestones
-    //   .map(m => toGanttTask({ ...m, startDate: m.date, endDate: m.date, type: 'milestone' }))
-    //   .filter(Boolean),
-  ];
+  const ganttTasks: GanttTask[] = tasks.map(toGanttTask).filter(Boolean);
 
   return (
     <Layout>
@@ -429,7 +395,7 @@ function PlanningSetting() {
                       headerName: 'Blocked By',
                       width: 160,
                       valueGetter: (_value, row) => {
-                        const allItems = [...tasks, ...milestones];
+                        const allItems = tasks;
                         const target = allItems.find(i => String(i._id || i.id) === String(row.blockedBy));
                         return target ? target.name : '';
                       },
@@ -499,13 +465,6 @@ function PlanningSetting() {
                           nodeId={`task-${t._id || t.id}`}
                           key={t._id || t.id}
                           label={`${t.name} (${t.startDate ? new Date(t.startDate).toLocaleDateString() : ''} - ${t.endDate ? new Date(t.endDate).toLocaleDateString() : ''})`}
-                        />
-                      ))}
-                      {milestones.map(m => (
-                        <TreeItem
-                          nodeId={`milestone-${m._id || m.id}`}
-                          key={`m-${m._id || m.id}`}
-                          label={`${m.name} (${new Date(m.date).toLocaleDateString()})`}
                         />
                       ))}
                     </TreeView>
@@ -620,7 +579,7 @@ function PlanningSetting() {
             </Grid>
           )}
         <Popup open={dialog === 'task'} onClose={() => setDialog('')} title="Add Task/Feature">
-          <TaskForm onSubmit={handleCreateTask} members={members} tasks={tasks} milestones={milestones} />
+          <TaskForm onSubmit={handleCreateTask} members={members} tasks={tasks} />
         </Popup>
         <Popup open={!!editTask} onClose={() => setEditTask(null)} title="Edit Task/Feature">
           {editTask && (
@@ -629,7 +588,6 @@ function PlanningSetting() {
               initial={editTask}
               members={members}
               tasks={tasks}
-              milestones={milestones}
             />
           )}
         </Popup>
