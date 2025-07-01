@@ -352,7 +352,7 @@ function PlanningSetting() {
                   <DataGrid
                     rows={combinedTasks.map(t => ({ id: t._id || t.id, ...t }))}
                     columns={[
-                      { field: 'name', headerName: 'Name', flex: 1, width: 100 },
+                      { field: 'name', headerName: 'Name', flex: 1, width: 160 },
                       {
                         field: 'startDate',
                         headerName: 'Start Date',
