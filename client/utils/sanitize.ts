@@ -1,4 +1,4 @@
-export function sanitizeList<T extends Record<string, any>>(items: T[]): T[] {
+export function sanitizeList<T extends Record<string, unknown>>(items: T[]): T[] {
   return items.map(item => {
     if (item && typeof item.onClick !== 'undefined') {
       const { onClick, ...rest } = item;
