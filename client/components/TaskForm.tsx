@@ -18,7 +18,8 @@ export default function TaskForm({ onSubmit, initial, members = [], tasks = [] }
   const [duration, setDuration] = useState(initial?.duration != null ? String(initial.duration) : '');
   const [blocked, setBlocked] = useState(null);
   const [taskType, setTaskType] = useState(
-    initial?.type || (initial?.isFeature ? 'feature' : 'milestone')
+    initial?.type ||
+      (initial ? (initial.isFeature ? 'feature' : 'milestone') : 'feature')
   );
 
   useEffect(() => {
@@ -30,7 +31,10 @@ export default function TaskForm({ onSubmit, initial, members = [], tasks = [] }
     setManday(initial?.manday != null ? String(initial.manday) : '');
     setDuration(initial?.duration != null ? String(initial.duration) : '');
     setBlocked(null);
-    setTaskType(initial?.type || (initial?.isFeature ? 'feature' : 'milestone'));
+    setTaskType(
+      initial?.type ||
+        (initial ? (initial.isFeature ? 'feature' : 'milestone') : 'feature')
+    );
   }, [initial]);
 
   const dateError = useMemo(
@@ -67,28 +71,18 @@ export default function TaskForm({ onSubmit, initial, members = [], tasks = [] }
   const handleSubmit = e => {
     e.preventDefault();
     if (!formValid) return;
-    if (taskType === 'milestone') {
-      onSubmit &&
-        onSubmit({
-          name,
-          detail,
-          startDate,
-          type: taskType,
-        });
-    } else {
-      onSubmit &&
-        onSubmit({
-          name,
-          detail,
-          startDate,
-          endDate,
-          owner,
-          manday: manday ? Number(manday) : undefined,
-          duration: duration ? Number(duration) : undefined,
-          blockedBy: blocked ? blocked.id : undefined,
-          type: taskType,
-        });
-    }
+    onSubmit &&
+      onSubmit({
+        name,
+        detail,
+        startDate,
+        endDate,
+        owner,
+        manday: manday ? Number(manday) : undefined,
+        duration: duration ? Number(duration) : undefined,
+        blockedBy: blocked ? blocked.id : undefined,
+        type: taskType,
+      });
     setName('');
     setDetail('');
     setStartDate(null);
@@ -104,54 +98,45 @@ export default function TaskForm({ onSubmit, initial, members = [], tasks = [] }
     <form onSubmit={handleSubmit}>
       <TextField label="Name" value={name} onChange={e => setName(e.target.value)} fullWidth required sx={{ mb: 2 }} />
       <TextField label="Detail" value={detail} onChange={e => setDetail(e.target.value)} fullWidth multiline sx={{ mb: 2 }} />
-      {taskType === 'milestone' ? (
+      <>
         <DatePicker
-          label="Date"
+          label="Start Date"
           value={startDate}
           onChange={setStartDate}
           sx={{ mb: 2 }}
+          slotProps={{ textField: { error: dateError } }}
         />
-      ) : (
-        <>
-          <DatePicker
-            label="Start Date"
-            value={startDate}
-            onChange={setStartDate}
-            sx={{ mb: 2 }}
-            slotProps={{ textField: { error: dateError } }}
-          />
-          <DatePicker
-            label="End Date"
-            value={endDate}
-            onChange={setEndDate}
-            sx={{ mb: 2 }}
-            slotProps={{
-              textField: {
-                error: dateError,
-                helperText: dateError ? 'End date must be after start date' : undefined,
-              },
-            }}
-          />
-          <TextField label="Duration (days)" type="number" value={duration} onChange={e => setDuration(e.target.value)} fullWidth sx={{ mb: 2 }} />
-          <Autocomplete
-            options={members}
-            getOptionLabel={o => o.name}
-            value={members.find(m => m.id === owner) || null}
-            onChange={(_, v) => setOwner(v ? v.id : '')}
-            renderInput={params => <TextField {...params} label="Owner" />}
-            sx={{ mb: 2 }}
-          />
-          <TextField label="Manday" type="number" value={manday} onChange={e => setManday(e.target.value)} fullWidth sx={{ mb: 2 }} />
-          <Autocomplete
-            options={tasks.map(t => ({ id: t._id || t.id, label: t.name, date: t.endDate }))}
-            getOptionLabel={o => o.label}
-            value={blocked}
-            onChange={(_, v) => setBlocked(v)}
-            renderInput={params => <TextField {...params} label="Blocked By" />}
-            sx={{ mb: 2 }}
-          />
-        </>
-      )}
+        <DatePicker
+          label="End Date"
+          value={endDate}
+          onChange={setEndDate}
+          sx={{ mb: 2 }}
+          slotProps={{
+            textField: {
+              error: dateError,
+              helperText: dateError ? 'End date must be after start date' : undefined,
+            },
+          }}
+        />
+        <TextField label="Duration (days)" type="number" value={duration} onChange={e => setDuration(e.target.value)} fullWidth sx={{ mb: 2 }} />
+        <Autocomplete
+          options={members}
+          getOptionLabel={o => o.name}
+          value={members.find(m => m.id === owner) || null}
+          onChange={(_, v) => setOwner(v ? v.id : '')}
+          renderInput={params => <TextField {...params} label="Owner" />}
+          sx={{ mb: 2 }}
+        />
+        <TextField label="Manday" type="number" value={manday} onChange={e => setManday(e.target.value)} fullWidth sx={{ mb: 2 }} />
+        <Autocomplete
+          options={tasks.map(t => ({ id: t._id || t.id, label: t.name, date: t.endDate }))}
+          getOptionLabel={o => o.label}
+          value={blocked}
+          onChange={(_, v) => setBlocked(v)}
+          renderInput={params => <TextField {...params} label="Blocked By" />}
+          sx={{ mb: 2 }}
+        />
+      </>
       <ToggleButtonGroup
         value={taskType}
         exclusive
@@ -159,7 +144,7 @@ export default function TaskForm({ onSubmit, initial, members = [], tasks = [] }
         size="small"
         sx={{ mb: 2 }}
       >
-        <ToggleButton value="feature">Feature</ToggleButton>
+        <ToggleButton value="feature">Task</ToggleButton>
         <ToggleButton value="milestone">Milestone</ToggleButton>
       </ToggleButtonGroup>
       <Button
