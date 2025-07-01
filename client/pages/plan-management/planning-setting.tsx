@@ -456,9 +456,9 @@ function PlanningSetting() {
                   <ToggleButton value={ViewMode.Month}>Month</ToggleButton>
                 </ToggleButtonGroup>
               </Box>
-              <Paper sx={{ p: 2, overflowX: 'auto' }}>
+              <Paper sx={{ p: 2, overflowX: 'auto', maxWidth: '114rem' }}>
                 <Grid container spacing={2}>
-                  <Grid size={12} sx={{ overflow: 'auto' }}>
+                  <Grid size={12} sx={{ maxWidth: '100%', overflow: 'auto' }}>
                     {ganttTasks.length > 0 ? (
                       <Box ref={ganttRef} sx={{ width: '100%', overflowX: 'auto' }}>
                           <Gantt
@@ -466,7 +466,7 @@ function PlanningSetting() {
                             viewMode={viewMode}
                             onDateChange={handleDateChange}
                             columnWidth={columnWidth}
-                            viewDate={new Date()}
+                            viewDate={Date.now()}
                             preStepsCount={0}
                           />
                       </Box>
