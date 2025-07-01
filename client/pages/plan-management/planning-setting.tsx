@@ -236,7 +236,7 @@ function PlanningSetting() {
   };
 
   const toGanttTask = (t: any): GanttTask | null => {
-    const start = parseValidDate(t.startDate);
+    const start = parseValidDate(t.startDate || t.date);
     if (!start) return null;
     const end = parseValidDate(t.endDate) || start;
     if (!end) return null;
@@ -358,7 +358,7 @@ function PlanningSetting() {
                         field: 'startDate',
                         headerName: 'Start Date',
                         valueFormatter: params => {
-                          const value = params?.value;
+                          const value = params?.value || params.row.date;
                           return value ? new Date(value).toLocaleDateString() : '';
                         },
                         width: 140,
@@ -393,8 +393,9 @@ function PlanningSetting() {
                       width: 120,
                       type: 'number',
                       valueGetter: (_value, row) => {
-                        if (!row.startDate) return '';
-                        const start = new Date(row.startDate);
+                        const startValue = row.startDate || row.date;
+                        if (!startValue) return '';
+                        const start = new Date(startValue);
                         const end = row.endDate ? new Date(row.endDate) : new Date();
                         const today = new Date();
                         const until = end < today ? end : today;
