@@ -478,10 +478,10 @@ function PlanningSetting() {
             {/* closing tag for outer Grid container */}
             </Grid>
           )}
-        <Popup open={dialog === 'task'} onClose={() => setDialog('')} title="Add Task/Feature">
+        <Popup open={dialog === 'task'} onClose={() => setDialog('')} title="Add Task">
           <TaskForm onSubmit={handleCreateTask} members={members} tasks={tasks} />
         </Popup>
-        <Popup open={!!editTask} onClose={() => setEditTask(null)} title="Edit Task/Feature">
+        <Popup open={!!editTask} onClose={() => setEditTask(null)} title="Edit Task">
           {editTask && (
             <TaskForm
               onSubmit={handleUpdateTask}
