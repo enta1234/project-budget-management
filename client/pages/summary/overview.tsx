@@ -21,6 +21,22 @@ import { withAuth } from '../../context/AuthContext';
 import { fetchBudgetOverview } from '../../models/budgetModel';
 import api from '../../api';
 
+interface LevelSummary {
+  headcount: number;
+  manday: number;
+  available: number;
+  avgRate: number;
+}
+
+interface RoleSummary {
+  role: string;
+  headcount: number;
+  manday: number;
+  available: number;
+  rateSum: number;
+  levels: Record<string, LevelSummary>;
+}
+
 function DashboardOverview() {
   const [overview, setOverview] = useState([]);
   const [resources, setResources] = useState([]);
@@ -160,7 +176,10 @@ function DashboardOverview() {
     positionMap[slug] = { role: o.role, level: o.level, rate: o.rate, count: o.count };
   });
 
-  const rolesSummary: Record<string, any> = {};
+  const rolesSummary: Record<string, RoleSummary> = {} as Record<
+    string,
+    RoleSummary
+  >;
   Object.values(positionMap).forEach(p => {
     if (!rolesSummary[p.role]) {
       rolesSummary[p.role] = {
@@ -169,7 +188,7 @@ function DashboardOverview() {
         manday: 0,
         available: 0,
         rateSum: 0,
-        levels: {},
+        levels: {} as Record<string, LevelSummary>,
       };
     }
     rolesSummary[p.role].headcount += p.count;
