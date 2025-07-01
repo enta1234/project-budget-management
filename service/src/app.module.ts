@@ -14,6 +14,7 @@ import { RolesModule } from './roles/roles.module';
 import { WorkdaysModule } from './workdays/workdays.module';
 import { ActivityLogsModule } from './activity-logs/activity-logs.module';
 import { PlanningModule } from './planning/planning.module';
+import { SettingsModule } from './settings/settings.module';
 import { IndexInitializer } from './index.initializer';
 
 @Module({
@@ -35,6 +36,7 @@ import { IndexInitializer } from './index.initializer';
     WorkdaysModule,
     ActivityLogsModule,
     PlanningModule,
+    SettingsModule,
   ],
   providers: [LoggerService, IndexInitializer],
   exports: [LoggerService],
