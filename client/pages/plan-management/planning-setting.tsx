@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -60,6 +60,7 @@ function PlanningSetting() {
   const [editTask, setEditTask] = useState(null);
   const [deleteRow, setDeleteRow] = useState(null);
   const [sprints, setSprints] = useState([]);
+  const ganttRef = useRef<HTMLDivElement | null>(null);
   const columnWidth = 60;
 
   const statusOptions = [
@@ -252,6 +253,18 @@ function PlanningSetting() {
   };
 
   const ganttTasks: GanttTask[] = tasks.map(toGanttTask).filter(Boolean);
+
+  useEffect(() => {
+    if (!project || !project.start || !ganttRef.current) return;
+    const container = ganttRef.current;
+    const start = new Date(project.start as any);
+    const today = new Date();
+    const diff = differenceInCalendarDays(today, start);
+    const unit = viewMode === ViewMode.Week ? 7 : viewMode === ViewMode.Month ? 30 : 1;
+    const dayWidth = columnWidth / unit;
+    const offset = diff * dayWidth - container.clientWidth / 2;
+    container.scrollLeft = offset > 0 ? offset : 0;
+  }, [project, viewMode, tasks]);
 
   return (
     <Layout>
@@ -471,7 +484,8 @@ function PlanningSetting() {
                   </Grid>
                   <Grid size={8} sx={{ maxHeight: 400, overflow: 'auto' }}>
                     {ganttTasks.length > 0 ? (
-                      <Box sx={{ minWidth: 600, width: '100%', position: 'relative' }}>
+                      <Box ref={ganttRef} sx={{ width: '100%', overflowX: 'auto' }}>
+                        <Box sx={{ minWidth: 600, width: '100%', position: 'relative' }}>
                         {project &&
                           sprints.map((s, idx) => {
                             const unit =
@@ -565,6 +579,7 @@ function PlanningSetting() {
                             preStepsCount={0}
                           />
                         </Box>
+                      </Box>
                       </Box>
                     ) : (
                       <Typography variant="body2" align="center">
