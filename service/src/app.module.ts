@@ -14,10 +14,14 @@ import { RolesModule } from './roles/roles.module';
 import { WorkdaysModule } from './workdays/workdays.module';
 import { ActivityLogsModule } from './activity-logs/activity-logs.module';
 import { PlanningModule } from './planning/planning.module';
+import { IndexInitializer } from './index.initializer';
 
 @Module({
   imports: [
-    MongooseModule.forRoot(process.env.MONGO_URL || 'mongodb://mongo:27017/budget'),
+    MongooseModule.forRoot(
+      process.env.MONGO_URL || 'mongodb://mongo:27017/budget',
+      { autoIndex: true },
+    ),
     RedisModule,
     UsersModule,
     ResourcesModule,
@@ -32,7 +36,7 @@ import { PlanningModule } from './planning/planning.module';
     ActivityLogsModule,
     PlanningModule,
   ],
-  providers: [LoggerService],
+  providers: [LoggerService, IndexInitializer],
   exports: [LoggerService],
 })
 export class AppModule {}
