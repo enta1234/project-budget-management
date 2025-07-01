@@ -422,14 +422,9 @@ function PlanningSetting() {
                       sortable: false,
                       renderCell: params => (
                         <Stack direction="row" spacing={1}>
-                          {params.row.type !== 'milestone' && (
-                            <IconButton
-                              size="small"
-                              onClick={() => setEditTask(params.row)}
-                            >
-                              <EditIcon fontSize="small" />
-                            </IconButton>
-                          )}
+                          <IconButton size="small" onClick={() => setEditTask(params.row)}>
+                            <EditIcon fontSize="small" />
+                          </IconButton>
                           <IconButton size="small" onClick={() => handleDelete(params.row)}>
                             <DeleteIcon fontSize="small" />
                           </IconButton>
