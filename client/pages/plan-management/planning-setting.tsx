@@ -458,118 +458,9 @@ function PlanningSetting() {
               </Box>
               <Paper sx={{ p: 2, overflowX: 'auto' }}>
                 <Grid container spacing={2}>
-                  <Grid size={4} sx={{ maxHeight: 400, overflow: 'auto' }}>
-                    <TreeView>
-                      {phases.map(ph => (
-                        <TreeItem nodeId={String(ph._id || ph.id)} label={ph.name} key={ph._id || ph.id}>
-                          {tasks
-                            .filter(t => String(t.phase) === String(ph._id || ph.id))
-                            .map(t => (
-                              <TreeItem
-                                nodeId={`task-${t._id || t.id}`}
-                                key={t._id || t.id}
-                                label={`${t.name} (${t.startDate ? new Date(t.startDate).toLocaleDateString() : ''} - ${t.endDate ? new Date(t.endDate).toLocaleDateString() : ''})`}
-                              />
-                            ))}
-                        </TreeItem>
-                      ))}
-                      {tasks.filter(t => !t.phase).map(t => (
-                        <TreeItem
-                          nodeId={`task-${t._id || t.id}`}
-                          key={t._id || t.id}
-                          label={`${t.name} (${t.startDate ? new Date(t.startDate).toLocaleDateString() : ''} - ${t.endDate ? new Date(t.endDate).toLocaleDateString() : ''})`}
-                        />
-                      ))}
-                    </TreeView>
-                  </Grid>
-                  <Grid size={8} sx={{ maxHeight: 400, overflow: 'auto' }}>
+                  <Grid size={12} sx={{ overflow: 'auto' }}>
                     {ganttTasks.length > 0 ? (
                       <Box ref={ganttRef} sx={{ width: '100%', overflowX: 'auto' }}>
-                        <Box sx={{ minWidth: 600, width: '100%', position: 'relative' }}>
-                        {project &&
-                          sprints.map((s, idx) => {
-                            const unit =
-                              viewMode === ViewMode.Week
-                                ? 7
-                                : viewMode === ViewMode.Month
-                                ? 30
-                                : 1;
-                            const dayWidth = columnWidth / unit;
-                            const left =
-                              differenceInCalendarDays(
-                                new Date(s.start),
-                                new Date(project.start)
-                              ) * dayWidth;
-                            const width =
-                              (differenceInCalendarDays(
-                                new Date(s.end),
-                                new Date(s.start)
-                              ) + 1) * dayWidth;
-                            return (
-                              <Box
-                                key={s.number}
-                                sx={{
-                                  position: 'absolute',
-                                  top: 0,
-                                  left,
-                                  width,
-                                  bottom: 0,
-                                  backgroundColor: idx % 2 ? 'rgba(100,100,100,0.05)' : 'rgba(100,100,100,0.1)',
-                                  zIndex: 1,
-                                  pointerEvents: 'none',
-                                }}
-                              />
-                            );
-                          })}
-                        {project && (
-                          <Box
-                            sx={{
-                              position: 'sticky',
-                              top: 0,
-                              left: 0,
-                              width: '100%',
-                              height: 20,
-                              zIndex: 3,
-                              pointerEvents: 'none',
-                            }}
-                          >
-                            {sprints.map(s => {
-                              const unit =
-                                viewMode === ViewMode.Week
-                                  ? 7
-                                  : viewMode === ViewMode.Month
-                                  ? 30
-                                  : 1;
-                              const dayWidth = columnWidth / unit;
-                              const left =
-                                differenceInCalendarDays(
-                                  new Date(s.start),
-                                  new Date(project.start)
-                                ) * dayWidth;
-                              const width =
-                                (differenceInCalendarDays(
-                                  new Date(s.end),
-                                  new Date(s.start)
-                                ) + 1) * dayWidth;
-                              return (
-                                <Typography
-                                  key={`lbl-${s.number}`}
-                                  variant="caption"
-                                  sx={{
-                                    position: 'absolute',
-                                    left,
-                                    width,
-                                    textAlign: 'center',
-                                    bgcolor: 'rgba(255,255,255,0.7)',
-                                  }}
-                                >
-                                  {`Sprint ${s.number}`}
-                                </Typography>
-                              );
-                            })}
-                          </Box>
-                        )}
-                        <Box sx={{ position: 'relative', zIndex: 2 }}>
                           <Gantt
                             tasks={ganttTasks}
                             viewMode={viewMode}
@@ -578,8 +469,6 @@ function PlanningSetting() {
                             viewDate={new Date()}
                             preStepsCount={0}
                           />
-                        </Box>
-                      </Box>
                       </Box>
                     ) : (
                       <Typography variant="body2" align="center">
