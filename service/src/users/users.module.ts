@@ -13,5 +13,6 @@ import { AdminInitializer } from './admin.initializer';
   imports: [MongooseModule.forFeature([{ name: User.name, schema: UserSchema }])],
   controllers: [UsersController, AuthController],
   providers: [UsersService, UsersRepository, AdminInitializer, AuthService, JwtAuthGuard],
+  exports: [UsersRepository],
 })
 export class UsersModule {}
