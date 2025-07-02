@@ -25,3 +25,4 @@ export { default as TaskForm } from './TaskForm';
 export { default as RoleCard } from "./RoleCard";
 export { default as MetricCard } from './MetricCard';
 export { default as ProjectTimeline } from './ProjectTimeline';
+export { default as SettingsDrawer } from './SettingsDrawer';

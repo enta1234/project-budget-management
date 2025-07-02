@@ -12,11 +12,13 @@ import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAuth } from '../context/AuthContext';
+import SettingsDrawer from './SettingsDrawer';
 
 export default function Topbar({ onMenuClick }) {
   const { logout } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
   const [openProfile, setOpenProfile] = useState(false);
+  const [openSettings, setOpenSettings] = useState(false);
   const router = useRouter();
 
   const handleMenu = (event) => {
@@ -72,7 +74,7 @@ export default function Topbar({ onMenuClick }) {
           <MenuItem
             onClick={() => {
               handleClose();
-              router.push('/settings');
+              setOpenSettings(true);
             }}
           >
             Settings
@@ -99,6 +101,10 @@ export default function Topbar({ onMenuClick }) {
             <Typography variant="body2">Profile details go here.</Typography>
           </Box>
         </Drawer>
+        <SettingsDrawer
+          open={openSettings}
+          onClose={() => setOpenSettings(false)}
+        />
       </Toolbar>
     </AppBar>
   );
