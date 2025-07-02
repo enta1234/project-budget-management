@@ -51,7 +51,7 @@ export default function Sidebar({ open, onClose }) {
       <Toolbar />
       <List>
         <ListItemButton
-          selected={router.pathname.startsWith('/summary')}
+          selected={router.pathname.startsWith('/dashboard')}
           onClick={() => setOpenDashboard(!openDashboard)}
         >
           <ListItemIcon>
@@ -69,9 +69,9 @@ export default function Sidebar({ open, onClose }) {
             <List component="div" disablePadding>
               <ListItemButton
                 sx={{ pl: 4 }}
-                selected={router.pathname === '/summary/overview'}
+                selected={router.pathname === '/dashboard/overview'}
                 onClick={() => {
-                  router.push('/summary/overview');
+                  router.push('/dashboard/overview');
                   onClose();
                 }}
               >
@@ -82,9 +82,9 @@ export default function Sidebar({ open, onClose }) {
               </ListItemButton>
               <ListItemButton
                 sx={{ pl: 4 }}
-                selected={router.pathname === '/summary/detail'}
+                selected={router.pathname === '/dashboard/detail'}
                 onClick={() => {
-                  router.push('/summary/detail');
+                  router.push('/dashboard/detail');
                   onClose();
                 }}
               >
