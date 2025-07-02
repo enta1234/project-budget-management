@@ -64,14 +64,14 @@ function GenerateTimeline() {
           size: { width: 40, height: 40 },
           attrs: {
             body: { fill: '#fafafa', stroke: '#555' },
-            label: { text: t.name, fill: '#000', fontSize: 11, y: 55 },
+            label: { text: t.name, fill: '#000', fontSize: 14, y: 55 },
           },
         });
         const yearText = new shapes.standard.Rectangle({
           position: { x, y: 20 },
           size: { width: 1, height: 1 },
           attrs: {
-            label: { text: String(year), fill: '#fff', fontSize: 12, textAnchor: 'middle', x: 20 },
+            label: { text: String(year), fill: '#fff', fontSize: 14, textAnchor: 'middle', x: 20 },
             body: { stroke: 'none', fill: 'none' },
           },
         });
@@ -93,7 +93,7 @@ function GenerateTimeline() {
         size: { width: 40, height: 40 },
         attrs: {
           body: { fill: '#fafafa', stroke: '#555' },
-          label: { text: 'present', fill: '#000', fontSize: 11, y: 55 },
+          label: { text: 'present', fill: '#000', fontSize: 14, y: 55 },
         },
       });
       cells.push(end);
