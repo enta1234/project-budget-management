@@ -119,9 +119,10 @@ function PlanManagementOverview() {
                 )}
             />
           ) : (
-            <ProjectTimeline projects={projects} />
-            <Timeline>
-              {projects.map((p, idx) => (
+            <>
+              <ProjectTimeline projects={projects} />
+              <Timeline>
+                {projects.map((p, idx) => (
                 <TimelineItem key={p._id || idx}>
                   <TimelineSeparator>
                     <TimelineDot />
@@ -146,8 +147,9 @@ function PlanManagementOverview() {
                     </Box>
                   </TimelineContent>
                 </TimelineItem>
-              ))}
-            </Timeline>
+                ))}
+              </Timeline>
+            </>
           )}
         </Paper>
       </Container>
