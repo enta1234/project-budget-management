@@ -104,6 +104,11 @@ export default function AgendaCalendar({
         <Box component="span" sx={{ fontSize: 12, mr: 0.5 }}>
           {event.title}
         </Box>
+        {typeof res.progress === 'number' && (
+          <Box component="span" sx={{ fontSize: 12, mr: 0.5 }}>
+            {res.progress}%
+          </Box>
+        )}
         <Box
           component="span"
           sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: stringToColor(res.status || 'none') }}

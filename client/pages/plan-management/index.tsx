@@ -11,6 +11,7 @@ import { fetchEvents } from '../../models/eventsModel';
 import { fetchProjects, updateProject } from '../../models/projectsModel';
 import { fetchTasks } from '../../models/tasksModel';
 import { fetchWorkdays } from '../../models/workdayModel';
+import { differenceInCalendarDays } from 'date-fns';
 import Timeline from '@mui/lab/Timeline';
 import TimelineItem from '@mui/lab/TimelineItem';
 import TimelineSeparator from '@mui/lab/TimelineSeparator';
@@ -19,6 +20,7 @@ import TimelineContent from '@mui/lab/TimelineContent';
 import TimelineDot from '@mui/lab/TimelineDot';
 import { Layout, AgendaCalendar, PageBreadcrumbs } from '../../components';
 import { withAuth } from '../../context/AuthContext';
+import LinearProgress from '@mui/material/LinearProgress';
 
 function PlanManagementOverview() {
   const [view, setView] = useState('calendar');
@@ -26,6 +28,23 @@ function PlanManagementOverview() {
   const [projects, setProjects] = useState([]);
   const [holidays, setHolidays] = useState([]);
   const router = useRouter();
+
+  const calcProgress = (p: any) => {
+    try {
+      const start = p.start ? new Date(p.start) : null;
+      const end = p.end ? new Date(p.end) : null;
+      if (!start || !end) return 0;
+      if (end.getTime() <= start.getTime()) return 0;
+      const now = new Date();
+      if (now.getTime() <= start.getTime()) return 0;
+      if (now.getTime() >= end.getTime()) return 100;
+      const total = differenceInCalendarDays(end, start);
+      const done = differenceInCalendarDays(now, start);
+      return Math.round((done / total) * 100);
+    } catch {
+      return 0;
+    }
+  };
 
   useEffect(() => {
     const year = new Date().getFullYear();
@@ -88,6 +107,7 @@ function PlanManagementOverview() {
                 endDate: p.end,
                 owner: p.lead?.name || '',
                 status: p.status,
+                progress: calcProgress(p),
               }))}
               events={events}
               holidays={holidays}
@@ -110,7 +130,19 @@ function PlanManagementOverview() {
                     onClick={() => router.push(`/project/${p._id || p.id}`)}
                     sx={{ cursor: 'pointer' }}
                   >
-                    {p.name} ({new Date(p.start).toLocaleDateString()} - {new Date(p.end).toLocaleDateString()})
+                    <Box>
+                      <Typography variant="body1">
+                        {p.name} ({new Date(p.start).toLocaleDateString()} - {new Date(p.end).toLocaleDateString()})
+                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
+                        <LinearProgress
+                          variant="determinate"
+                          value={calcProgress(p)}
+                          sx={{ flexGrow: 1, height: 8, borderRadius: 5, mr: 1 }}
+                        />
+                        <Typography variant="caption">{calcProgress(p)}%</Typography>
+                      </Box>
+                    </Box>
                   </TimelineContent>
                 </TimelineItem>
               ))}
