@@ -139,6 +139,19 @@ export default function Sidebar({ open, onClose }) {
                 </ListItemIcon>
                 <ListItemText primary="Planning Setting" />
               </ListItemButton>
+              <ListItemButton
+                sx={{ pl: 4 }}
+                selected={router.pathname === '/plan-management/generate'}
+                onClick={() => {
+                  router.push('/plan-management/generate');
+                  onClose();
+                }}
+              >
+                <ListItemIcon>
+                  <CalendarMonthIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText primary="Generate" />
+              </ListItemButton>
             </List>
           </Collapse>
         )}
