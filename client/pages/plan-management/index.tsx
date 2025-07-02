@@ -8,16 +8,10 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { fetchEvents } from '../../models/eventsModel';
-import { fetchProjects, updateProject } from '../../models/projectsModel';
+import { fetchProjects } from '../../models/projectsModel';
 import { fetchTasks } from '../../models/tasksModel';
 import { fetchWorkdays } from '../../models/workdayModel';
-import Timeline from '@mui/lab/Timeline';
-import TimelineItem from '@mui/lab/TimelineItem';
-import TimelineSeparator from '@mui/lab/TimelineSeparator';
-import TimelineConnector from '@mui/lab/TimelineConnector';
-import TimelineContent from '@mui/lab/TimelineContent';
-import TimelineDot from '@mui/lab/TimelineDot';
-import { Layout, AgendaCalendar, PageBreadcrumbs } from '../../components';
+import { Layout, AgendaCalendar, PageBreadcrumbs, ProjectTimeline } from '../../components';
 import { withAuth } from '../../context/AuthContext';
 
 function PlanManagementOverview() {
@@ -43,11 +37,11 @@ function PlanManagementOverview() {
                 return end && new Date(end) > acc ? new Date(end) : acc;
               }, projectEnd || new Date(0));
               const finalEnd = projectEnd && maxEnd > projectEnd ? maxEnd : projectEnd || maxEnd;
-              return { ...p, end: finalEnd };
+              return { ...p, end: finalEnd, tasks };
             } catch {
-              return p;
+              return { ...p, tasks: [] };
             }
-          }),
+          })
         );
         setProjects(withTasks);
         setHolidays(hol);
@@ -99,22 +93,7 @@ function PlanManagementOverview() {
                 )}
             />
           ) : (
-            <Timeline>
-              {projects.map((p, idx) => (
-                <TimelineItem key={p._id || idx}>
-                  <TimelineSeparator>
-                    <TimelineDot />
-                    {idx < projects.length - 1 && <TimelineConnector />}
-                  </TimelineSeparator>
-                  <TimelineContent
-                    onClick={() => router.push(`/project/${p._id || p.id}`)}
-                    sx={{ cursor: 'pointer' }}
-                  >
-                    {p.name} ({new Date(p.start).toLocaleDateString()} - {new Date(p.end).toLocaleDateString()})
-                  </TimelineContent>
-                </TimelineItem>
-              ))}
-            </Timeline>
+            <ProjectTimeline projects={projects} />
           )}
         </Paper>
       </Container>

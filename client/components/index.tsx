@@ -24,3 +24,4 @@ export { default as PhaseForm } from './PhaseForm';
 export { default as TaskForm } from './TaskForm';
 export { default as RoleCard } from "./RoleCard";
 export { default as MetricCard } from './MetricCard';
+export { default as ProjectTimeline } from './ProjectTimeline';
