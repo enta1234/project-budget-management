@@ -63,9 +63,11 @@ function BudgetManagement() {
 
   const confirmDelete = async () => {
     try {
-      await deleteBudget(deleteRow.budgetId);
-      showToast('Rate deleted');
-      loadData();
+      if (deleteRow?.budgetId) {
+        await deleteBudget(deleteRow.budgetId);
+        showToast('Rate deleted');
+        loadData();
+      }
     } catch (e) {
       showToast('Error deleting rate', { severity: 'error' });
     }

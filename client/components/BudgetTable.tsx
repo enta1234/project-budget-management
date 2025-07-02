@@ -61,7 +61,7 @@ export default function BudgetTable({ data, onEdit, onDelete }) {
               <EditIcon fontSize="small" />
             </IconButton>
           )}
-          {onDelete && (
+          {onDelete && params.row.budgetId && (
             <IconButton size="small" onClick={() => onDelete(params.row)}>
               <DeleteIcon fontSize="small" />
             </IconButton>
