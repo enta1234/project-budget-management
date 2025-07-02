@@ -9,10 +9,10 @@ import { UsersModule } from '../users/users.module';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Setting.name, schema: SettingSchema }]),
-    UsersModule,
+    UsersModule
   ],
   controllers: [SettingsController],
-  providers: [SettingsService, SettingsRepository],
+  providers: [SettingsService, SettingsRepository, ],
   exports: [SettingsService],
 })
 export class SettingsModule {}
