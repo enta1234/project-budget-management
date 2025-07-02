@@ -32,6 +32,10 @@ export default function ProjectTimeline({ projects, year = new Date().getFullYea
   const endYear = new Date(year, 11, 31).getTime();
   const range = endYear - startYear;
 
+  const todayRatio = (Date.now() - startYear) / range;
+  const showToday = todayRatio >= 0 && todayRatio <= 1;
+  const todayLeft = Math.min(Math.max(todayRatio * 100, 0), 100);
+
   const renderTask = (t: Task, color: string, key: number) => {
     const s = new Date(t.startDate || t.endDate || Date.now()).getTime();
     const e = new Date(t.endDate || t.startDate || t.endDate || Date.now()).getTime();
@@ -55,28 +59,43 @@ export default function ProjectTimeline({ projects, year = new Date().getFullYea
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Box sx={{ display: 'flex', ml: 16 }}>
-        {months.map(m => (
-          <Box key={m} sx={{ flex: 1, textAlign: 'center', fontWeight: 'bold', fontSize: 12 }}>
-            {m}
-          </Box>
-        ))}
+      <Box sx={{ position: 'relative' }}>
+        {showToday && (
+          <Box
+            sx={{
+              position: 'absolute',
+              left: `${todayLeft}%`,
+              top: 0,
+              bottom: 0,
+              width: 2,
+              bgcolor: 'red',
+              pointerEvents: 'none',
+            }}
+          />
+        )}
+        <Box sx={{ display: 'flex', ml: 16 }}>
+          {months.map(m => (
+            <Box key={m} sx={{ flex: 1, textAlign: 'center', fontWeight: 'bold', fontSize: 12 }}>
+              {m}
+            </Box>
+          ))}
+        </Box>
+        {projects.map((p, idx) => {
+          const color = stringToColor(p.name + idx);
+          return (
+            <Box key={p._id || p.id || idx} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+              <Box sx={{ width: 160, pr: 1 }}>
+                <Typography variant="body2" noWrap>
+                  {p.name}
+                </Typography>
+              </Box>
+              <Box sx={{ flex: 1, position: 'relative', height: 20, borderBottom: '1px solid #ddd' }}>
+                {p.tasks?.map((t, i) => renderTask(t, color, i))}
+              </Box>
+            </Box>
+          );
+        })}
       </Box>
-      {projects.map((p, idx) => {
-        const color = stringToColor(p.name + idx);
-        return (
-          <Box key={p._id || p.id || idx} sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-            <Box sx={{ width: 160, pr: 1 }}>
-              <Typography variant="body2" noWrap>
-                {p.name}
-              </Typography>
-            </Box>
-            <Box sx={{ flex: 1, position: 'relative', height: 20, borderBottom: '1px solid #ddd' }}>
-              {p.tasks?.map((t, i) => renderTask(t, color, i))}
-            </Box>
-          </Box>
-        );
-      })}
       <Typography variant="body2" sx={{ mt: 2 }}>
         Use this view to monitor project schedules and milestones throughout the year.
       </Typography>
