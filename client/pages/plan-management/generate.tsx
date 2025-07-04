@@ -52,7 +52,7 @@ function GenerateTimeline() {
         height: 160,
         gridSize: 1,
         interactive: false,
-        background: { color: '#111' },
+        background: { color: '#A2D5C6' },
       });
       setPaper(p);
       const cells = [] as any[];
@@ -63,15 +63,15 @@ function GenerateTimeline() {
           position: { x, y: 60 },
           size: { width: 40, height: 40 },
           attrs: {
-            body: { fill: '#fafafa', stroke: '#555' },
-            label: { text: t.name, fill: '#000', fontSize: 14, y: 55 },
+            body: { fill: '#000000', stroke: '#CFFFE2' },
+            label: { text: t.name, fill: '#F6F6F6', fontSize: 14, y: 55 },
           },
         });
         const yearText = new shapes.standard.Rectangle({
           position: { x, y: 20 },
           size: { width: 1, height: 1 },
           attrs: {
-            label: { text: String(year), fill: '#fff', fontSize: 14, textAnchor: 'middle', x: 20 },
+            label: { text: String(year), fill: '#F6F6F6', fontSize: 14, textAnchor: 'middle', x: 20 },
             body: { stroke: 'none', fill: 'none' },
           },
         });
@@ -81,7 +81,7 @@ function GenerateTimeline() {
             source: { id: cells[cells.length - 4].id },
             target: { id: circle.id },
             attrs: {
-              line: { stroke: '#fff', targetMarker: { type: 'path', d: 'M 10 -5 0 0 10 5 Z' } },
+              line: { stroke: '#CFFFE2', targetMarker: { type: 'path', d: 'M 10 -5 0 0 10 5 Z' } },
             },
           });
           cells.push(link);
@@ -92,8 +92,8 @@ function GenerateTimeline() {
         position: { x, y: 60 },
         size: { width: 40, height: 40 },
         attrs: {
-          body: { fill: '#fafafa', stroke: '#555' },
-          label: { text: 'present', fill: '#000', fontSize: 14, y: 55 },
+          body: { fill: '#000000', stroke: '#CFFFE2' },
+          label: { text: 'present', fill: '#F6F6F6', fontSize: 14, y: 55 },
         },
       });
       cells.push(end);
@@ -102,7 +102,7 @@ function GenerateTimeline() {
           source: { id: cells[cells.length - 3].id },
           target: { id: end.id },
           attrs: {
-            line: { stroke: '#fff', targetMarker: { type: 'path', d: 'M 10 -5 0 0 10 5 Z' } },
+            line: { stroke: '#CFFFE2', targetMarker: { type: 'path', d: 'M 10 -5 0 0 10 5 Z' } },
           },
         });
         cells.push(link);
@@ -142,7 +142,7 @@ function GenerateTimeline() {
             getOptionLabel={o => o.name || ''}
             renderInput={params => <TextField {...params} label="Select Project" />}
           />
-          <Box ref={paperRef} sx={{ mb: 2, overflow: 'auto', border: '1px solid #444', p: 1 }} />
+          <Box ref={paperRef} sx={{ mb: 2, overflow: 'auto', border: '1px solid #CFFFE2', p: 1 }} />
           {paper && (
             <Button variant="contained" onClick={handleDownload}>
               Download SVG
