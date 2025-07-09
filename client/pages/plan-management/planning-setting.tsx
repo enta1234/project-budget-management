@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -62,6 +62,14 @@ function PlanningSetting() {
   const [sprints, setSprints] = useState([]);
   const ganttRef = useRef<HTMLDivElement | null>(null);
   const columnWidth = 60;
+
+  const idNameMap = useMemo(() => {
+    const m: Record<string, string> = {};
+    members.forEach(mem => {
+      m[mem.id] = mem.name;
+    });
+    return m;
+  }, [members]);
 
   const statusOptions = [
     'planing',
@@ -377,6 +385,23 @@ function PlanningSetting() {
                         valueGetter: (_value, row) =>
                           Array.isArray(row.roles) ? row.roles.join(', ') : '-',
                       },
+                      {
+                        field: 'assignees',
+                        headerName: 'Assignees',
+                        width: 160,
+                        valueGetter: (_value, row) => {
+                          if (!row.assignees) return '';
+                          const list: string[] = [];
+                          Object.values(row.assignees).forEach((ids: any) => {
+                            if (Array.isArray(ids)) {
+                              ids.forEach((id: string) => {
+                                if (idNameMap[id]) list.push(idNameMap[id]);
+                              });
+                            }
+                          });
+                          return list.join(', ');
+                        },
+                      },
                     {
                       field: 'manday',
                       headerName: 'Manday',
@@ -478,7 +503,7 @@ function PlanningSetting() {
             </Grid>
           )}
         <Popup open={dialog === 'task'} onClose={() => setDialog('')} title="Add Task">
-          <TaskForm onSubmit={handleCreateTask} tasks={tasks} />
+          <TaskForm onSubmit={handleCreateTask} tasks={tasks} members={members} />
         </Popup>
         <Popup open={!!editTask} onClose={() => setEditTask(null)} title="Edit Task">
           {editTask && (
@@ -486,6 +511,7 @@ function PlanningSetting() {
               onSubmit={handleUpdateTask}
               initial={editTask}
               tasks={tasks}
+              members={members}
             />
           )}
         </Popup>
