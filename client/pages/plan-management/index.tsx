@@ -119,7 +119,37 @@ function PlanManagementOverview() {
                 )}
             />
           ) : (
-            <ProjectTimeline projects={projects} />
+            <>
+              <ProjectTimeline projects={projects} />
+              <Timeline>
+                {projects.map((p, idx) => (
+                <TimelineItem key={p._id || idx}>
+                  <TimelineSeparator>
+                    <TimelineDot />
+                    {idx < projects.length - 1 && <TimelineConnector />}
+                  </TimelineSeparator>
+                  <TimelineContent
+                    onClick={() => router.push(`/project/${p._id || p.id}`)}
+                    sx={{ cursor: 'pointer' }}
+                  >
+                    <Box>
+                      <Typography variant="body1">
+                        {p.name} ({new Date(p.start).toLocaleDateString()} - {new Date(p.end).toLocaleDateString()})
+                      </Typography>
+                      <Box sx={{ display: 'flex', alignItems: 'center', mt: 0.5 }}>
+                        <LinearProgress
+                          variant="determinate"
+                          value={calcProgress(p)}
+                          sx={{ flexGrow: 1, height: 8, borderRadius: 5, mr: 1 }}
+                        />
+                        <Typography variant="caption">{calcProgress(p)}%</Typography>
+                      </Box>
+                    </Box>
+                  </TimelineContent>
+                </TimelineItem>
+                ))}
+              </Timeline>
+            </>
           )}
         </Paper>
       </Container>
