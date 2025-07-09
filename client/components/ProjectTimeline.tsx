@@ -51,7 +51,7 @@ export default function ProjectTimeline({ projects, year = new Date().getFullYea
           <Box sx={{ position: 'absolute', top: -3, left: '50%', width: 8, height: 8, bgcolor: color, borderRadius: '50%', transform: 'translateX(-50%)' }} />
         )}
         {!isMilestone && (
-          <Typography sx={{ fontSize: 10, color: '#fff', pl: 0.5, whiteSpace: 'nowrap', overflow: 'hidden' }}>{t.name}</Typography>
+          <Typography sx={{ fontSize: 12, color: '#fff', pl: 0.5, whiteSpace: 'nowrap', overflow: 'hidden' }}>{t.name}</Typography>
         )}
       </Box>
     );

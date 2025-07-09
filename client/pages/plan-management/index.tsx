@@ -105,7 +105,7 @@ function PlanManagementOverview() {
                 name: p.name,
                 startDate: p.start,
                 endDate: p.end,
-                owner: p.lead?.name || '',
+                roles: p.lead?.name ? [p.lead.name] : [],
                 status: p.status,
                 progress: calcProgress(p),
               }))}

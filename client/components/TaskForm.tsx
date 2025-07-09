@@ -8,12 +8,12 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { addDays } from 'date-fns';
 
-export default function TaskForm({ onSubmit, initial, members = [], tasks = [] }) {
+export default function TaskForm({ onSubmit, initial, tasks = [], members = [] }) {
   const [name, setName] = useState(initial?.name || '');
   const [detail, setDetail] = useState(initial?.detail || '');
   const [startDate, setStartDate] = useState(initial?.startDate || initial?.date || null);
   const [endDate, setEndDate] = useState(initial?.endDate || null);
-  const [owner, setOwner] = useState(initial?.owner || '');
+  const [assignees, setAssignees] = useState({});
   const [manday, setManday] = useState(initial?.manday != null ? String(initial.manday) : '');
   const [duration, setDuration] = useState(initial?.duration != null ? String(initial.duration) : '');
   const [blocked, setBlocked] = useState(null);
@@ -22,12 +22,30 @@ export default function TaskForm({ onSubmit, initial, members = [], tasks = [] }
       (initial ? (initial.isFeature ? 'feature' : 'milestone') : 'feature')
   );
 
+  const roleMap = useMemo(() => {
+    const map: any = {};
+    members.forEach(m => {
+      const role = String(m.position).split('_')[0].toUpperCase();
+      if (!map[role]) map[role] = [];
+      map[role].push(m);
+    });
+    return map;
+  }, [members]);
+
   useEffect(() => {
     setName(initial?.name || '');
     setDetail(initial?.detail || '');
     setStartDate(initial?.startDate || initial?.date || null);
     setEndDate(initial?.endDate || null);
-    setOwner(initial?.owner || '');
+    const initAssign: any = {};
+    Object.keys(roleMap).forEach(r => (initAssign[r] = []));
+    if (initial?.assignees) {
+      const idMap = Object.fromEntries(members.map(m => [m.id, m]));
+      Object.entries(initial.assignees).forEach(([r, ids]: any) => {
+        initAssign[r] = ids.map((id: string) => idMap[id]).filter(Boolean);
+      });
+    }
+    setAssignees(initAssign);
     setManday(initial?.manday != null ? String(initial.manday) : '');
     setDuration(initial?.duration != null ? String(initial.duration) : '');
     setBlocked(null);
@@ -35,7 +53,7 @@ export default function TaskForm({ onSubmit, initial, members = [], tasks = [] }
       initial?.type ||
         (initial ? (initial.isFeature ? 'feature' : 'milestone') : 'feature')
     );
-  }, [initial]);
+  }, [initial, roleMap, members]);
 
   const dateError = useMemo(
     () =>
@@ -71,13 +89,22 @@ export default function TaskForm({ onSubmit, initial, members = [], tasks = [] }
   const handleSubmit = e => {
     e.preventDefault();
     if (!formValid) return;
+    const roleList: string[] = [];
+    const assignData: any = {};
+    Object.entries(assignees).forEach(([r, list]: any) => {
+      if (list.length) {
+        roleList.push(r);
+        assignData[r] = list.map((m: any) => m.id);
+      }
+    });
     onSubmit &&
       onSubmit({
         name,
         detail,
         startDate,
         endDate,
-        owner,
+        roles: roleList,
+        assignees: assignData,
         manday: manday ? Number(manday) : undefined,
         duration: duration ? Number(duration) : undefined,
         blockedBy: blocked ? blocked.id : undefined,
@@ -87,7 +114,7 @@ export default function TaskForm({ onSubmit, initial, members = [], tasks = [] }
     setDetail('');
     setStartDate(null);
     setEndDate(null);
-    setOwner('');
+    setAssignees(Object.fromEntries(Object.keys(roleMap).map(r => [r, []])));
     setManday('');
     setDuration('');
     setBlocked(null);
@@ -119,14 +146,20 @@ export default function TaskForm({ onSubmit, initial, members = [], tasks = [] }
           }}
         />
         <TextField label="Duration (days)" type="number" value={duration} onChange={e => setDuration(e.target.value)} fullWidth sx={{ mb: 2 }} />
-        <Autocomplete
-          options={members}
-          getOptionLabel={o => o.name}
-          value={members.find(m => m.id === owner) || null}
-          onChange={(_, v) => setOwner(v ? v.id : '')}
-          renderInput={params => <TextField {...params} label="Owner" />}
-          sx={{ mb: 2 }}
-        />
+        {Object.entries(roleMap).map(([r, opts]) => (
+          <Autocomplete
+            key={r}
+            multiple
+            options={opts as any}
+            getOptionLabel={(o: any) => o.name}
+            value={assignees[r] || []}
+            onChange={(_, v) =>
+              setAssignees(a => ({ ...a, [r]: v }))
+            }
+            renderInput={params => <TextField {...params} label={r} />}
+            sx={{ mb: 2 }}
+          />
+        ))}
         <TextField label="Manday" type="number" value={manday} onChange={e => setManday(e.target.value)} fullWidth sx={{ mb: 2 }} />
         <Autocomplete
           options={tasks.map(t => ({ id: t._id || t.id, label: t.name, date: t.endDate }))}

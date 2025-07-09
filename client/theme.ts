@@ -17,7 +17,7 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: '"Fira Code", monospace',
+    fontFamily: '"Noto Sans Thai", "Fira Code", monospace',
   },
 });
 
