@@ -31,6 +31,9 @@ export class Task extends Document {
   @Prop({ type: [String], enum: ['SA', 'PA', 'QA'] })
   roles?: string[];
 
+  @Prop({ type: [Types.ObjectId], ref: 'Resource', default: [] })
+  assignees?: Types.ObjectId[];
+
   @Prop()
   manday?: number;
 

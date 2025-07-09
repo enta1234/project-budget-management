@@ -12,10 +12,6 @@ export class CreateTaskInput {
   project!: Types.ObjectId;
 
   @IsOptional()
-  @Type(() => String)
-  @IsString()
-  phase?: Types.ObjectId;
-
   @IsString()
   name!: string;
 
@@ -43,6 +39,14 @@ export class CreateTaskInput {
   @IsArray()
   @IsString({ each: true })
   roles?: string[];
+
+  @IsOptional()
+  @IsArray()
+  @Type(() => String)
+  @IsString({ each: true })
+  assignees?: Types.ObjectId[];
+
+
 
   @IsOptional()
   @IsNumber()
@@ -92,6 +96,12 @@ export class UpdateTaskInput {
   @IsArray()
   @IsString({ each: true })
   roles?: string[];
+  @IsOptional()
+  @IsArray()
+  @Type(() => String)
+  @IsString({ each: true })
+  assignees?: Types.ObjectId[];
+
 
   @IsOptional()
   @IsNumber()
