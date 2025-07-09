@@ -371,13 +371,11 @@ function PlanningSetting() {
                         width: 140,
                       },
                       {
-                        field: 'owner',
-                        headerName: 'Owner',
+                        field: 'roles',
+                        headerName: 'Roles',
                         width: 160,
-                        valueGetter: (_value, row) => {
-                          const mem = members.find(m => m.id === row.owner);
-                          return mem ? mem.name : row.owner || '-';
-                        },
+                        valueGetter: (_value, row) =>
+                          Array.isArray(row.roles) ? row.roles.join(', ') : '-',
                       },
                     {
                       field: 'manday',
@@ -480,14 +478,13 @@ function PlanningSetting() {
             </Grid>
           )}
         <Popup open={dialog === 'task'} onClose={() => setDialog('')} title="Add Task">
-          <TaskForm onSubmit={handleCreateTask} members={members} tasks={tasks} />
+          <TaskForm onSubmit={handleCreateTask} tasks={tasks} />
         </Popup>
         <Popup open={!!editTask} onClose={() => setEditTask(null)} title="Edit Task">
           {editTask && (
             <TaskForm
               onSubmit={handleUpdateTask}
               initial={editTask}
-              members={members}
               tasks={tasks}
             />
           )}

@@ -28,8 +28,8 @@ export class Task extends Document {
   @Prop()
   endDate?: Date;
 
-  @Prop()
-  owner?: string;
+  @Prop({ type: [String], enum: ['SA', 'PA', 'QA'] })
+  roles?: string[];
 
   @Prop()
   manday?: number;

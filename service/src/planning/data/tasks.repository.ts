@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Task } from './task.schema';
 import { BaseRepository } from './base.repository';
-import { IsString, IsOptional, IsBoolean, IsNumber } from 'class-validator';
+import { IsString, IsOptional, IsBoolean, IsNumber, IsArray } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateTaskInput {
@@ -40,8 +40,9 @@ export class CreateTaskInput {
   endDate?: Date;
 
   @IsOptional()
-  @IsString()
-  owner?: string;
+  @IsArray()
+  @IsString({ each: true })
+  roles?: string[];
 
   @IsOptional()
   @IsNumber()
@@ -88,8 +89,9 @@ export class UpdateTaskInput {
   startDate?: Date;
 
   @IsOptional()
-  @IsString()
-  owner?: string;
+  @IsArray()
+  @IsString({ each: true })
+  roles?: string[];
 
   @IsOptional()
   @IsNumber()
