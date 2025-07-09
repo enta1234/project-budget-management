@@ -87,9 +87,9 @@ export default function AgendaCalendar({
     if (res.type && res.type !== 'task') {
       return <Box sx={{ fontSize: 12 }}>{event.title}</Box>;
     }
-    const owner = res.owner || '';
-    const initials = owner
-      .split(' ')
+    const roles = Array.isArray(res.roles) ? res.roles : [];
+    const owner = roles.join(', ');
+    const initials = roles
       .map((s: string) => s[0])
       .join('')
       .slice(0, 2)

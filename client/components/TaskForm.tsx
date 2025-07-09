@@ -8,12 +8,12 @@ import ToggleButtonGroup from '@mui/material/ToggleButtonGroup';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { addDays } from 'date-fns';
 
-export default function TaskForm({ onSubmit, initial, members = [], tasks = [] }) {
+export default function TaskForm({ onSubmit, initial, tasks = [] }) {
   const [name, setName] = useState(initial?.name || '');
   const [detail, setDetail] = useState(initial?.detail || '');
   const [startDate, setStartDate] = useState(initial?.startDate || initial?.date || null);
   const [endDate, setEndDate] = useState(initial?.endDate || null);
-  const [owner, setOwner] = useState(initial?.owner || '');
+  const [roles, setRoles] = useState(initial?.roles || []);
   const [manday, setManday] = useState(initial?.manday != null ? String(initial.manday) : '');
   const [duration, setDuration] = useState(initial?.duration != null ? String(initial.duration) : '');
   const [blocked, setBlocked] = useState(null);
@@ -27,7 +27,7 @@ export default function TaskForm({ onSubmit, initial, members = [], tasks = [] }
     setDetail(initial?.detail || '');
     setStartDate(initial?.startDate || initial?.date || null);
     setEndDate(initial?.endDate || null);
-    setOwner(initial?.owner || '');
+    setRoles(initial?.roles || []);
     setManday(initial?.manday != null ? String(initial.manday) : '');
     setDuration(initial?.duration != null ? String(initial.duration) : '');
     setBlocked(null);
@@ -77,7 +77,7 @@ export default function TaskForm({ onSubmit, initial, members = [], tasks = [] }
         detail,
         startDate,
         endDate,
-        owner,
+        roles,
         manday: manday ? Number(manday) : undefined,
         duration: duration ? Number(duration) : undefined,
         blockedBy: blocked ? blocked.id : undefined,
@@ -87,7 +87,7 @@ export default function TaskForm({ onSubmit, initial, members = [], tasks = [] }
     setDetail('');
     setStartDate(null);
     setEndDate(null);
-    setOwner('');
+    setRoles([]);
     setManday('');
     setDuration('');
     setBlocked(null);
@@ -120,11 +120,11 @@ export default function TaskForm({ onSubmit, initial, members = [], tasks = [] }
         />
         <TextField label="Duration (days)" type="number" value={duration} onChange={e => setDuration(e.target.value)} fullWidth sx={{ mb: 2 }} />
         <Autocomplete
-          options={members}
-          getOptionLabel={o => o.name}
-          value={members.find(m => m.id === owner) || null}
-          onChange={(_, v) => setOwner(v ? v.id : '')}
-          renderInput={params => <TextField {...params} label="Owner" />}
+          multiple
+          options={['SA', 'PA', 'QA']}
+          value={roles}
+          onChange={(_, v) => setRoles(v)}
+          renderInput={params => <TextField {...params} label="Roles" />}
           sx={{ mb: 2 }}
         />
         <TextField label="Manday" type="number" value={manday} onChange={e => setManday(e.target.value)} fullWidth sx={{ mb: 2 }} />
