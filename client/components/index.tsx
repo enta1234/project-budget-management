@@ -26,3 +26,6 @@ export { default as RoleCard } from "./RoleCard";
 export { default as MetricCard } from './MetricCard';
 export { default as ProjectTimeline } from './ProjectTimeline';
 export { default as SettingsDrawer } from './SettingsDrawer';
+export { default as ProjectPage } from './ProjectPage';
+export { default as TaskTable } from './TaskTable';
+export { default as RoadmapGantt } from './RoadmapGantt';

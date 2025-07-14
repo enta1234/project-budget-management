@@ -223,7 +223,7 @@ function ProjectDetail() {
             sx={{ ml: 1 }}
             onClick={() =>
               router.push(
-                `/plan-management/planning-setting?project=${
+                `/plan-management/roadmap?project=${
                   project._id || project.id
                 }`,
               )

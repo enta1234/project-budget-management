@@ -128,16 +128,16 @@ export default function Sidebar({ open, onClose }) {
               </ListItemButton>
               <ListItemButton
                 sx={{ pl: 4 }}
-                selected={router.pathname === '/plan-management/planning-setting'}
+                selected={router.pathname === '/plan-management/roadmap'}
                 onClick={() => {
-                  router.push('/plan-management/planning-setting');
+                  router.push('/plan-management/roadmap');
                   onClose();
                 }}
               >
                 <ListItemIcon>
                   <CalendarMonthIcon fontSize="small" />
                 </ListItemIcon>
-                <ListItemText primary="Planning Setting" />
+                <ListItemText primary="Roadmap" />
               </ListItemButton>
               <ListItemButton
                 sx={{ pl: 4 }}
