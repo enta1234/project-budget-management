@@ -1,6 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Fira+Code&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;700&display=swap');
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 body {
   font-family: 'Noto Sans Thai', 'Fira Code', monospace;
   color: #24292e;
