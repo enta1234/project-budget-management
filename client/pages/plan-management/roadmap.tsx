@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
-import { Layout, PageBreadcrumbs, Popup, ConfirmDialog, useToast } from '../../components';
+import { Layout, PageBreadcrumbs, Popup, ConfirmDialog, useToast, ProjectTimeline } from '../../components';
 import { withAuth } from '../../context/AuthContext';
 import api from '../../api';
 import {
@@ -47,7 +47,7 @@ import {
 } from 'gantt-task-react';
 import 'gantt-task-react/dist/index.css';
 
-function PlanningSetting() {
+function Roadmap() {
   const router = useRouter();
   const { showToast } = useToast();
   const [projects, setProjects] = useState([]);
@@ -56,6 +56,7 @@ function PlanningSetting() {
   const [phases, setPhases] = useState([]);
   const [members, setMembers] = useState([]);
   const [viewMode, setViewMode] = useState(ViewMode.Week);
+  const [scheduleView, setScheduleView] = useState<'gantt' | 'roadmap'>('gantt');
   const [dialog, setDialog] = useState('');
   const [editTask, setEditTask] = useState(null);
   const [deleteRow, setDeleteRow] = useState(null);
@@ -279,9 +280,9 @@ function PlanningSetting() {
     <Layout>
       <Container maxWidth={false} sx={{ mt: 4 }}>
         <Typography variant="h5" gutterBottom>
-          Planning Setting
+          Roadmap
         </Typography>
-        <PageBreadcrumbs items={[{ label: 'Plan Management', href: '/plan-management' }, { label: 'Planning Setting' }]} />
+        <PageBreadcrumbs items={[{ label: 'Plan Management', href: '/plan-management' }, { label: 'Roadmap' }]} />
         <Paper sx={{ p: 2, mt: 2, mb: 2 }}>
           <Autocomplete
             options={projects}
@@ -465,22 +466,36 @@ function PlanningSetting() {
             <Grid size={12}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                 <Typography variant="h6">Schedule</Typography>
-                <ToggleButtonGroup
-                  value={viewMode}
-                  exclusive
-                  onChange={(_, v) => v && setViewMode(v)}
-                  size="small"
-                >
-                  <ToggleButton value={ViewMode.Day}>Day</ToggleButton>
-                  <ToggleButton value={ViewMode.Week}>Week</ToggleButton>
-                  <ToggleButton value={ViewMode.Month}>Month</ToggleButton>
-                </ToggleButtonGroup>
+                <Box>
+                  <ToggleButtonGroup
+                    value={scheduleView}
+                    exclusive
+                    onChange={(_, v) => v && setScheduleView(v)}
+                    size="small"
+                    sx={{ mr: 1 }}
+                  >
+                    <ToggleButton value="gantt">Gantt</ToggleButton>
+                    <ToggleButton value="roadmap">Roadmap</ToggleButton>
+                  </ToggleButtonGroup>
+                  <ToggleButtonGroup
+                    value={viewMode}
+                    exclusive
+                    onChange={(_, v) => v && setViewMode(v)}
+                    size="small"
+                    sx={{ display: scheduleView === 'gantt' ? 'inline-flex' : 'none' }}
+                  >
+                    <ToggleButton value={ViewMode.Day}>Day</ToggleButton>
+                    <ToggleButton value={ViewMode.Week}>Week</ToggleButton>
+                    <ToggleButton value={ViewMode.Month}>Month</ToggleButton>
+                  </ToggleButtonGroup>
+                </Box>
               </Box>
               <Paper sx={{ p: 2, overflowX: 'auto', maxWidth: '114rem' }}>
                 <Grid container spacing={2}>
                   <Grid size={12} sx={{ maxWidth: '100%', overflow: 'auto' }}>
-                    {ganttTasks.length > 0 ? (
-                      <Box ref={ganttRef} sx={{ width: '100%', overflowX: 'auto' }}>
+                    {scheduleView === 'gantt' ? (
+                      ganttTasks.length > 0 ? (
+                        <Box ref={ganttRef} sx={{ width: '100%', overflowX: 'auto' }}>
                           <Gantt
                             tasks={ganttTasks}
                             viewMode={viewMode}
@@ -489,11 +504,20 @@ function PlanningSetting() {
                             viewDate={Date.now()}
                             preStepsCount={0}
                           />
-                      </Box>
+                        </Box>
+                      ) : (
+                        <Typography variant="body2" align="center">
+                          No schedule data
+                        </Typography>
+                      )
                     ) : (
-                      <Typography variant="body2" align="center">
-                        No schedule data
-                      </Typography>
+                      tasks.length > 0 ? (
+                        <ProjectTimeline projects={[{ ...project, tasks }]} />
+                      ) : (
+                        <Typography variant="body2" align="center">
+                          No schedule data
+                        </Typography>
+                      )
                     )}
                   </Grid>
                 </Grid>
@@ -527,4 +551,4 @@ function PlanningSetting() {
   );
 }
 
-export default withAuth(PlanningSetting);
+export default withAuth(Roadmap);

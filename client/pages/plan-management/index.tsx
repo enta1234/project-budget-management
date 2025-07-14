@@ -113,7 +113,7 @@ function PlanManagementOverview() {
               holidays={holidays}
               onTaskClick={proj =>
                 router.push(
-                  `/plan-management/planning-setting?project=${
+                  `/plan-management/roadmap?project=${
                     proj._id || proj.id
                   }`,
                 )}
