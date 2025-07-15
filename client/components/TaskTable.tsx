@@ -33,7 +33,7 @@ export default function TableView({ tasks, setTasks }: Props) {
       {
         id: nextId,
         name: 'New Task',
-        status: 'To Do',
+        status: 'todo',
         startDate: new Date().toISOString().slice(0, 10),
         endDate: new Date().toISOString().slice(0, 10),
         assignees: [],
