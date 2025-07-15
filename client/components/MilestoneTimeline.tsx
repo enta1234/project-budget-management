@@ -25,8 +25,9 @@ export default function MilestoneTimeline() {
   }, {});
 
   const years = Object.keys(groups).map(y => parseInt(y, 10));
-  const minYear = Math.min(...years);
-  const maxYear = Math.max(...years);
+  const sortedYears = years.slice().sort((a, b) => a - b);
+  const minYear = Math.min(...sortedYears);
+  const maxYear = Math.max(...sortedYears);
 
   const spacing = 200; // equal horizontal spacing per year
   const margin = 100;
@@ -37,7 +38,7 @@ export default function MilestoneTimeline() {
   const lineY = levels * verticalGap + 40;
   const height = lineY + levels * verticalGap + 60;
 
-  const width = (maxYear - minYear) * spacing + margin * 2;
+  const width = Math.max(1, maxYear - minYear) * spacing + margin * 2;
 
   const handleDownload = () => {
     const svg = svgRef.current;
@@ -69,7 +70,7 @@ export default function MilestoneTimeline() {
             stroke="#9ca3af"
             strokeWidth={2}
           />
-          {years.sort().map(year => {
+          {sortedYears.map(year => {
             const x = margin + (year - minYear) * spacing;
             const items = groups[year];
             return (
