@@ -12,14 +12,13 @@ const statusColors: Record<string, string> = {
   done: 'bg-green-500',
 };
 
-const DAY_WIDTH = 32;
 const ROW_HEIGHT = 28;
 const rowOffset = ROW_HEIGHT;
 
 const zoomOptions = {
-  day: { gridStep: 1 },
-  week: { gridStep: 7 },
-  month: { gridStep: 30 },
+  day: { pxPerDay: 48 },
+  week: { pxPerDay: 24 },
+  month: { pxPerDay: 12 },
 };
 
 export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
@@ -68,55 +67,23 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
 
   const daysDiff = (d1: Date, d2: Date) =>
     Math.floor((d1.getTime() - d2.getTime()) / 86400000);
-  const { gridStep } = zoomOptions[zoom];
-  const pxPerDay = DAY_WIDTH;
+  const { pxPerDay } = zoomOptions[zoom];
   const totalDays = daysDiff(endRange, startRange) + 1;
   const width = totalDays * pxPerDay;
 
-  const headers: { label: string; left: number }[] = [];
-  const headerCursor = new Date(startRange);
-  if (zoom === 'day') {
-    while (headerCursor <= endRange) {
-      headers.push({
-        label: headerCursor.toLocaleDateString('default', {
-          month: 'short',
-          day: 'numeric',
-        }),
-        left: daysDiff(headerCursor, startRange) * pxPerDay,
-      });
-      headerCursor.setDate(headerCursor.getDate() + 1);
-    }
-  } else if (zoom === 'week') {
-    while (headerCursor <= endRange) {
-      headers.push({
-        label: headerCursor.toLocaleDateString('default', {
-          month: 'short',
-          day: 'numeric',
-        }),
-        left: daysDiff(headerCursor, startRange) * pxPerDay,
-      });
-      headerCursor.setDate(headerCursor.getDate() + 7);
-    }
-  } else {
-    headerCursor.setDate(1);
-    while (headerCursor <= endRange) {
-      headers.push({
-        label: headerCursor.toLocaleString('default', {
-          month: 'long',
-          year: 'numeric',
-        }),
-        left: daysDiff(headerCursor, startRange) * pxPerDay,
-      });
-      headerCursor.setMonth(headerCursor.getMonth() + 1);
-    }
+  const dayCells: { label: string; month: string; left: number; first: boolean }[] = [];
+  const cursor = new Date(startRange);
+  while (cursor <= endRange) {
+    dayCells.push({
+      label: String(cursor.getDate()),
+      month: cursor.toLocaleString('default', { month: 'short' }),
+      left: daysDiff(cursor, startRange) * pxPerDay,
+      first: cursor.getDate() === 1,
+    });
+    cursor.setDate(cursor.getDate() + 1);
   }
 
-  const grids: number[] = [];
-  const g = new Date(startRange);
-  while (g <= endRange) {
-    grids.push(daysDiff(g, startRange) * pxPerDay);
-    g.setDate(g.getDate() + gridStep);
-  }
+  const grids = dayCells.map(c => ({ left: c.left, first: c.first }));
 
   const handleAdd = () => {
     if (!newName.trim()) return;
@@ -209,17 +176,22 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
       >
         <div className="relative" style={{ width }}>
           {/* header */}
-          {headers.map(h => (
-            <div key={h.label} className="absolute top-0 text-xs" style={{ left: h.left }}>
-              {h.label}
+          {dayCells.map((d, idx) => (
+            <div
+              key={idx}
+              className={`absolute top-0 text-[10px] text-center ${d.first ? 'font-semibold' : ''}`}
+              style={{ left: d.left, width: pxPerDay }}
+            >
+              {d.label}
+              {d.first && <div className="text-[9px]">{d.month}</div>}
             </div>
           ))}
           {/* grid lines */}
-          {grids.map((l, idx) => (
+          {grids.map((g, idx) => (
             <div
               key={idx}
-              className="absolute top-4 bottom-0 border-l border-gray-200"
-              style={{ left: l }}
+              className={`absolute top-4 bottom-0 border-l ${g.first ? 'border-gray-400' : 'border-gray-200'}`}
+              style={{ left: g.left, borderLeftWidth: g.first ? 2 : 1 }}
             />
           ))}
           {/* today marker */}
