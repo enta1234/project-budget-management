@@ -6,7 +6,12 @@ interface Props {
   setTasks: (t: Task[]) => void;
 }
 
-const columns = ['To Do', 'In Progress', 'Done'];
+const columns = ['todo', 'in_progress', 'done'];
+const labels: Record<string, string> = {
+  todo: 'To Do',
+  in_progress: 'In Progress',
+  done: 'Done',
+};
 
 export default function BoardView({ tasks, setTasks }: Props) {
   const onDragEnd = (result: DropResult) => {
@@ -30,7 +35,7 @@ export default function BoardView({ tasks, setTasks }: Props) {
                 {...provided.droppableProps}
                 className="flex-1 bg-gray-100 rounded p-2"
               >
-                <h3 className="font-semibold mb-2">{col}</h3>
+                <h3 className="font-semibold mb-2">{labels[col]}</h3>
                 {tasks
                   .filter(t => t.status === col)
                   .map((t, idx) => (
