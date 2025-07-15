@@ -2,7 +2,7 @@ import Container from '@mui/material/Container';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { Layout, PageBreadcrumbs } from '../../components';
-import MilestoneTimeline from '../../components/MilestoneTimeline';
+import GenerateTimelineWithJointJS from '../../components/GenerateTimelineWithJointJS';
 import { withAuth } from '../../context/AuthContext';
 
 function GenerateTimeline() {
@@ -16,7 +16,7 @@ function GenerateTimeline() {
           <Typography variant="h5" sx={{ mb: 2 }}>
             Generate Timeline
           </Typography>
-          <MilestoneTimeline />
+          <GenerateTimelineWithJointJS />
         </Paper>
       </Container>
     </Layout>

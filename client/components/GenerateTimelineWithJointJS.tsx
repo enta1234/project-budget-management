@@ -26,7 +26,7 @@ export default function GenerateTimelineWithJointJS() {
   useEffect(() => {
     async function loadProjects() {
       try {
-        const { data } = await api.get('/api/projects');
+        const { data } = await api.get('/api/v1/projects');
         setProjects(data);
       } catch (err) {
         console.error(err);
@@ -60,9 +60,17 @@ export default function GenerateTimelineWithJointJS() {
     }
     setLoading(true);
     api
-      .get(`/api/projects/${selected}/timeline`)
+      .get('/api/v1/planning/tasks', { params: { project: selected } })
       .then(res => {
-        setTimeline(res.data);
+        const list = Array.isArray(res.data) ? res.data : [];
+        const converted = list
+          .filter((t: any) => t.startDate || t.endDate)
+          .map((t: any) => ({
+            year: new Date(t.startDate || t.endDate).getFullYear(),
+            title: t.name,
+            description: t.detail,
+          }));
+        setTimeline(converted);
       })
       .catch(err => {
         console.error(err);
