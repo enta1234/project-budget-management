@@ -7,22 +7,36 @@ interface Milestone {
 }
 
 const sampleData: Milestone[] = [
-  { title: 'Phase 1.0', year: 2023, description: 'Start architecture' },
-  { title: 'Phase 1.1', year: 2024, description: 'Initial release' },
-  { title: 'Phase 2.0', year: 2025, description: 'UAT + Launch' },
-  { title: 'Phase 2.1', year: 2025, description: 'QA hardening' },
-  { title: 'Phase 3.0', year: 2026, description: 'Scale Up' },
-  { title: 'Phase 3.1', year: 2026, description: 'Optimization' },
+  { year: 2023, title: 'Phase 1.0', description: 'Start architecture' },
+  { year: 2024, title: 'Phase 1.1', description: 'Initial release' },
+  { year: 2025, title: 'Phase 2.0', description: 'UAT' },
+  { year: 2025, title: 'Phase 2.0', description: 'Launch' },
+  { year: 2026, title: 'Phase 3.0', description: 'Stabilization' },
 ];
 
 export default function MilestoneTimeline() {
   const svgRef = useRef<SVGSVGElement | null>(null);
 
-  const minYear = Math.min(...sampleData.map(m => m.year));
-  const maxYear = Math.max(...sampleData.map(m => m.year));
-  const spacing = 160;
-  const margin = 80;
-  const height = 140;
+  // group milestones by year to handle stacking
+  const groups = sampleData.reduce<Record<number, Milestone[]>>((acc, m) => {
+    acc[m.year] = acc[m.year] || [];
+    acc[m.year].push(m);
+    return acc;
+  }, {});
+
+  const years = Object.keys(groups).map(y => parseInt(y, 10));
+  const minYear = Math.min(...years);
+  const maxYear = Math.max(...years);
+
+  const spacing = 200; // equal horizontal spacing per year
+  const margin = 100;
+
+  const maxItems = Math.max(...Object.values(groups).map(g => g.length));
+  const levels = Math.ceil(maxItems / 2);
+  const verticalGap = 40;
+  const lineY = levels * verticalGap + 40;
+  const height = lineY + levels * verticalGap + 60;
+
   const width = (maxYear - minYear) * spacing + margin * 2;
 
   const handleDownload = () => {
@@ -49,45 +63,65 @@ export default function MilestoneTimeline() {
         >
           <line
             x1={margin}
-            y1={70}
+            y1={lineY}
             x2={width - margin}
-            y2={70}
+            y2={lineY}
             stroke="#9ca3af"
             strokeWidth={2}
           />
-          {sampleData.map((m, idx) => {
-            const x = margin + (m.year - minYear) * spacing;
+          {years.sort().map(year => {
+            const x = margin + (year - minYear) * spacing;
+            const items = groups[year];
             return (
-              <g key={idx} transform={`translate(${x},0)`}>
-                <line y1={20} y2={70} stroke="#9ca3af" strokeWidth={2} />
+              <g key={year} transform={`translate(${x},0)`}>
                 <text
-                  y={15}
+                  y={lineY + 20}
                   textAnchor="middle"
                   className="fill-gray-800 text-sm"
                 >
-                  {m.year}
+                  {year}
                 </text>
-                <circle
-                  cy={70}
-                  r={10}
-                  className="fill-blue-500 stroke-white stroke-2"
-                />
-                <text
-                  y={90}
-                  textAnchor="middle"
-                  className="fill-gray-800 text-sm"
-                >
-                  {m.title}
-                </text>
-                {m.description && (
-                  <text
-                    y={105}
-                    textAnchor="middle"
-                    className="fill-gray-500 text-xs"
-                  >
-                    {m.description}
-                  </text>
-                )}
+                {items.map((m, idx) => {
+                  const direction = idx % 2 === 0 ? -1 : 1;
+                  const row = Math.floor(idx / 2) + 1;
+                  const cy = lineY + direction * row * verticalGap;
+                  return (
+                    <g key={idx}>
+                      <line
+                        x1={0}
+                        x2={0}
+                        y1={lineY}
+                        y2={cy}
+                        stroke="#9ca3af"
+                        strokeWidth={2}
+                      />
+                      <circle
+                        cx={0}
+                        cy={cy}
+                        r={10}
+                        className="fill-blue-500 stroke-white stroke-2"
+                      >
+                        <title>{`${m.title}: ${m.description ?? ''}`}</title>
+                      </circle>
+                      <text
+                        y={cy - 12}
+                        textAnchor="middle"
+                        className="fill-gray-800 text-sm"
+                      >
+                        {m.title}
+                      </text>
+                      {m.description && (
+                        <text
+                          y={cy + 16}
+                          textAnchor="middle"
+                          className="fill-gray-500 text-xs"
+                        >
+                          {m.description}
+                        </text>
+                      )}
+                    </g>
+                  );
+                })}
               </g>
             );
           })}
