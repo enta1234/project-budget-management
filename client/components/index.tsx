@@ -34,3 +34,4 @@ export { default as TimelineView } from './TimelineView';
 export { default as IterationsView } from './IterationsView';
 export { default as CapacityView } from './CapacityView';
 export { default as MilestoneTimeline } from './MilestoneTimeline';
+export { default as GenerateTimelineWithJointJS } from './GenerateTimelineWithJointJS';
