@@ -13,16 +13,10 @@ const statusColors: Record<string, string> = {
 };
 
 const ROW_HEIGHT = 28;
-
-const zoomOptions = {
-  day: { pxPerDay: 48 },
-  week: { pxPerDay: 24 },
-  month: { pxPerDay: 12 },
-};
+const DAY_WIDTH = 48;
 
 export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
   const [items, setItems] = useState<Task[]>(tasks);
-  const [zoom, setZoom] = useState<'day' | 'week' | 'month'>('month');
   const [startField, setStartField] = useState<'startDate' | 'iterationStart'>('startDate');
   const [endField, setEndField] = useState<'endDate' | 'iterationEnd'>('endDate');
   const [search, setSearch] = useState('');
@@ -60,13 +54,11 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
 
   // extend range a bit
   const startRange = new Date(minDate);
-  startRange.setDate(startRange.getDate() - 7);
   const endRange = new Date(maxDate);
-  endRange.setDate(endRange.getDate() + 7);
 
   const daysDiff = (d1: Date, d2: Date) =>
     Math.floor((d1.getTime() - d2.getTime()) / 86400000);
-  const { pxPerDay } = zoomOptions[zoom];
+  const pxPerDay = DAY_WIDTH;
   const totalDays = daysDiff(endRange, startRange) + 1;
   const width = totalDays * pxPerDay;
 
