@@ -1,7 +1,7 @@
 export interface Task {
   id: string;
   name: string;
-  status: 'To Do' | 'In Progress' | 'Done';
+  status: 'todo' | 'in_progress' | 'done';
   startDate: string;
   endDate: string;
   assignees: string[];
@@ -22,7 +22,7 @@ export const sampleTasks: Task[] = [
   {
     id: '1',
     name: 'Setup project repo',
-    status: 'To Do',
+    status: 'todo',
     startDate: '2025-06-01',
     endDate: '2025-06-03',
     assignees: ['Alice'],
@@ -33,7 +33,7 @@ export const sampleTasks: Task[] = [
   {
     id: '2',
     name: 'Design database schema',
-    status: 'In Progress',
+    status: 'in_progress',
     startDate: '2025-06-02',
     endDate: '2025-06-06',
     assignees: ['Bob'],
@@ -45,7 +45,7 @@ export const sampleTasks: Task[] = [
   {
     id: '3',
     name: 'Implement auth module',
-    status: 'To Do',
+    status: 'todo',
     startDate: '2025-06-07',
     endDate: '2025-06-14',
     assignees: ['Carol'],
@@ -56,7 +56,7 @@ export const sampleTasks: Task[] = [
   {
     id: '4',
     name: 'Deploy to staging',
-    status: 'Done',
+    status: 'done',
     startDate: '2025-06-10',
     endDate: '2025-06-11',
     assignees: ['Alice'],

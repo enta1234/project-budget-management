@@ -2,9 +2,11 @@ import { useState } from 'react';
 import Layout from './Layout';
 import TaskTable from './TaskTable';
 import BoardView from './BoardView';
-import TimelineView from './TimelineView';
+import RoadmapGantt from './RoadmapGantt';
 import IterationsView from './IterationsView';
 import CapacityView from './CapacityView';
+import AllStatusView from './AllStatusView';
+import NewTaskModal from './NewTaskModal';
 import { ViewProvider, useView } from '../context/ViewContext';
 import { sampleTasks, Task } from './sampleData';
 
@@ -14,6 +16,7 @@ const views = [
   { key: 'timeline', label: 'Timeline' },
   { key: 'iterations', label: 'Iterations' },
   { key: 'capacity', label: 'Team Capacity' },
+  { key: 'status', label: 'All Status' },
 ];
 
 function InnerPage() {
@@ -21,6 +24,7 @@ function InnerPage() {
   const [tasks, setTasks] = useState<Task[]>(sampleTasks);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [showNew, setShowNew] = useState(false);
 
   const filtered = tasks
     .filter(t =>
@@ -30,6 +34,11 @@ function InnerPage() {
         .includes(search.toLowerCase()),
     )
     .filter(t => (statusFilter ? t.status === statusFilter : true));
+
+  const addTask = (t: Omit<Task, 'id'>) => {
+    const nextId = (tasks.length + 1).toString();
+    setTasks([...tasks, { ...t, id: nextId }]);
+  };
 
   return (
     <Layout>
@@ -53,9 +62,9 @@ function InnerPage() {
             className="ml-auto border px-2 py-1 text-sm rounded"
           >
             <option value="">All Status</option>
-            <option>To Do</option>
-            <option>In Progress</option>
-            <option>Done</option>
+            <option value="todo">To Do</option>
+            <option value="in_progress">In Progress</option>
+            <option value="done">Done</option>
           </select>
           <input
             type="text"
@@ -64,14 +73,29 @@ function InnerPage() {
             placeholder="Search"
             className="ml-2 border px-2 py-1 text-sm rounded"
           />
+          <button
+            className="ml-2 px-3 py-1 text-sm bg-blue-600 text-white rounded"
+            onClick={() => setShowNew(true)}
+          >
+            + New
+          </button>
         </div>
         <div>
           {view === 'table' && <TaskTable tasks={filtered} setTasks={setTasks} />}
           {view === 'board' && <BoardView tasks={filtered} setTasks={setTasks} />}
-          {view === 'timeline' && <TimelineView tasks={filtered} />}
+          {view === 'timeline' && <RoadmapGantt tasks={filtered} />}
           {view === 'iterations' && <IterationsView tasks={filtered} />}
           {view === 'capacity' && <CapacityView tasks={filtered} />}
+          {view === 'status' && <AllStatusView tasks={filtered} />}
         </div>
+        <NewTaskModal
+          open={showNew}
+          onClose={() => setShowNew(false)}
+          onCreate={t => {
+            addTask(t);
+            setShowNew(false);
+          }}
+        />
       </div>
     </Layout>
   );
