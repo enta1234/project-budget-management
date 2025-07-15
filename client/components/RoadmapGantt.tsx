@@ -7,9 +7,9 @@ interface Props {
 }
 
 const statusColors: Record<string, string> = {
-  'To Do': 'bg-gray-400',
-  'In Progress': 'bg-blue-500',
-  'Done': 'bg-green-500',
+  todo: 'bg-gray-400',
+  in_progress: 'bg-blue-500',
+  done: 'bg-green-500',
 };
 
 const DAY_WIDTH = 32;
@@ -126,7 +126,7 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
       {
         id: Date.now().toString(),
         name: newName,
-        status: 'To Do',
+        status: 'todo',
         startDate: today,
         endDate: today,
         assignees: [],
@@ -177,9 +177,9 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
           className="ml-4 border px-1 rounded"
         >
           <option value="">All</option>
-          <option>To Do</option>
-          <option>In Progress</option>
-          <option>Done</option>
+          <option value="todo">To Do</option>
+          <option value="in_progress">In Progress</option>
+          <option value="done">Done</option>
         </select>
         <input
           value={search}
@@ -251,9 +251,9 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
             const left = daysDiff(start, startRange) * pxPerDay;
             const widthBar = (daysDiff(end, start) + 1) * pxPerDay;
             const colorClasses: Record<string, string> = {
-              'To Do': 'border-gray-400 bg-gray-50',
-              'In Progress': 'border-blue-500 bg-blue-50',
-              Done: 'border-green-500 bg-green-50',
+              todo: 'border-gray-400 bg-gray-50',
+              in_progress: 'border-blue-500 bg-blue-50',
+              done: 'border-green-500 bg-green-50',
             };
             const color = colorClasses[t.status] || 'border-gray-300 bg-gray-50';
             return (
@@ -271,7 +271,7 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
                   }}
                 >
                   <span className="mr-1">
-                    {t.status === 'Done' ? (
+                    {t.status === 'done' ? (
                       <svg className="w-3 h-3 text-green-600" viewBox="0 0 16 16" fill="currentColor">
                         <path d="M6 10.3L3.7 8l-1.4 1.4L6 13 14 5l-1.4-1.4z" />
                       </svg>
