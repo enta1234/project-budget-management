@@ -65,16 +65,30 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
     return res;
   };
 
-  const [rangeStart, setRangeStart] = useState<Date>(addDays(minDate, -14));
-  const [rangeEnd, setRangeEnd] = useState<Date>(addDays(maxDate, 14));
+  const WINDOW_DAYS = 90;
+  const initialStart = addDays(minDate, -14);
+  const initialEnd = addDays(maxDate, 14);
+  function daysDiff(d1: Date, d2: Date) {
+    return Math.floor((d1.getTime() - d2.getTime()) / 86400000);
+  }
+
+  const span = daysDiff(initialEnd, initialStart) + 1;
+  const [rangeStart, setRangeStart] = useState<Date>(initialStart);
+  const [rangeEnd, setRangeEnd] = useState<Date>(
+    span > WINDOW_DAYS ? addDays(initialStart, WINDOW_DAYS - 1) : initialEnd,
+  );
 
   useEffect(() => {
-    setRangeStart(addDays(minDate, -14));
-    setRangeEnd(addDays(maxDate, 14));
+    const newStart = addDays(minDate, -14);
+    const newEndCandidate = addDays(maxDate, 14);
+    const newSpan = daysDiff(newEndCandidate, newStart) + 1;
+    setRangeStart(newStart);
+    setRangeEnd(
+      newSpan > WINDOW_DAYS ? addDays(newStart, WINDOW_DAYS - 1) : newEndCandidate,
+    );
   }, [minDate.getTime(), maxDate.getTime()]);
 
-  const daysDiff = (d1: Date, d2: Date) =>
-    Math.floor((d1.getTime() - d2.getTime()) / 86400000);
+
 
   const pxPerDay = DAY_WIDTH;
   const totalDays = daysDiff(rangeEnd, rangeStart) + 1;
@@ -118,7 +132,6 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
 
   const BUFFER_DAYS = 7;
   const EXTEND_DAYS = 14;
-  const MAX_RANGE_DAYS = 365;
 
   const rangeStartRef = useRef(rangeStart);
   const rangeEndRef = useRef(rangeEnd);
@@ -143,14 +156,14 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
     setRenderStart(Math.max(0, startIdx - buf));
     setRenderEnd(Math.min(currentTotal, endIdx + buf));
 
-    if (
-      startIdx < BUFFER_DAYS &&
-      currentTotal < MAX_RANGE_DAYS
-    ) {
+    if (startIdx < BUFFER_DAYS) {
       const newStart = addDays(rangeStartRef.current, -EXTEND_DAYS);
+      const newEnd = addDays(rangeEndRef.current, -EXTEND_DAYS);
       if (newStart.getTime() !== rangeStartRef.current.getTime()) {
         setRangeStart(newStart);
+        setRangeEnd(newEnd);
         rangeStartRef.current = newStart;
+        rangeEndRef.current = newEnd;
         requestAnimationFrame(() => {
           if (scrollRef.current)
             scrollRef.current.scrollLeft += EXTEND_DAYS * DAY_WIDTH;
@@ -158,13 +171,13 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
       }
     }
 
-    if (
-      endIdx > currentTotal - BUFFER_DAYS &&
-      currentTotal < MAX_RANGE_DAYS
-    ) {
+    if (endIdx > currentTotal - BUFFER_DAYS) {
+      const newStart = addDays(rangeStartRef.current, EXTEND_DAYS);
       const newEnd = addDays(rangeEndRef.current, EXTEND_DAYS);
       if (newEnd.getTime() !== rangeEndRef.current.getTime()) {
+        setRangeStart(newStart);
         setRangeEnd(newEnd);
+        rangeStartRef.current = newStart;
         rangeEndRef.current = newEnd;
       }
     }
@@ -223,22 +236,22 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
       );
 
       if (delta < -BUFFER_DAYS) {
-        const next = addDays(rangeStartRef.current, -EXTEND_DAYS);
-        if (
-          next.getTime() !== rangeStartRef.current.getTime() &&
-          daysDiff(rangeEndRef.current, next) < MAX_RANGE_DAYS
-        ) {
-          setRangeStart(next);
-          rangeStartRef.current = next;
+        const nextStart = addDays(rangeStartRef.current, -EXTEND_DAYS);
+        const nextEnd = addDays(rangeEndRef.current, -EXTEND_DAYS);
+        if (nextStart.getTime() !== rangeStartRef.current.getTime()) {
+          setRangeStart(nextStart);
+          setRangeEnd(nextEnd);
+          rangeStartRef.current = nextStart;
+          rangeEndRef.current = nextEnd;
         }
       } else if (daysDiff(newEnd, rangeEndRef.current) > -BUFFER_DAYS) {
-        const next = addDays(rangeEndRef.current, EXTEND_DAYS);
-        if (
-          next.getTime() !== rangeEndRef.current.getTime() &&
-          daysDiff(next, rangeStartRef.current) < MAX_RANGE_DAYS
-        ) {
-          setRangeEnd(next);
-          rangeEndRef.current = next;
+        const nextStart = addDays(rangeStartRef.current, EXTEND_DAYS);
+        const nextEnd = addDays(rangeEndRef.current, EXTEND_DAYS);
+        if (nextEnd.getTime() !== rangeEndRef.current.getTime()) {
+          setRangeStart(nextStart);
+          setRangeEnd(nextEnd);
+          rangeStartRef.current = nextStart;
+          rangeEndRef.current = nextEnd;
         }
       }
     },
