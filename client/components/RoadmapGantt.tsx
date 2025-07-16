@@ -160,49 +160,15 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
         </button>
       </div>
 
-      <div className="border rounded">
-        <div className="flex" style={{ height: (filtered.length + 1) * ROW_HEIGHT + 60 }}>
-          {/* left column */}
-          <div className="w-60">
-            <div className="sticky top-0 z-10 flex h-8 items-center border-b bg-white px-2 text-xs font-semibold">
+      <div className="border rounded overflow-x-auto">
+        <div className="relative" style={{ width: width + 240 }}>
+          {/* header */}
+          <div className="flex sticky top-0 z-20">
+            <div className="sticky left-0 z-30 flex h-8 w-60 items-center border-r border-b bg-white px-2 text-xs font-semibold">
               Task
             </div>
-            {filtered.map((t, idx) => (
-              <div
-                key={t.id}
-                className={`flex items-center gap-2 px-2 text-sm border-b ${idx % 2 ? 'bg-gray-50' : 'bg-white'} transition-colors`}
-                style={{ height: ROW_HEIGHT }}
-              >
-                <div className="w-4 text-right text-xs text-gray-500">{idx + 1}</div>
-                <div className="w-4">
-                  {t.status === 'done' ? (
-                    <svg className="h-3 w-3 text-green-600" viewBox="0 0 16 16" fill="currentColor">
-                      <path d="M6 10.3L3.7 8l-1.4 1.4L6 13 14 5l-1.4-1.4z" />
-                    </svg>
-                  ) : (
-                    <svg className="h-3 w-3 text-gray-400" viewBox="0 0 16 16" fill="currentColor">
-                      <circle cx="8" cy="8" r="3" />
-                    </svg>
-                  )}
-                </div>
-                <div className="truncate">
-                  {t.name} <span className="text-gray-400">#{t.id}</span>
-                </div>
-              </div>
-            ))}
-            <div
-              className="cursor-pointer px-2 py-1 text-sm text-blue-600"
-              onClick={() => setShowAdd(true)}
-            >
-              + Add item
-            </div>
-          </div>
-
-          {/* timeline */}
-          <div className="flex-1 overflow-x-auto">
-            <div className="relative" style={{ width }}>
-              {/* month headers */}
-              <div className="sticky top-0 z-10 bg-white">
+            <div className="flex-1" style={{ width }}>
+              <div className="relative bg-white">
                 <div className="relative h-6 border-b">
                   {monthCells.map(m => (
                     <div
@@ -214,74 +180,96 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
                     </div>
                   ))}
                 </div>
-                <div className="relative h-6 border-b">
+                <div
+                  className="grid h-6 border-b text-[10px]"
+                  style={{ gridTemplateColumns: `repeat(${totalDays}, ${pxPerDay}px)` }}
+                >
                   {dayCells.map((d, idx) => (
-                    <div
-                      key={idx}
-                      className="absolute text-[10px] text-center"
-                      style={{ left: d.left, width: pxPerDay }}
-                    >
+                    <div key={idx} className="text-center">
                       {d.label}
                     </div>
                   ))}
                 </div>
               </div>
-
-              {/* grid lines */}
-              {dayCells.map((d, idx) => (
-                <div
-                  key={idx}
-                  className="absolute top-0 bottom-0 border-l border-gray-200"
-                  style={{ left: d.left }}
-                />
-              ))}
-              {/* today marker */}
-              {(() => {
-                const today = new Date();
-                if (today >= startRange && today <= endRange) {
-                  const left = daysDiff(today, startRange) * pxPerDay;
-                  return <div className="absolute top-0 bottom-0 border-l border-red-500" style={{ left }} />;
-                }
-                return null;
-              })()}
-
-              {/* task bars */}
-              {filtered.map((t, idx) => {
-                const start = fieldStartDate(t);
-                const end = fieldEndDate(t);
-                const left = daysDiff(start, startRange) * pxPerDay;
-                const widthBar = Math.max((daysDiff(end, start) + 1) * pxPerDay, 8);
-                const color = statusColors[t.status] || 'bg-gray-400';
-                return (
-                  <div
-                    key={t.id}
-                    className="absolute"
-                    style={{ top: 12 + idx * ROW_HEIGHT, left }}
-                  >
-                    <div
-                      className={`flex h-5 items-center gap-1 rounded-full px-2 text-xs text-white ${color} transition-all cursor-pointer`}
-                      style={{ width: widthBar }}
-                      onClick={() => {
-                        setEditing(t);
-                        setEditName(t.name);
-                      }}
-                    >
-                      {t.status === 'done' ? (
-                        <svg className="h-3 w-3" viewBox="0 0 16 16" fill="currentColor">
-                          <path d="M6 10.3L3.7 8l-1.4 1.4L6 13 14 5l-1.4-1.4z" />
-                        </svg>
-                      ) : (
-                        <svg className="h-3 w-3" viewBox="0 0 16 16" fill="currentColor">
-                          <circle cx="8" cy="8" r="3" />
-                        </svg>
-                      )}
-                      <span className="truncate">{t.name}</span>
-                    </div>
-                  </div>
-                );
-              })}
             </div>
           </div>
+
+          {/* grid lines */}
+          {dayCells.map((d, idx) => (
+            <div
+              key={idx}
+              className="absolute top-0 bottom-0 border-l border-gray-200"
+              style={{ left: 240 + d.left }}
+            />
+          ))}
+          {(() => {
+            const today = new Date();
+            if (today >= startRange && today <= endRange) {
+              const left = daysDiff(today, startRange) * pxPerDay;
+              return (
+                <div
+                  className="absolute top-0 bottom-0 border-l border-red-500"
+                  style={{ left: 240 + left }}
+                />
+              );
+            }
+            return null;
+          })()}
+
+          {/* rows */}
+          {filtered.map((t, idx) => {
+            const start = fieldStartDate(t);
+            const end = fieldEndDate(t);
+            const left = daysDiff(start, startRange) * pxPerDay;
+            const widthBar = Math.max((daysDiff(end, start) + 1) * pxPerDay, 8);
+            const color = statusColors[t.status] || 'bg-gray-400';
+            return (
+              <div key={t.id} className="flex" style={{ height: ROW_HEIGHT }}>
+                <div
+                  className={`sticky left-0 z-10 flex w-60 items-center gap-2 border-r px-2 text-sm ${
+                    idx % 2 ? 'bg-gray-50' : 'bg-white'
+                  }`}
+                >
+                  <div className="w-4 text-right text-xs text-gray-500">{idx + 1}</div>
+                  <div className="w-4">
+                    {t.status === 'done' ? (
+                      <svg className="h-3 w-3 text-green-600" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M6 10.3L3.7 8l-1.4 1.4L6 13 14 5l-1.4-1.4z" />
+                      </svg>
+                    ) : (
+                      <svg className="h-3 w-3 text-gray-400" viewBox="0 0 16 16" fill="currentColor">
+                        <circle cx="8" cy="8" r="3" />
+                      </svg>
+                    )}
+                  </div>
+                  <div className="truncate">
+                    {t.name} <span className="text-gray-400">#{t.id}</span>
+                  </div>
+                </div>
+                <div className="relative" style={{ width }}>
+                  <div
+                    className={`absolute flex h-5 items-center gap-1 rounded-full px-2 text-xs text-white ${color} transition-all cursor-pointer`}
+                    style={{ left, width: widthBar }}
+                    onClick={() => {
+                      setEditing(t);
+                      setEditName(t.name);
+                    }}
+                  >
+                    {t.status === 'done' ? (
+                      <svg className="h-3 w-3" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M6 10.3L3.7 8l-1.4 1.4L6 13 14 5l-1.4-1.4z" />
+                      </svg>
+                    ) : (
+                      <svg className="h-3 w-3" viewBox="0 0 16 16" fill="currentColor">
+                        <circle cx="8" cy="8" r="3" />
+                      </svg>
+                    )}
+                    <span className="truncate">{t.name}</span>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
