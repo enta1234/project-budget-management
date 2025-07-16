@@ -85,10 +85,17 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
     setRangeEnd(addDays(newStart, WINDOW_DAYS - 1));
   }, [minDate.getTime(), maxDate.getTime()]);
 
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const offset = daysDiff(minDate, rangeStart) * DAY_WIDTH;
+    el.scrollLeft = offset;
+  }, []);
+
 
 
   const pxPerDay = DAY_WIDTH;
-  const totalDays = WINDOW_DAYS;
+  const totalDays = daysDiff(rangeEnd, rangeStart) + 1;
   const width = totalDays * pxPerDay;
 
   const dayCells: { label: string; month: string; left: number; first: boolean }[] = [];
@@ -367,7 +374,7 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
           {visibleGrids.map((d, idx) => (
             <div
               key={idx}
-              className="absolute top-0 bottom-0 border-l border-gray-200"
+              className={`absolute top-0 bottom-0 border-l ${d.first ? 'border-gray-400 border-l-2' : 'border-gray-200'}`}
               style={{ left: 240 + d.left }}
             />
           ))}
@@ -418,10 +425,12 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
                 </div>
                 <div className="relative" style={{ width }}>
                   <div
-                    className={`absolute flex h-5 items-center gap-1 rounded-full px-2 text-xs text-white ${color} transition-all cursor-pointer hover:shadow-md ${activeId === t.id ? 'ring-2 ring-blue-500 ring-offset-2' : ''}`}
+                    tabIndex={0}
+                    className={`absolute flex h-5 items-center gap-1 rounded-full px-2 text-xs text-white ${color} transition-all cursor-pointer hover:shadow-md ${activeId === t.id ? 'ring-2 ring-blue-500 ring-offset-2' : ''} ${dragging?.id === t.id ? 'shadow-lg opacity-70' : ''}`}
                     style={{ left, width: widthBar }}
                     onPointerDown={e => startDrag(t, e)}
                     onClick={() => setActiveId(t.id)}
+                    onFocus={() => setActiveId(t.id)}
                     onDoubleClick={() => {
                       setEditing(t);
                       setEditName(t.name);
