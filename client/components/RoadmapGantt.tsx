@@ -116,35 +116,72 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
   const visibleDayCells = dayCells.slice(renderStart, renderEnd);
   const visibleGrids = grids.slice(renderStart, renderEnd);
 
-  const handleScroll = useCallback(() => {
+  const BUFFER_DAYS = 7;
+  const EXTEND_DAYS = 14;
+  const MAX_RANGE_DAYS = 365;
+
+  const rangeStartRef = useRef(rangeStart);
+  const rangeEndRef = useRef(rangeEnd);
+  const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    rangeStartRef.current = rangeStart;
+  }, [rangeStart]);
+
+  useEffect(() => {
+    rangeEndRef.current = rangeEnd;
+  }, [rangeEnd]);
+
+  const processScroll = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
+    const currentTotal =
+      daysDiff(rangeEndRef.current, rangeStartRef.current) + 1;
     const startIdx = Math.floor(el.scrollLeft / DAY_WIDTH);
     const endIdx = Math.ceil((el.scrollLeft + el.clientWidth) / DAY_WIDTH);
-    const buf = 14;
+    const buf = EXTEND_DAYS;
     setRenderStart(Math.max(0, startIdx - buf));
-    setRenderEnd(Math.min(totalDays, endIdx + buf));
-    if (startIdx < 7) {
-      setRangeStart(prev => {
-        const next = addDays(prev, -14);
+    setRenderEnd(Math.min(currentTotal, endIdx + buf));
+
+    if (
+      startIdx < BUFFER_DAYS &&
+      currentTotal < MAX_RANGE_DAYS
+    ) {
+      const newStart = addDays(rangeStartRef.current, -EXTEND_DAYS);
+      if (newStart.getTime() !== rangeStartRef.current.getTime()) {
+        setRangeStart(newStart);
+        rangeStartRef.current = newStart;
         requestAnimationFrame(() => {
-          if (scrollRef.current) scrollRef.current.scrollLeft += 14 * DAY_WIDTH;
+          if (scrollRef.current)
+            scrollRef.current.scrollLeft += EXTEND_DAYS * DAY_WIDTH;
         });
-        return next;
-      });
+      }
     }
-    if (endIdx > totalDays - 7) {
-      setRangeEnd(prev => addDays(prev, 14));
+
+    if (
+      endIdx > currentTotal - BUFFER_DAYS &&
+      currentTotal < MAX_RANGE_DAYS
+    ) {
+      const newEnd = addDays(rangeEndRef.current, EXTEND_DAYS);
+      if (newEnd.getTime() !== rangeEndRef.current.getTime()) {
+        setRangeEnd(newEnd);
+        rangeEndRef.current = newEnd;
+      }
     }
-  }, [totalDays]);
+  }, []);
+
+  const handleScroll = useCallback(() => {
+    if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
+    scrollTimeout.current = setTimeout(processScroll, 200);
+  }, [processScroll]);
 
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
-    handleScroll();
+    processScroll();
     el.addEventListener('scroll', handleScroll);
     return () => el.removeEventListener('scroll', handleScroll);
-  }, [handleScroll]);
+  }, [handleScroll, processScroll]);
 
   const handleAdd = () => {
     if (!newName.trim()) return;
@@ -184,13 +221,28 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
             : t,
         ),
       );
-      if (delta < -7) {
-        setRangeStart(prev => addDays(prev, -14));
-      } else if (daysDiff(newEnd, rangeEnd) > -7) {
-        setRangeEnd(prev => addDays(prev, 14));
+
+      if (delta < -BUFFER_DAYS) {
+        const next = addDays(rangeStartRef.current, -EXTEND_DAYS);
+        if (
+          next.getTime() !== rangeStartRef.current.getTime() &&
+          daysDiff(rangeEndRef.current, next) < MAX_RANGE_DAYS
+        ) {
+          setRangeStart(next);
+          rangeStartRef.current = next;
+        }
+      } else if (daysDiff(newEnd, rangeEndRef.current) > -BUFFER_DAYS) {
+        const next = addDays(rangeEndRef.current, EXTEND_DAYS);
+        if (
+          next.getTime() !== rangeEndRef.current.getTime() &&
+          daysDiff(next, rangeStartRef.current) < MAX_RANGE_DAYS
+        ) {
+          setRangeEnd(next);
+          rangeEndRef.current = next;
+        }
       }
     },
-    [dragging, rangeEnd],
+    [dragging],
   );
 
   const handlePointerUp = useCallback(() => {
