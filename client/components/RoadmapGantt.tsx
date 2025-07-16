@@ -1,4 +1,10 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useLayoutEffect,
+} from 'react';
 import { updateTask } from '../models/planningModel';
 
 import { sampleTasks, sampleIterations, Task } from './sampleData';
@@ -35,6 +41,26 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
   } | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
 
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState(0);
+  const MIN_DAYS = 30;
+  const visibleDays = Math.max(
+    MIN_DAYS,
+    Math.round(containerWidth / DAY_WIDTH) || MIN_DAYS,
+  );
+  const EXTEND_DAYS = Math.max(14, Math.round(visibleDays / 2));
+  const WINDOW_DAYS = visibleDays + EXTEND_DAYS * 2;
+
+  useLayoutEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const update = () => setContainerWidth(el.clientWidth - 240);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   const fieldStartDate = (t: Task): Date => {
     if (startField === 'startDate') return new Date(t.startDate);
     const it = sampleIterations.find(i => i.name === t.iteration);
@@ -66,7 +92,6 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
     return res;
   };
 
-  const WINDOW_DAYS = 90;
   const initialStart = addDays(minDate, -14);
   const initialEnd = addDays(initialStart, WINDOW_DAYS - 1);
   function daysDiff(d1: Date, d2: Date) {
@@ -83,20 +108,44 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
     const newStart = addDays(minDate, -14);
     setRangeStart(newStart);
     setRangeEnd(addDays(newStart, WINDOW_DAYS - 1));
-  }, [minDate.getTime(), maxDate.getTime()]);
+  }, [minDate.getTime(), maxDate.getTime(), WINDOW_DAYS]);
+
+  const centerOnDate = useCallback(
+    (d: Date) => {
+      const el = scrollRef.current;
+      if (!el) return;
+      let start = rangeStartRef.current;
+      let end = rangeEndRef.current;
+      if (d < start || d > end) {
+        start = addDays(d, -Math.floor(visibleDays / 2));
+        end = addDays(start, WINDOW_DAYS - 1);
+        setRangeStart(start);
+        setRangeEnd(end);
+        rangeStartRef.current = start;
+        rangeEndRef.current = end;
+      }
+      requestAnimationFrame(() => {
+        const offset = daysDiff(d, start) * DAY_WIDTH - el.clientWidth / 2 + DAY_WIDTH / 2;
+        el.scrollLeft = Math.max(0, offset);
+      });
+    },
+    [visibleDays],
+  );
 
   useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const offset = daysDiff(minDate, rangeStart) * DAY_WIDTH;
-    el.scrollLeft = offset;
-  }, []);
+    if (!containerWidth) return;
+    centerOnDate(new Date());
+  }, [containerWidth, centerOnDate]);
+
+  useEffect(() => {
+    setRangeEnd(addDays(rangeStart, WINDOW_DAYS - 1));
+  }, [WINDOW_DAYS, rangeStart]);
 
 
 
   const pxPerDay = DAY_WIDTH;
   const totalDays = daysDiff(rangeEnd, rangeStart) + 1;
-  const width = totalDays * pxPerDay;
+  const width = Math.max(totalDays * pxPerDay, containerWidth);
 
   const dayCells: { label: string; month: string; left: number; first: boolean }[] = [];
   const cursor = new Date(rangeStart);
@@ -136,11 +185,14 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
   const visibleGrids = grids.slice(renderStart, renderEnd);
 
   const BUFFER_DAYS = 7;
-  const EXTEND_DAYS = 14;
 
   const rangeStartRef = useRef(rangeStart);
   const rangeEndRef = useRef(rangeEnd);
   const scrollTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    setRenderEnd(daysDiff(rangeEnd, rangeStart) + 1);
+  }, [rangeStart, rangeEnd]);
 
   useEffect(() => {
     rangeStartRef.current = rangeStart;
@@ -321,10 +373,7 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
         <button className="px-2 py-1 rounded border">Month</button>
         <button
           className="px-2 py-1 rounded border"
-          onClick={() => {
-            const today = new Date().toISOString().slice(0, 10);
-            setSearch(today);
-          }}
+          onClick={() => centerOnDate(new Date())}
         >
           Today
         </button>
@@ -336,7 +385,13 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
         </button>
       </div>
 
-      <div className="border rounded overflow-x-auto" ref={scrollRef}>
+      <div
+        className="border rounded overflow-x-auto"
+        ref={el => {
+          scrollRef.current = el;
+          containerRef.current = el;
+        }}
+      >
         <div className="relative" style={{ width: width + 240 }}>
           {/* header */}
           <div className="flex sticky top-0 z-20">
