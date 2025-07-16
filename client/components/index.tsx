@@ -30,6 +30,7 @@ export { default as ProjectPage } from './ProjectPage';
 export { default as TaskTable } from './TaskTable';
 export { default as RoadmapGantt } from './RoadmapGantt';
 export { default as BoardView } from './BoardView';
+export { default as TaskDrawer } from './TaskDrawer';
 export { default as TimelineView } from './TimelineView';
 export { default as IterationsView } from './IterationsView';
 export { default as CapacityView } from './CapacityView';
