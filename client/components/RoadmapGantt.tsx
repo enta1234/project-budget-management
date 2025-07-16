@@ -110,17 +110,19 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
     cursor.setDate(cursor.getDate() + 1);
   }
 
-  const monthCells: { label: string; left: number; width: number }[] = [];
+  const monthCells: { label: string; left: number; width: number; days: number }[] = [];
   {
     let curMonth = new Date(rangeStart.getFullYear(), rangeStart.getMonth(), 1);
     while (curMonth <= rangeEnd) {
       const nextMonth = new Date(curMonth.getFullYear(), curMonth.getMonth() + 1, 1);
       const left = daysDiff(curMonth, rangeStart) * pxPerDay;
-      const width = daysDiff(nextMonth, curMonth) * pxPerDay;
+      const days = daysDiff(nextMonth, curMonth);
+      const width = days * pxPerDay;
       monthCells.push({
         label: curMonth.toLocaleString('default', { month: 'short', year: 'numeric' }),
         left,
         width,
+        days,
       });
       curMonth = nextMonth;
     }
@@ -131,7 +133,6 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [renderStart, setRenderStart] = useState(0);
   const [renderEnd, setRenderEnd] = useState(totalDays);
-  const visibleDayCells = dayCells.slice(renderStart, renderEnd);
   const visibleGrids = grids.slice(renderStart, renderEnd);
 
   const BUFFER_DAYS = 7;
@@ -343,25 +344,27 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
               Task
             </div>
             <div className="flex-1" style={{ width }}>
-              <div className="relative bg-white" style={{ width }}>
-                <div className="relative h-6 border-b">
+              <div className="bg-white" style={{ width }}>
+                <div
+                  className="border-b grid"
+                  style={{ gridTemplateColumns: `repeat(${totalDays}, ${DAY_WIDTH}px)` }}
+                >
                   {monthCells.map(m => (
                     <div
                       key={m.label}
-                      className="absolute text-center text-xs font-semibold"
-                      style={{ left: m.left, width: m.width }}
+                      className="text-center text-xs font-semibold"
+                      style={{ gridColumn: `span ${m.days}` }}
                     >
                       {m.label}
                     </div>
                   ))}
                 </div>
-                <div className="relative h-6 border-b text-[10px]">
-                  {visibleDayCells.map((d, idx) => (
-                    <div
-                      key={idx}
-                      className="absolute text-center"
-                      style={{ left: d.left, width: pxPerDay }}
-                    >
+                <div
+                  className="border-b grid text-[10px]"
+                  style={{ gridTemplateColumns: `repeat(${totalDays}, ${DAY_WIDTH}px)` }}
+                >
+                  {dayCells.map((d, idx) => (
+                    <div key={idx} className="text-center">
                       {d.label}
                     </div>
                   ))}
