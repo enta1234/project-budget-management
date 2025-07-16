@@ -33,6 +33,7 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
     origStart: Date;
     origEnd: Date;
   } | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
 
   const fieldStartDate = (t: Task): Date => {
     if (startField === 'startDate') return new Date(t.startDate);
@@ -67,7 +68,7 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
 
   const WINDOW_DAYS = 90;
   const initialStart = addDays(minDate, -14);
-  const initialEnd = addDays(maxDate, 14);
+  const initialEnd = addDays(initialStart, WINDOW_DAYS - 1);
   function daysDiff(d1: Date, d2: Date) {
     return Math.floor((d1.getTime() - d2.getTime()) / 86400000);
   }
@@ -80,18 +81,14 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
 
   useEffect(() => {
     const newStart = addDays(minDate, -14);
-    const newEndCandidate = addDays(maxDate, 14);
-    const newSpan = daysDiff(newEndCandidate, newStart) + 1;
     setRangeStart(newStart);
-    setRangeEnd(
-      newSpan > WINDOW_DAYS ? addDays(newStart, WINDOW_DAYS - 1) : newEndCandidate,
-    );
+    setRangeEnd(addDays(newStart, WINDOW_DAYS - 1));
   }, [minDate.getTime(), maxDate.getTime()]);
 
 
 
   const pxPerDay = DAY_WIDTH;
-  const totalDays = daysDiff(rangeEnd, rangeStart) + 1;
+  const totalDays = WINDOW_DAYS;
   const width = totalDays * pxPerDay;
 
   const dayCells: { label: string; month: string; left: number; first: boolean }[] = [];
@@ -148,8 +145,7 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
   const processScroll = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
-    const currentTotal =
-      daysDiff(rangeEndRef.current, rangeStartRef.current) + 1;
+    const currentTotal = WINDOW_DAYS;
     const startIdx = Math.floor(el.scrollLeft / DAY_WIDTH);
     const endIdx = Math.ceil((el.scrollLeft + el.clientWidth) / DAY_WIDTH);
     const buf = EXTEND_DAYS;
@@ -158,7 +154,7 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
 
     if (startIdx < BUFFER_DAYS) {
       const newStart = addDays(rangeStartRef.current, -EXTEND_DAYS);
-      const newEnd = addDays(rangeEndRef.current, -EXTEND_DAYS);
+      const newEnd = addDays(newStart, WINDOW_DAYS - 1);
       if (newStart.getTime() !== rangeStartRef.current.getTime()) {
         setRangeStart(newStart);
         setRangeEnd(newEnd);
@@ -173,7 +169,7 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
 
     if (endIdx > currentTotal - BUFFER_DAYS) {
       const newStart = addDays(rangeStartRef.current, EXTEND_DAYS);
-      const newEnd = addDays(rangeEndRef.current, EXTEND_DAYS);
+      const newEnd = addDays(newStart, WINDOW_DAYS - 1);
       if (newEnd.getTime() !== rangeEndRef.current.getTime()) {
         setRangeStart(newStart);
         setRangeEnd(newEnd);
@@ -237,7 +233,7 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
 
       if (delta < -BUFFER_DAYS) {
         const nextStart = addDays(rangeStartRef.current, -EXTEND_DAYS);
-        const nextEnd = addDays(rangeEndRef.current, -EXTEND_DAYS);
+        const nextEnd = addDays(nextStart, WINDOW_DAYS - 1);
         if (nextStart.getTime() !== rangeStartRef.current.getTime()) {
           setRangeStart(nextStart);
           setRangeEnd(nextEnd);
@@ -246,7 +242,7 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
         }
       } else if (daysDiff(newEnd, rangeEndRef.current) > -BUFFER_DAYS) {
         const nextStart = addDays(rangeStartRef.current, EXTEND_DAYS);
-        const nextEnd = addDays(rangeEndRef.current, EXTEND_DAYS);
+        const nextEnd = addDays(nextStart, WINDOW_DAYS - 1);
         if (nextEnd.getTime() !== rangeEndRef.current.getTime()) {
           setRangeStart(nextStart);
           setRangeEnd(nextEnd);
@@ -275,6 +271,7 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
 
   const startDrag = (t: Task, e: React.PointerEvent) => {
     e.preventDefault();
+    setActiveId(t.id);
     setDragging({
       id: t.id,
       startX: e.clientX,
@@ -400,7 +397,8 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
                 <div
                   className={`sticky left-0 z-10 flex w-60 items-center gap-2 border-r px-2 text-sm ${
                     idx % 2 ? 'bg-gray-50' : 'bg-white'
-                  }`}
+                  } ${activeId === t.id ? 'ring-2 ring-blue-500 ring-offset-2' : ''}`}
+                  onClick={() => setActiveId(t.id)}
                 >
                   <div className="w-4 text-right text-xs text-gray-500">{idx + 1}</div>
                   <div className="w-4">
@@ -420,9 +418,10 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
                 </div>
                 <div className="relative" style={{ width }}>
                   <div
-                    className={`absolute flex h-5 items-center gap-1 rounded-full px-2 text-xs text-white ${color} transition-all cursor-pointer`}
+                    className={`absolute flex h-5 items-center gap-1 rounded-full px-2 text-xs text-white ${color} transition-all cursor-pointer hover:shadow-md ${activeId === t.id ? 'ring-2 ring-blue-500 ring-offset-2' : ''}`}
                     style={{ left, width: widthBar }}
                     onPointerDown={e => startDrag(t, e)}
+                    onClick={() => setActiveId(t.id)}
                     onDoubleClick={() => {
                       setEditing(t);
                       setEditName(t.name);
