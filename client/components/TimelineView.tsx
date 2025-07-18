@@ -19,12 +19,15 @@ export default function TimelineView({ tasks }: Props) {
 
   const cells = [] as { label: string; left: number }[];
   const cur = new Date(min);
-  while (cur <= max) {
+  const MAX_CELLS = 365;
+  let safety = 0;
+  while (cur <= max && safety < MAX_CELLS) {
     const label = cur.toISOString().slice(0, 10);
     cells.push({ label, left: calcLeft(new Date(cur)) });
     if (zoom === 'month') cur.setMonth(cur.getMonth() + 1);
     else if (zoom === 'week') cur.setDate(cur.getDate() + 7);
     else cur.setDate(cur.getDate() + 1);
+    safety++;
   }
 
   return (
