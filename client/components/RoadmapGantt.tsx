@@ -83,8 +83,9 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
     });
 
   const dates = filtered.flatMap(t => [fieldStartDate(t), fieldEndDate(t)]);
-  const minDate = new Date(Math.min(...dates.map(d => d.getTime())));
-  const maxDate = new Date(Math.max(...dates.map(d => d.getTime())));
+  const timestamps = dates.map(d => d.getTime());
+  const minDate = timestamps.length ? new Date(Math.min(...timestamps)) : new Date();
+  const maxDate = timestamps.length ? new Date(Math.max(...timestamps)) : new Date();
 
   const addDays = (d: Date, n: number) => {
     const res = new Date(d);
@@ -95,7 +96,9 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
   const initialStart = addDays(minDate, -14);
   const initialEnd = addDays(initialStart, WINDOW_DAYS - 1);
   function daysDiff(d1: Date, d2: Date) {
-    return Math.floor((d1.getTime() - d2.getTime()) / 86400000);
+    const utc1 = Date.UTC(d1.getFullYear(), d1.getMonth(), d1.getDate());
+    const utc2 = Date.UTC(d2.getFullYear(), d2.getMonth(), d2.getDate());
+    return Math.floor((utc1 - utc2) / 86400000);
   }
 
   const span = daysDiff(initialEnd, initialStart) + 1;
