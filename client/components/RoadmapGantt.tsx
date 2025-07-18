@@ -152,7 +152,9 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
 
   const dayCells: { label: string; month: string; left: number; first: boolean }[] = [];
   const cursor = new Date(rangeStart);
-  while (cursor <= rangeEnd) {
+  const MAX_CELLS = 365;
+  let dayCount = 0;
+  while (cursor <= rangeEnd && dayCount < MAX_CELLS) {
     dayCells.push({
       label: String(cursor.getDate()),
       month: cursor.toLocaleString('default', { month: 'short' }),
@@ -160,12 +162,14 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
       first: cursor.getDate() === 1,
     });
     cursor.setDate(cursor.getDate() + 1);
+    dayCount++;
   }
 
   const monthCells: { label: string; left: number; width: number; days: number }[] = [];
   {
     let curMonth = new Date(rangeStart.getFullYear(), rangeStart.getMonth(), 1);
-    while (curMonth <= rangeEnd) {
+    let monthCount = 0;
+    while (curMonth <= rangeEnd && monthCount < MAX_CELLS) {
       const nextMonth = new Date(curMonth.getFullYear(), curMonth.getMonth() + 1, 1);
       const left = daysDiff(curMonth, rangeStart) * pxPerDay;
       const days = daysDiff(nextMonth, curMonth);
@@ -177,6 +181,7 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
         days,
       });
       curMonth = nextMonth;
+      monthCount++;
     }
   }
 
