@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Layout from './Layout';
 import TaskTable from './TaskTable';
 import BoardView from './BoardView';
@@ -9,6 +9,7 @@ import AllStatusView from './AllStatusView';
 import NewTaskModal from './NewTaskModal';
 import { ViewProvider, useView } from '../context/ViewContext';
 import { sampleTasks, Task } from './sampleData';
+import { fetchTasks } from '../models/planningModel';
 
 const views = [
   { key: 'table', label: 'Table' },
@@ -19,9 +20,23 @@ const views = [
   { key: 'status', label: 'All Status' },
 ];
 
-function InnerPage() {
+interface PageProps {
+  projectId?: string;
+}
+
+function InnerPage({ projectId }: PageProps) {
   const { view, setView } = useView();
   const [tasks, setTasks] = useState<Task[]>(sampleTasks);
+
+  useEffect(() => {
+    if (!projectId) {
+      setTasks(sampleTasks);
+      return;
+    }
+    fetchTasks(projectId)
+      .then(setTasks)
+      .catch(console.error);
+  }, [projectId]);
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [showNew, setShowNew] = useState(false);
@@ -83,7 +98,9 @@ function InnerPage() {
         <div>
           {view === 'table' && <TaskTable tasks={filtered} setTasks={setTasks} />}
           {view === 'board' && <BoardView tasks={filtered} setTasks={setTasks} />}
-          {view === 'timeline' && <RoadmapGantt tasks={filtered} />}
+          {view === 'timeline' && (
+            <RoadmapGantt tasks={filtered} projectId={projectId} />
+          )}
           {view === 'iterations' && <IterationsView tasks={filtered} />}
           {view === 'capacity' && <CapacityView tasks={filtered} />}
           {view === 'status' && <AllStatusView tasks={filtered} />}
@@ -101,10 +118,10 @@ function InnerPage() {
   );
 }
 
-export default function ProjectPage() {
+export default function ProjectPage({ projectId }: PageProps) {
   return (
     <ViewProvider>
-      <InnerPage />
+      <InnerPage projectId={projectId} />
     </ViewProvider>
   );
 }

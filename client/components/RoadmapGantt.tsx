@@ -5,7 +5,7 @@ import React, {
   useCallback,
   useLayoutEffect,
 } from 'react';
-import { updateTask } from '../models/planningModel';
+import { fetchTasks, updateTask } from '../models/planningModel';
 
 import { sampleTasks, sampleIterations, Task } from './sampleData';
 import {
@@ -19,6 +19,7 @@ import {
 
 interface Props {
   tasks?: Task[];
+  projectId?: string;
 }
 
 const statusColors: Record<string, string> = {
@@ -29,7 +30,7 @@ const statusColors: Record<string, string> = {
 
 const ROW_HEIGHT = 28;
 
-export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
+export default function RoadmapGantt({ tasks = sampleTasks, projectId }: Props) {
   const [items, setItems] = useState<Task[]>(tasks);
   const [startField, setStartField] = useState<'startDate' | 'iterationStart'>('startDate');
   const [endField, setEndField] = useState<'endDate' | 'iterationEnd'>('endDate');
@@ -47,6 +48,22 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
     origEnd: Date;
   } | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!projectId) {
+      setItems(tasks);
+      return;
+    }
+    fetchTasks(projectId)
+      .then(setItems)
+      .catch(console.error);
+  }, [projectId]);
+
+  useEffect(() => {
+    if (!projectId) {
+      setItems(tasks);
+    }
+  }, [tasks, projectId]);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(0);
