@@ -52,7 +52,8 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
   const [containerWidth, setContainerWidth] = useState(0);
   const visibleDays = Math.max(1, Math.round(containerWidth / DAY_WIDTH));
   const EXTEND_DAYS = Math.max(14, Math.round(visibleDays / 2));
-  const WINDOW_DAYS = visibleDays + EXTEND_DAYS * 2;
+  // limit the overall timeline to a fixed 60 day window
+  const WINDOW_DAYS = 60;
 
   useLayoutEffect(() => {
     const el = containerRef.current;
@@ -85,27 +86,13 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
       return text.includes(search.toLowerCase());
     });
 
-  const dates = filtered.flatMap(t => [fieldStartDate(t), fieldEndDate(t)]);
-  const timestamps = dates.map(d => d.getTime());
-  const minDate = timestamps.length ? new Date(Math.min(...timestamps)) : new Date();
-  const maxDate = timestamps.length ? new Date(Math.max(...timestamps)) : new Date();
+  // restrict display to today plus the next 60 days
+  const today = new Date();
+  const initialStart = today;
+  const initialEnd = addDays(today, WINDOW_DAYS - 1);
 
-  // Starting window includes a two week buffer before the first task
-  const initialStart = addDays(minDate, -14);
-  const initialEnd = addDays(initialStart, WINDOW_DAYS - 1);
-
-  // Number of days in the initial window
-  const span = daysDiff(initialEnd, initialStart) + 1;
   const [rangeStart, setRangeStart] = useState<Date>(initialStart);
-  const [rangeEnd, setRangeEnd] = useState<Date>(
-    span > WINDOW_DAYS ? addDays(initialStart, WINDOW_DAYS - 1) : initialEnd,
-  );
-
-  useEffect(() => {
-    const newStart = addDays(minDate, -14);
-    setRangeStart(newStart);
-    setRangeEnd(addDays(newStart, WINDOW_DAYS - 1));
-  }, [minDate.getTime(), maxDate.getTime(), WINDOW_DAYS]);
+  const [rangeEnd, setRangeEnd] = useState<Date>(initialEnd);
 
   const centerOnDate = useCallback(
     (d: Date) => {
@@ -159,7 +146,6 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
     m => m.start + m.days > renderStart && m.start < renderEnd,
   );
 
-  const BUFFER_DAYS = 7;
 
   const rangeStartRef = useRef(rangeStart);
   const rangeEndRef = useRef(rangeEnd);
@@ -188,31 +174,7 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
     setRenderStart(Math.max(0, startIdx - buf));
     setRenderEnd(Math.min(currentTotal, endIdx + buf));
 
-    if (startIdx < BUFFER_DAYS) {
-      const newStart = addDays(rangeStartRef.current, -EXTEND_DAYS);
-      const newEnd = addDays(newStart, WINDOW_DAYS - 1);
-      if (newStart.getTime() !== rangeStartRef.current.getTime()) {
-        setRangeStart(newStart);
-        setRangeEnd(newEnd);
-        rangeStartRef.current = newStart;
-        rangeEndRef.current = newEnd;
-        requestAnimationFrame(() => {
-          if (scrollRef.current)
-            scrollRef.current.scrollLeft += EXTEND_DAYS * DAY_WIDTH;
-        });
-      }
-    }
-
-    if (endIdx > currentTotal - BUFFER_DAYS) {
-      const newStart = addDays(rangeStartRef.current, EXTEND_DAYS);
-      const newEnd = addDays(newStart, WINDOW_DAYS - 1);
-      if (newEnd.getTime() !== rangeEndRef.current.getTime()) {
-        setRangeStart(newStart);
-        setRangeEnd(newEnd);
-        rangeStartRef.current = newStart;
-        rangeEndRef.current = newEnd;
-      }
-    }
+    // do not extend the date range beyond the fixed window
   }, []);
 
   const handleScroll = useCallback(() => {
@@ -267,25 +229,7 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
         ),
       );
 
-      if (delta < -BUFFER_DAYS) {
-        const nextStart = addDays(rangeStartRef.current, -EXTEND_DAYS);
-        const nextEnd = addDays(nextStart, WINDOW_DAYS - 1);
-        if (nextStart.getTime() !== rangeStartRef.current.getTime()) {
-          setRangeStart(nextStart);
-          setRangeEnd(nextEnd);
-          rangeStartRef.current = nextStart;
-          rangeEndRef.current = nextEnd;
-        }
-      } else if (daysDiff(newEnd, rangeEndRef.current) > -BUFFER_DAYS) {
-        const nextStart = addDays(rangeStartRef.current, EXTEND_DAYS);
-        const nextEnd = addDays(nextStart, WINDOW_DAYS - 1);
-        if (nextEnd.getTime() !== rangeEndRef.current.getTime()) {
-          setRangeStart(nextStart);
-          setRangeEnd(nextEnd);
-          rangeStartRef.current = nextStart;
-          rangeEndRef.current = nextEnd;
-        }
-      }
+      // keep the window fixed and do not auto-extend while dragging
     },
     [dragging],
   );
