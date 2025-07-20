@@ -8,6 +8,14 @@ import React, {
 import { updateTask } from '../models/planningModel';
 
 import { sampleTasks, sampleIterations, Task } from './sampleData';
+import {
+  DAY_WIDTH,
+  MAX_CELLS,
+  addDays,
+  daysDiff,
+  generateDayCells,
+  generateMonthCells,
+} from '../utils/timeline';
 
 interface Props {
   tasks?: Task[];
@@ -20,7 +28,6 @@ const statusColors: Record<string, string> = {
 };
 
 const ROW_HEIGHT = 28;
-const DAY_WIDTH = 48;
 
 export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
   const [items, setItems] = useState<Task[]>(tasks);
@@ -83,20 +90,11 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
   const minDate = timestamps.length ? new Date(Math.min(...timestamps)) : new Date();
   const maxDate = timestamps.length ? new Date(Math.max(...timestamps)) : new Date();
 
-  const addDays = (d: Date, n: number) => {
-    const res = new Date(d);
-    res.setDate(res.getDate() + n);
-    return res;
-  };
-
+  // Starting window includes a two week buffer before the first task
   const initialStart = addDays(minDate, -14);
   const initialEnd = addDays(initialStart, WINDOW_DAYS - 1);
-  function daysDiff(d1: Date, d2: Date) {
-    const utc1 = Date.UTC(d1.getFullYear(), d1.getMonth(), d1.getDate());
-    const utc2 = Date.UTC(d2.getFullYear(), d2.getMonth(), d2.getDate());
-    return Math.floor((utc1 - utc2) / 86400000);
-  }
 
+  // Number of days in the initial window
   const span = daysDiff(initialEnd, initialStart) + 1;
   const [rangeStart, setRangeStart] = useState<Date>(initialStart);
   const [rangeEnd, setRangeEnd] = useState<Date>(
@@ -125,7 +123,7 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
       }
       requestAnimationFrame(() => {
         const offset = daysDiff(d, start) * DAY_WIDTH - el.clientWidth / 2 + DAY_WIDTH / 2;
-        el.scrollLeft = Math.max(0, offset);
+        el.scrollTo({ left: Math.max(0, offset), behavior: 'smooth' });
       });
     },
     [visibleDays],
@@ -146,41 +144,9 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
   const totalDays = daysDiff(rangeEnd, rangeStart) + 1;
   const width = Math.max(totalDays * pxPerDay, containerWidth);
 
-  const dayCells: { label: string; month: string; left: number; first: boolean }[] = [];
-  const cursor = new Date(rangeStart);
-  const MAX_CELLS = 365;
-  let dayCount = 0;
-  while (cursor <= rangeEnd && dayCount < MAX_CELLS) {
-    dayCells.push({
-      label: String(cursor.getDate()),
-      month: cursor.toLocaleString('default', { month: 'short' }),
-      left: daysDiff(cursor, rangeStart) * pxPerDay,
-      first: cursor.getDate() === 1,
-    });
-    cursor.setDate(cursor.getDate() + 1);
-    dayCount++;
-  }
-
-  const monthCells: { label: string; left: number; width: number; days: number; start: number }[] = [];
-  {
-    let curMonth = new Date(rangeStart.getFullYear(), rangeStart.getMonth(), 1);
-    let monthCount = 0;
-    while (curMonth <= rangeEnd && monthCount < MAX_CELLS) {
-      const nextMonth = new Date(curMonth.getFullYear(), curMonth.getMonth() + 1, 1);
-      const left = daysDiff(curMonth, rangeStart) * pxPerDay;
-      const days = daysDiff(nextMonth, curMonth);
-      const width = days * pxPerDay;
-      monthCells.push({
-        label: curMonth.toLocaleString('default', { month: 'short', year: 'numeric' }),
-        left,
-        width,
-        days,
-        start: daysDiff(curMonth, rangeStart),
-      });
-      curMonth = nextMonth;
-      monthCount++;
-    }
-  }
+  // Pre-compute day and month grid cells within the current range
+  const dayCells = generateDayCells(rangeStart, rangeEnd, pxPerDay);
+  const monthCells = generateMonthCells(rangeStart, rangeEnd, pxPerDay);
 
   const grids = dayCells.map(c => ({ left: c.left, first: c.first }));
 
@@ -211,6 +177,7 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
     rangeEndRef.current = rangeEnd;
   }, [rangeEnd]);
 
+  // Handles virtualization and lazy loading of additional days when scrolling
   const processScroll = useCallback(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -446,6 +413,7 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
             />
           ))}
           {(() => {
+            // Highlight the current day if it falls within the rendered range
             const today = new Date();
             if (today >= rangeStart && today <= rangeEnd) {
               const left = daysDiff(today, rangeStart) * pxPerDay;
