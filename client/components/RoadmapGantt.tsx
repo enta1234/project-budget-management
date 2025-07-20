@@ -43,11 +43,7 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
 
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(0);
-  const MIN_DAYS = 30;
-  const visibleDays = Math.max(
-    MIN_DAYS,
-    Math.round(containerWidth / DAY_WIDTH) || MIN_DAYS,
-  );
+  const visibleDays = Math.max(1, Math.round(containerWidth / DAY_WIDTH));
   const EXTEND_DAYS = Math.max(14, Math.round(visibleDays / 2));
   const WINDOW_DAYS = visibleDays + EXTEND_DAYS * 2;
 
@@ -165,7 +161,7 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
     dayCount++;
   }
 
-  const monthCells: { label: string; left: number; width: number; days: number }[] = [];
+  const monthCells: { label: string; left: number; width: number; days: number; start: number }[] = [];
   {
     let curMonth = new Date(rangeStart.getFullYear(), rangeStart.getMonth(), 1);
     let monthCount = 0;
@@ -179,6 +175,7 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
         left,
         width,
         days,
+        start: daysDiff(curMonth, rangeStart),
       });
       curMonth = nextMonth;
       monthCount++;
@@ -191,6 +188,10 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
   const [renderStart, setRenderStart] = useState(0);
   const [renderEnd, setRenderEnd] = useState(totalDays);
   const visibleGrids = grids.slice(renderStart, renderEnd);
+  const visibleDayCells = dayCells.slice(renderStart, renderEnd);
+  const visibleMonthCells = monthCells.filter(
+    m => m.start + m.days > renderStart && m.start < renderEnd,
+  );
 
   const BUFFER_DAYS = 7;
 
@@ -410,13 +411,13 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
               <div className="bg-white" style={{ width }}>
                 <div
                   className="border-b grid"
-                  style={{ gridTemplateColumns: `repeat(${totalDays}, ${DAY_WIDTH}px)` }}
+                  style={{ gridTemplateColumns: `repeat(${renderEnd - renderStart}, ${DAY_WIDTH}px)` }}
                 >
-                  {monthCells.map(m => (
+                  {visibleMonthCells.map(m => (
                     <div
-                      key={m.label}
+                      key={`${m.label}-${m.start}`}
                       className="text-center text-xs font-semibold"
-                      style={{ gridColumn: `span ${m.days}` }}
+                      style={{ gridColumn: `${m.start - renderStart + 1} / span ${m.days}` }}
                     >
                       {m.label}
                     </div>
@@ -424,10 +425,10 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
                 </div>
                 <div
                   className="border-b grid text-[10px]"
-                  style={{ gridTemplateColumns: `repeat(${totalDays}, ${DAY_WIDTH}px)` }}
+                  style={{ gridTemplateColumns: `repeat(${renderEnd - renderStart}, ${DAY_WIDTH}px)` }}
                 >
-                  {dayCells.map((d, idx) => (
-                    <div key={idx} className="text-center">
+                  {visibleDayCells.map((d, idx) => (
+                    <div key={renderStart + idx} className="text-center">
                       {d.label}
                     </div>
                   ))}
@@ -441,7 +442,7 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
             <div
               key={idx}
               className={`absolute top-0 bottom-0 border-l ${d.first ? 'border-gray-400 border-l-2' : 'border-gray-200'}`}
-              style={{ left: 240 + d.left }}
+              style={{ left: 240 + d.left - renderStart * DAY_WIDTH }}
             />
           ))}
           {(() => {
@@ -451,7 +452,7 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
               return (
                 <div
                   className="absolute top-0 bottom-0 border-l border-red-500"
-                  style={{ left: 240 + left }}
+                  style={{ left: 240 + left - renderStart * DAY_WIDTH }}
                 />
               );
             }
@@ -462,8 +463,11 @@ export default function RoadmapGantt({ tasks = sampleTasks }: Props) {
           {filtered.map((t, idx) => {
             const start = fieldStartDate(t);
             const end = fieldEndDate(t);
-            const left = daysDiff(start, rangeStart) * pxPerDay;
-            const widthBar = Math.max((daysDiff(end, start) + 1) * pxPerDay, 8);
+            if (end < rangeStart || start > rangeEnd) return null;
+            const visibleStart = start < rangeStart ? rangeStart : start;
+            const visibleEnd = end > rangeEnd ? rangeEnd : end;
+            const left = daysDiff(visibleStart, rangeStart) * pxPerDay - renderStart * DAY_WIDTH;
+            const widthBar = Math.max((daysDiff(visibleEnd, visibleStart) + 1) * pxPerDay, 8);
             const color = statusColors[t.status] || 'bg-gray-400';
             return (
               <div key={t.id} className="flex" style={{ height: ROW_HEIGHT }}>
