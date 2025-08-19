@@ -9,7 +9,7 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import { fetchEvents } from '../../models/eventsModel';
 import { fetchProjects } from '../../models/projectsModel';
-import { fetchTasks } from '../../models/tasksModel';
+import { fetchTasks } from '../../models/planningModel';
 import { fetchWorkdays } from '../../models/workdayModel';
 import { Layout, AgendaCalendar, PageBreadcrumbs, ProjectTimeline } from '../../components';
 import { differenceInCalendarDays } from 'date-fns';
