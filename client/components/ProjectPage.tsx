@@ -52,7 +52,7 @@ function InnerPage({ projectId }: PageProps) {
 
   const addTask = (t: Omit<Task, 'id'>) => {
     const nextId = (tasks.length + 1).toString();
-    setTasks([...tasks, { ...t, id: nextId }]);
+    setTasks([...tasks, { ...t, id: nextId } as Task]);
   };
 
   return (

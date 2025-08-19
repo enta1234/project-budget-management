@@ -1,5 +1,6 @@
 import api from '../api';
 import { sanitizeList } from '../utils/sanitize';
+import type { Task } from './taskTypes';
 
 export async function fetchPhases(projectId: string) {
   const { data } = await api.get('/api/v1/planning/phases', {
@@ -8,11 +9,11 @@ export async function fetchPhases(projectId: string) {
   return sanitizeList(data);
 }
 
-export async function fetchTasks(projectId: string) {
-  const { data } = await api.get('/api/v1/planning/tasks', {
+export async function fetchTasks(projectId: string): Promise<Task[]> {
+  const { data } = await api.get<Task[]>('/api/v1/planning/tasks', {
     params: { project: projectId },
   });
-  return sanitizeList(data);
+  return sanitizeList<Task>(data);
 }
 
 

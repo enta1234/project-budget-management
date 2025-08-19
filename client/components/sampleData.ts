@@ -1,15 +1,5 @@
-export interface Task {
-  id: string;
-  name: string;
-  status: 'todo' | 'in_progress' | 'done';
-  startDate: string;
-  endDate: string;
-  assignees: string[];
-  manday: number;
-  blockedBy?: string;
-  type: string;
-  iteration: string;
-}
+import type { Task } from '../models/taskTypes';
+export type { Task };
 
 export const sampleUsers = ['Alice', 'Bob', 'Carol'];
 
