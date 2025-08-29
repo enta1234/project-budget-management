@@ -34,7 +34,7 @@ function InnerPage({ projectId }: PageProps) {
       return;
     }
     fetchTasks(projectId)
-      .then(setTasks)
+      // .then(setTasks)
       .catch(console.error);
   }, [projectId]);
   const [search, setSearch] = useState('');

@@ -54,9 +54,9 @@ export default function RoadmapGantt({ tasks = sampleTasks, projectId }: Props) 
       setItems(tasks);
       return;
     }
-    fetchTasks(projectId)
-      .then(setItems)
-      .catch(console.error);
+    // fetchTasks(projectId)
+    //   .then()
+    //   .catch(console.error);
   }, [projectId]);
 
   useEffect(() => {

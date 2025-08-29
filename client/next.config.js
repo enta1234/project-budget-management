@@ -14,8 +14,12 @@ module.exports = {
   async rewrites() {
     return [
       {
-        source: '/api/:path*',
-        destination: `${SERVICE_URL}/api/:path*`,
+        source: '/api/auth/:path*',
+        destination: `${AUTH_SERVICE_URL}/api/:path*`,
+      },
+      {
+        source: '/api/user-manage/:path*',
+        destination: `${USER_SERVICE_URL}/api/:path*`,
       },
     ];
   },
